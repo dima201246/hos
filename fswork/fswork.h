@@ -7,8 +7,8 @@
 		// ... информация о файле ... 
 	};
 	bool FileExists(const std::string&);
-	int get_files(std::string, std::vector<FILESTR>&);
-	void files_sort_by(char/*SORT TYPE*/, std::vector<FILESTR>&);
+	int get_files(std::string, std::vector<FILEINFO>&);
+	void files_sort_by(char/*SORT TYPE*/, std::vector<FILEINFO>&);
 	/* SORT TYPE
 		n - name
 	*/
