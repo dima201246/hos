@@ -1,7 +1,9 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <curses.h>
-#include <string>
+#include <vector>
+
+#include "../lang/lang.h"
 
 /*BUGS
 
@@ -13,7 +15,7 @@
 */
 
 /*Tips
-- Вынести все вычисления из цикла - Не выполненно
+- Вынести все вычисления из цикла - Выполненно
 */
 
 #define DEBUG 1
@@ -23,12 +25,16 @@
 #define TAB_KEY 9
 #define CtrlF1 289
 
-
 using namespace std;
+
+const string win_ver = "0.1";
 
 struct DLGSTR {
 	string title, line, f_button, s_button, t_button;
-	int num_of_chars, type_input, style, keys, fix_size, std_select;
+	int num_of_chars, type_input, style, keys, fix_size;
+	unsigned int xpos, ypos, xmax, ymax, selected;
+	unsigned int xreturn, yreturn;
+	bool border_menu, avtive_menu;
 };
 
 unsigned int count_lines(string line, unsigned int maxX) { // Счётчик кол-ва строк через знак новой строки
@@ -95,8 +101,65 @@ void info_win() {
 	printw(":DV company 2016 (c)\n\n");
 	printw("Standart windows library HOS\n\n");
 	printw("Autor: Dmitriy Volchenko (dima201246)\n\n");
-	printw("msg_win ver.0.1\ndlg_win ver.0.1");
+	printw("Ver.%s", win_ver.c_str());
 	getch();
+}
+
+int search_max_vectro(vector<string> items) {
+	unsigned int max = 0;
+	string temp;
+	for (unsigned int i = 0; i < items.size(); i++) {
+		temp = items[i];
+		if (max < llength(temp)) max = llength(temp);
+	}
+	return max;
+}
+
+void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
+	unsigned int max_x = search_max_vectro(items), max_y = items.size();
+	switch (dlgcfg.style) { // Цветовая схема окна
+		case 1: dlgcfg.style = 2; break; // RED
+		case 2: dlgcfg.style = 4; break; // GREEN
+		case 3: dlgcfg.style = 6; break; // BLUE
+		case 4: dlgcfg.style = 8; break; // YELLOW
+		default: dlgcfg.style = 0; break;
+	}
+	if (dlgcfg.border_menu) { // Вывод границ, если они нужны
+		for (unsigned int i = 0; i < (max_x + 2); i++) {
+			mvprintw(dlgcfg.ypos, dlgcfg.xpos + i, "-");
+			mvprintw((dlgcfg.ypos + max_y + 1), dlgcfg.xpos + i, "-");
+		}
+		dlgcfg.xpos++; // Смещение текста
+		dlgcfg.ypos++;
+	}
+	string temp;
+	
+	// attron(COLOR_PAIR(3/*dlgcfg.style*/) | A_BOLD);
+	for (unsigned int i = 0; i < items.size(); i++) {
+		if (dlgcfg.border_menu) { // Вывод границ, если они нужны
+			mvprintw(dlgcfg.ypos + i, dlgcfg.xpos - 1, "|"); // Вывод левой границы
+			mvprintw(dlgcfg.ypos + i, dlgcfg.xpos + max_x, "|"); // Вывод правой границы
+			
+		}
+		temp = items[i];
+		if ((dlgcfg.selected != 0) && ((dlgcfg.selected - 1) == i)) attron(COLOR_PAIR(dlgcfg.style + 1)/* | A_BOLD*/); // Выделение пункта
+		mvprintw(dlgcfg.ypos + i, dlgcfg.xpos, "%s", temp.c_str()); // Вывод элемента
+		if (llength(temp) < max_x) { // Если не хватает пробелов до границы
+			unsigned int length_temp = llength(temp);
+			for (unsigned int j = 0; j < (max_x - llength(temp)); j++) { // Добавление пробелов
+				temp += " ";
+				mvprintw(dlgcfg.ypos + i, dlgcfg.xpos + length_temp + j, " ");
+			}
+			items[i] = temp; // Сохранение пробелов в векторе
+		}
+		if ((dlgcfg.selected != 0) && ((dlgcfg.selected - 1) == i)) {
+			attroff(COLOR_PAIR(dlgcfg.style + 1)/* | A_BOLD*/); // Выделение пункта
+			dlgcfg.xreturn = dlgcfg.xpos + max_x;
+			dlgcfg.yreturn = dlgcfg.ypos + i;
+		}
+	}
+	// attroff(COLOR_PAIR(3/*dlgcfg.style*/) | A_BOLD);
+	return;
 }
 
 int msg_win(DLGSTR dlgcfg) {
@@ -141,6 +204,7 @@ int msg_win(DLGSTR dlgcfg) {
 	max_line += 4; // Границы и пропуск до границ
 	bool cycle = true;
 	int active_input = 1;
+	if ((dlgcfg.selected > 0) && (dlgcfg.selected <= (unsigned)dlgcfg.keys)) active_input = dlgcfg.selected; // Изменение стандартной позиции выделения
 	if ((max_line % 2) == 0) fix = 1;
 	unsigned int cn;
 	string line_out, banka;
@@ -285,6 +349,7 @@ int dlg_win(DLGSTR dlgcfg, string& out_put) {
 	max_line += 4; // Границы и пропуск до границ
 	bool cycle = true;
 	int active_input = 0;
+	if ((dlgcfg.selected > 0) && (dlgcfg.selected <= (unsigned)dlgcfg.keys)) active_input = dlgcfg.selected; // Изменение стандартной позиции выделения
 	if ((max_line % 2) == 0) fix = 1;
 	unsigned int cn, pos = 0, right_pos = 0;
 	string line_out, banka;

@@ -1,6 +1,7 @@
 #ifndef WINDLG_H
 #define WINDLG_H
 	#include <string>
+	#include <vector>
 	struct DLGSTR {
 		std::string title, // Title
 		line, // Text
@@ -11,12 +12,17 @@
 		type_input, // TYPE INPUT (not work)
 		style, // STYLE
 		keys, // Number of keys (1 - 3)
-		fix_size, // Unknown
-		std_select; // Initial choice (not work)
+		fix_size; // Unknown
+		unsigned int xpos, ypos,
+		xmax, ymax,
+		selected; // Initial choice
+		unsigned int xreturn, yreturn;
+		bool border_menu, avtive_menu;
 	};
 	
 	int dlg_win(DLGSTR, std::string&);
 	int msg_win(DLGSTR);
+	void menu_win(DLGSTR&, std::vector<std::string>&);
 	
 	/* TYPE INPUT:
 	0 - any signs
