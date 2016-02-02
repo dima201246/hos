@@ -1,8 +1,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <curses.h>
-#include <vector>
 
+#include "windlg.h"
 #include "../lang/lang.h"
 
 /*BUGS
@@ -28,14 +28,6 @@
 using namespace std;
 
 const string win_ver = "0.1";
-
-struct DLGSTR {
-	string title, line, f_button, s_button, t_button;
-	int num_of_chars, type_input, style, keys, fix_size;
-	unsigned int xpos, ypos, xmax, ymax, selected;
-	unsigned int xreturn, yreturn;
-	bool border_menu, avtive_menu;
-};
 
 unsigned int count_lines(string line, unsigned int maxX) { // Счётчик кол-ва строк через знак новой строки
 	unsigned int count = 0, count_chars = 0;
