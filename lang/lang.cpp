@@ -1,5 +1,6 @@
-#include <string>
 #include <sstream> // Для str()
+
+#include "lang.h"
 
 using namespace std;
 
