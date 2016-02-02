@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
 	initscr();
 	start_color();
-	keypad (stdscr, TRUE);
+	keypad (stdscr, true);
 	noecho();
 	curs_set(0);
 	erase();
@@ -48,15 +48,27 @@ int main(int argc, char *argv[]) {
 	teststr.title = "Pre pre pre ... Alpha";
 	teststr.style = 1;
 	teststr.line = "Dear user, it's not full version of OS!/nThis is just an example of how might look this OS.";
-	msg_win(teststr);
+	// msg_win(teststr);
 	
+	/*DEBUG*/
+	vector <string> items;
+	teststr.border_menu = true;
+	teststr.selected = 2;
+	items.insert(items.end(), "test");
+	items.insert(items.end(), "test2");
+	menu_win(teststr, items);
+	mvprintw(10, 10, "%i", teststr.xreturn);
+	mvprintw(11, 10, "%i", teststr.yreturn);
+	getch();
+	/*DEBUG*/
+
 	/*if (!FileExists("hos_configs")) {
 		warning_win("Sorry, I can't find configs directory./nCant't boot...", 0);
 		endwin();
 		return 32;
 	}*/
 
-	main_desktop("user_name");
+	// main_desktop("user_name");
 	//add_to_file("test", "test");
 	endwin();
 	return 0;
