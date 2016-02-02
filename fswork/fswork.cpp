@@ -15,8 +15,9 @@
 
 using namespace std;
 
-struct FILESTR {
+struct FILEINFO {					
 	string name;
+// ... информация о файле ... 
 };
 
 bool makedir(string path) {
@@ -26,12 +27,12 @@ bool makedir(string path) {
 	return false;
 }
 
-bool FileExists(const string& path) {
+inline bool FileExists(const string& path) {	
 	return ifstream(path.c_str()).good();
 }
 
-void files_sort_by(char type_sort, vector<FILESTR> &filevec) {
-	FILESTR temp_1, temp_2, temp_3;
+void files_sort_by(char type_sort, vector<FILEINFO> &filevec) {
+	FILEINFO temp_1, temp_2, temp_3;
 	unsigned int k_cycle, itemp_1, itemp_2;
 	for (unsigned int i = 0; i < filevec.size() - 1; i++) { // Сортировка методом пузырька
 		for (unsigned int j = 0; j < filevec.size() - i - 1; j++) {
@@ -60,12 +61,12 @@ void files_sort_by(char type_sort, vector<FILESTR> &filevec) {
 	return;
 }
 
-int get_files(string path, vector<FILESTR> &filevec) {
+int get_files(string path, vector<FILEINFO> &filevec) {
 	DIR *dir;
 	if ((dir=opendir(path.c_str())) == NULL)
 		return -1;
 	else {
-		FILESTR file_info;
+		FILEINFO file_info;
 		struct dirent *f_cur;
 		while ((f_cur=readdir(dir))!= NULL) {
 			file_info.name = f_cur->d_name;
