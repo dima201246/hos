@@ -9,16 +9,10 @@
 #include <vector>
 #include "../lang/lang.h"
 #include "../configurator/configurator.h"
-
+#include "fswork.h"
 #include <curses.h>
 
-
 using namespace std;
-
-struct FILEINFO {					
-	string name;
-// ... информация о файле ... 
-};
 
 bool makedir(string path) {
 	/*if (mkdir(path.c_str(), 0777) != 0) {
