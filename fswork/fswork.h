@@ -2,8 +2,9 @@
 #define FSWORK_H
 	#include <vector>
 	#include <string>
-	struct FILESTR {
+	struct FILEINFO {					
 		std::string name;
+		// ... информация о файле ... 
 	};
 	bool FileExists(const std::string&);
 	int get_files(std::string, std::vector<FILESTR>&);
