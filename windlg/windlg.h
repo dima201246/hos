@@ -16,7 +16,7 @@
 		unsigned int xpos, ypos,
 		xmax, ymax,
 		selected; // Initial choice
-		unsigned int xreturn, yreturn;
+		unsigned int xreturn, yreturn, second_border;
 		bool border_menu, avtive_menu;
 	};
 	
