@@ -115,12 +115,14 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 	int fix_border = 0;
 	bool vertical_moving = false/*Выводить ли с боку прогрессбар прокрутки*/, past_pointer = false;/*Чтобы указатели прогресса не уходили вниз*/
 	getmaxyx(stdscr, maxY, maxX);
+	if (max_y > items.size()) max_y = items.size();
+	dlgcfg.second_border = items.size();
 	if (local_cfg.border_menu) fix_border = 2;
 	dlgcfg.yreturn = 0; // Онуление возврата по Y
 	if (local_cfg.ymax != 0) { // Присвоение размера менюшки и проверка на "влезание" в экран
 		max_y = local_cfg.ymax;
 		if ((local_cfg.ypos + max_y + fix_border) >= maxY) {
-			if (((local_cfg.ypos + max_y + fix_border) - maxY) <= local_cfg.ypos) local_cfg.ypos -= ((local_cfg.ypos + max_y + fix_border) - maxY);
+			if (((local_cfg.ypos + max_y + fix_border) - maxY) <= local_cfg.ypos) local_cfg.ypos -= ((local_cfg.ypos + max_y + fix_border) - maxY); // Сдвиг окошка вверх, если не хватает места
 			else {
 				local_cfg.keys = 1;
 				local_cfg.style = 1;
@@ -153,6 +155,7 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 		case 4: local_cfg.style = 8; break; // YELLOW
 		default: local_cfg.style = 0; break;
 	}
+	attron(COLOR_PAIR(local_cfg.style) | A_BOLD);
 	if (local_cfg.border_menu) { // Вывод границ, если они нужны
 		for (unsigned int i = 0; i < (max_x + 2); i++) { // Вывод верхней и нижней границы
 			mvprintw(local_cfg.ypos, local_cfg.xpos + i, "-");
@@ -177,13 +180,13 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 		}
 		local_cfg.xpos++; // Смещение текста
 	}
+	attroff(COLOR_PAIR(local_cfg.style) | A_BOLD);
 	string temp;
-	// attron(COLOR_PAIR(3/*dlgcfg.style*/) | A_BOLD);
-	// mvprintw(0, 10, "%i", items.size());
 	for (unsigned int i = min_y; i < items.size(); i++) {
 		if (i >= max_y + min_y) continue;
 		temp = items[i];
-		if ((local_cfg.selected != 0) && ((local_cfg.selected - 1) == i)) attron(COLOR_PAIR(local_cfg.style + 1)/* | A_BOLD*/); // Выделение пункта
+		if ((local_cfg.selected - 1) == i) attron(COLOR_PAIR(local_cfg.style + 1)/* | A_BOLD*/); // Выделение пункта
+		else attron(COLOR_PAIR(local_cfg.style) | A_BOLD);
 		mvprintw(local_cfg.ypos + i - min_y, local_cfg.xpos, "%s", temp.c_str()); // Вывод элемента
 		if (llength(temp) < max_x) { // Если не хватает пробелов до границы
 			unsigned int length_temp = llength(temp);
@@ -198,9 +201,8 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 			dlgcfg.xreturn = local_cfg.xpos + max_x;
 			if (dlgcfg.yreturn == 0)
 				dlgcfg.yreturn = local_cfg.ypos + i;
-		}
+		} else attroff(COLOR_PAIR(local_cfg.style) | A_BOLD);
 	}
-	// attroff(COLOR_PAIR(3/*dlgcfg.style*/) | A_BOLD);
 	#if WINDOWS_XP_SIMULATION == 1 // Just for fan :)
 	if (dlgcfg.border_menu) {
 		dlgcfg.xpos++; // Смещение текста
