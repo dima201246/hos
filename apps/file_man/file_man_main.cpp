@@ -13,8 +13,8 @@ int main(int argc, char* argv[]) {
 	curs_set(0);
 	erase();
 
-	vector <FILESTR> test_vec;
-	FILESTR test_str;
+	vector <FILEINFO> test_vec;
+	FILEINFO test_str;
 	// get_files("./test", test_vec);
 	get_files(".", test_vec);
 	/*for(unsigned int i = 0; i < test_vec.size(); i++) {
