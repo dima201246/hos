@@ -19,6 +19,7 @@
 */
 
 #define DEBUG 1
+#define WINDOWS_XP_SIMULATION 0
 
 #define BACKSPACE_KEY 127
 #define DEL_KEY 330
@@ -108,49 +109,104 @@ int search_max_vectro(vector<string> items) {
 }
 
 void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
-	unsigned int max_x = search_max_vectro(items), max_y = items.size();
-	switch (dlgcfg.style) { // Цветовая схема окна
-		case 1: dlgcfg.style = 2; break; // RED
-		case 2: dlgcfg.style = 4; break; // GREEN
-		case 3: dlgcfg.style = 6; break; // BLUE
-		case 4: dlgcfg.style = 8; break; // YELLOW
-		default: dlgcfg.style = 0; break;
-	}
-	if (dlgcfg.border_menu) { // Вывод границ, если они нужны
-		for (unsigned int i = 0; i < (max_x + 2); i++) {
-			mvprintw(dlgcfg.ypos, dlgcfg.xpos + i, "-");
-			mvprintw((dlgcfg.ypos + max_y + 1), dlgcfg.xpos + i, "-");
+	// Сделать сжатие текста по X
+	DLGSTR local_cfg = dlgcfg;
+	unsigned int max_x = search_max_vectro(items), max_y = items.size(), min_y = 0, maxX, maxY;
+	int fix_border = 0;
+	bool vertical_moving = false/*Выводить ли с боку прогрессбар прокрутки*/, past_pointer = false;/*Чтобы указатели прогресса не уходили вниз*/
+	getmaxyx(stdscr, maxY, maxX);
+	if (local_cfg.border_menu) fix_border = 2;
+	dlgcfg.yreturn = 0; // Онуление возврата по Y
+	if (local_cfg.ymax != 0) { // Присвоение размера менюшки и проверка на "влезание" в экран
+		max_y = local_cfg.ymax;
+		if ((local_cfg.ypos + max_y + fix_border) >= maxY) {
+			if (((local_cfg.ypos + max_y + fix_border) - maxY) <= local_cfg.ypos) local_cfg.ypos -= ((local_cfg.ypos + max_y + fix_border) - maxY);
+			else {
+				local_cfg.keys = 1;
+				local_cfg.style = 1;
+				local_cfg.title.clear();
+				local_cfg.line = "Ooops... I can't find free space for menu!";
+				msg_win(local_cfg);
+				return;
+			}
 		}
-		dlgcfg.xpos++; // Смещение текста
-		dlgcfg.ypos++;
+	} else if (max_y >= maxY) {
+		local_cfg.keys = 1;
+		local_cfg.style = 1;
+		local_cfg.title.clear();
+		local_cfg.line = "Ooops... Not free space for menu!";
+		msg_win(local_cfg);
+		return;
+	}
+	if (items.size() > max_y) vertical_moving = true;
+	if (local_cfg.selected == 0) local_cfg.selected = 1;
+	if (local_cfg.selected > items.size()) local_cfg.selected = items.size(); 
+	if (max_y < local_cfg.selected) { // Если нужно сжать окошка
+		dlgcfg.yreturn = max_y; // Чтобы новое окно, если что, не уехало вниз
+		min_y = local_cfg.selected - max_y; // Чтобы элементы, которые выше видимой области не выводились
+		local_cfg.selected = max_y + min_y; // Исправление выбора
+	}
+	switch (local_cfg.style) { // Цветовая схема окна
+		case 1: local_cfg.style = 2; break; // RED
+		case 2: local_cfg.style = 4; break; // GREEN
+		case 3: local_cfg.style = 6; break; // BLUE
+		case 4: local_cfg.style = 8; break; // YELLOW
+		default: local_cfg.style = 0; break;
+	}
+	if (local_cfg.border_menu) { // Вывод границ, если они нужны
+		for (unsigned int i = 0; i < (max_x + 2); i++) { // Вывод верхней и нижней границы
+			mvprintw(local_cfg.ypos, local_cfg.xpos + i, "-");
+			mvprintw((local_cfg.ypos + max_y + 1), local_cfg.xpos + i, "-");
+		}
+		local_cfg.xpos++; // Смещение текста
+		local_cfg.ypos++;
+		for (unsigned int i = 0; i < max_y; i++) {
+			mvprintw(local_cfg.ypos + i, local_cfg.xpos + max_x, "|"); // Вывод правой границы
+			if ((vertical_moving) && (!past_pointer) && ((100 / max_y * (i + 1)) >= (local_cfg.selected * 100 / items.size()))) { // Очень крутая формула вывода прогресса спуска в списке
+				past_pointer = true; // Чтобы указатели прогресса не уходили вниз
+				mvprintw(local_cfg.ypos + i, local_cfg.xpos - 1, "]"); // Вывод Указателя
+			} else mvprintw(local_cfg.ypos + i, local_cfg.xpos - 1, "|"); // Вывод левой границы
+		}
+	}
+	if ((vertical_moving) && (!local_cfg.border_menu)) { // Вывод границы слева, если нужна прокрутка
+		for (unsigned int i = 0; i < max_y; i++) {
+			if ((!past_pointer) && ((100 / max_y * (i + 1)) >= (local_cfg.selected * 100 / items.size()))) { // Очень крутая формула вывода прогресса спуска в списке
+				past_pointer = true; // Чтобы указатели прогресса не уходили вниз
+				mvprintw(local_cfg.ypos + i, local_cfg.xpos, "]"); // Вывод Указателя
+			} else mvprintw(local_cfg.ypos + i, local_cfg.xpos, "|"); // Вывод левой границы
+		}
+		local_cfg.xpos++; // Смещение текста
 	}
 	string temp;
-	
 	// attron(COLOR_PAIR(3/*dlgcfg.style*/) | A_BOLD);
-	for (unsigned int i = 0; i < items.size(); i++) {
-		if (dlgcfg.border_menu) { // Вывод границ, если они нужны
-			mvprintw(dlgcfg.ypos + i, dlgcfg.xpos - 1, "|"); // Вывод левой границы
-			mvprintw(dlgcfg.ypos + i, dlgcfg.xpos + max_x, "|"); // Вывод правой границы
-			
-		}
+	// mvprintw(0, 10, "%i", items.size());
+	for (unsigned int i = min_y; i < items.size(); i++) {
+		if (i >= max_y + min_y) continue;
 		temp = items[i];
-		if ((dlgcfg.selected != 0) && ((dlgcfg.selected - 1) == i)) attron(COLOR_PAIR(dlgcfg.style + 1)/* | A_BOLD*/); // Выделение пункта
-		mvprintw(dlgcfg.ypos + i, dlgcfg.xpos, "%s", temp.c_str()); // Вывод элемента
+		if ((local_cfg.selected != 0) && ((local_cfg.selected - 1) == i)) attron(COLOR_PAIR(local_cfg.style + 1)/* | A_BOLD*/); // Выделение пункта
+		mvprintw(local_cfg.ypos + i - min_y, local_cfg.xpos, "%s", temp.c_str()); // Вывод элемента
 		if (llength(temp) < max_x) { // Если не хватает пробелов до границы
 			unsigned int length_temp = llength(temp);
 			for (unsigned int j = 0; j < (max_x - llength(temp)); j++) { // Добавление пробелов
 				temp += " ";
-				mvprintw(dlgcfg.ypos + i, dlgcfg.xpos + length_temp + j, " ");
+				mvprintw(local_cfg.ypos + i - min_y, local_cfg.xpos + length_temp + j, " ");
 			}
 			items[i] = temp; // Сохранение пробелов в векторе
 		}
-		if ((dlgcfg.selected != 0) && ((dlgcfg.selected - 1) == i)) {
-			attroff(COLOR_PAIR(dlgcfg.style + 1)/* | A_BOLD*/); // Выделение пункта
-			dlgcfg.xreturn = dlgcfg.xpos + max_x;
-			dlgcfg.yreturn = dlgcfg.ypos + i;
+		if ((local_cfg.selected - 1) == i) {
+			attroff(COLOR_PAIR(local_cfg.style + 1)/* | A_BOLD*/); // Выделение пункта
+			dlgcfg.xreturn = local_cfg.xpos + max_x;
+			if (dlgcfg.yreturn == 0)
+				dlgcfg.yreturn = local_cfg.ypos + i;
 		}
 	}
 	// attroff(COLOR_PAIR(3/*dlgcfg.style*/) | A_BOLD);
+	#if WINDOWS_XP_SIMULATION == 1 // Just for fan :)
+	if (dlgcfg.border_menu) {
+		dlgcfg.xpos++; // Смещение текста
+		dlgcfg.ypos++;
+	}
+	#endif
 	return;
 }
 
