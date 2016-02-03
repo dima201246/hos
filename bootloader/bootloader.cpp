@@ -53,36 +53,35 @@ int main(int argc, char *argv[]) {
 	
 	/*DEBUG*/
 	vector <string> items;
-	teststr.style = 0;
+	teststr.style = 2;
 	teststr.border_menu = true;
 	teststr.selected = 2;
 	teststr.ymax = 5;
-	items.insert(items.end(), "test");
-	items.insert(items.end(), "test2");
-	items.insert(items.end(), "test3");
-	items.insert(items.end(), "test4");
-	items.insert(items.end(), "test5");
-	items.insert(items.end(), "test6");
-	items.insert(items.end(), "test7");
-	items.insert(items.end(), "test8");
-	items.insert(items.end(), "test9");
-	items.insert(items.end(), "test10");
+	items.insert(items.end(), "White");
+	items.insert(items.end(), "Red");
+	items.insert(items.end(), "Green");
+	items.insert(items.end(), "Blue");
+	items.insert(items.end(), "Yellow");
 
 	int key = 0;
 	while (key != 27) {
 		menu_win(teststr, items);
 		key = getch();
 		switch (key) {
-			case KEY_UP: if (teststr.selected != 0) teststr.selected--; break;
-			case KEY_DOWN: if (teststr.selected != 10) teststr.selected++; break;
+			case KEY_UP: if (teststr.selected != 1) teststr.selected--; break;
+			case KEY_DOWN: if (teststr.selected != teststr.second_border) teststr.selected++; break;
+			case '\n': switch (teststr.selected) {
+						case 1: teststr.style = 0; break;
+						case 2: teststr.style = 1; break;
+						case 3: teststr.style = 2; break;
+						case 4: teststr.style = 3; break;
+						case 5: teststr.style = 4; break;
+					} break;
 		}
 	}
 	teststr.xpos = teststr.xreturn;
 	teststr.ypos = teststr.yreturn;
 	menu_win(teststr, items);
-	
-	mvprintw(10, 10, "%i", teststr.xreturn);
-	mvprintw(11, 10, "%i", teststr.yreturn);
 	getch();
 	/*DEBUG*/
 
