@@ -2,8 +2,10 @@
 #define FSWORK_H
 	#include <vector>
 	#include <string>
+	#include <time.h>
 	struct FILEINFO {					
-		std::string name;
+		std::string name;		// Имя файла
+		time_t mtime;		// Структура, содержащая много полезной информации
 		// ... информация о файле ... 
 	};
 	bool FileExists(const std::string&);
