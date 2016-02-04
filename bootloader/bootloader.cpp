@@ -30,17 +30,6 @@ int main(int argc, char *argv[]) {
 	noecho();
 	curs_set(0);
 	erase();
-
-	init_pair (0, COLOR_WHITE, COLOR_BLACK);
-	init_pair (1, COLOR_BLACK, COLOR_WHITE);
-	init_pair (2, COLOR_RED, COLOR_BLACK);
-	init_pair (3, COLOR_BLACK, COLOR_RED);
-	init_pair (4, COLOR_GREEN, COLOR_BLACK);
-	init_pair (5, COLOR_BLACK, COLOR_GREEN);
-	init_pair (6, COLOR_BLUE, COLOR_BLACK);
-	init_pair (7, COLOR_BLACK, COLOR_BLUE);
-	init_pair (8, COLOR_YELLOW, COLOR_BLACK);
-	init_pair (9, COLOR_BLACK, COLOR_YELLOW);
 	
 	timeout(-1);
 	string test_output;
@@ -56,12 +45,18 @@ int main(int argc, char *argv[]) {
 	teststr.style = 2;
 	teststr.border_menu = true;
 	teststr.selected = 2;
-	teststr.ymax = 5;
+	// teststr.not_view_scrollbar = true;
+	teststr.ymax = 4;
+	// teststr.xmax = 6;
 	items.insert(items.end(), "White");
 	items.insert(items.end(), "Red");
 	items.insert(items.end(), "Green");
 	items.insert(items.end(), "Blue");
 	items.insert(items.end(), "Yellow");
+	items.insert(items.end(), "Yellow");
+	items.insert(items.end(), "Yellow");
+	items.insert(items.end(), "Yellow");
+	items.insert(items.end(), "Yellow123234234");
 
 	int key = 0;
 	while (key != 27) {
@@ -81,6 +76,7 @@ int main(int argc, char *argv[]) {
 	}
 	teststr.xpos = teststr.xreturn;
 	teststr.ypos = teststr.yreturn;
+	teststr.style = 4;
 	menu_win(teststr, items);
 	getch();
 	/*DEBUG*/
