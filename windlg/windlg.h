@@ -17,7 +17,7 @@
 		xmax, ymax,
 		selected; // Initial choice
 		unsigned int xreturn, yreturn, second_border;
-		bool border_menu, avtive_menu;
+		bool border_menu, avtive_menu, not_view_scrollbar;
 	};
 	
 	int dlg_win(DLGSTR, std::string&);
