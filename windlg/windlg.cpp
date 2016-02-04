@@ -18,7 +18,7 @@
 - Вынести все вычисления из цикла - Выполненно
 */
 
-#define DEBUG 1
+#define DEBUG 0
 #define WINDOWS_XP_SIMULATION 0
 
 #define BACKSPACE_KEY 127
@@ -98,8 +98,8 @@ void info_win() {
 	getch();
 }
 
-int search_max_vectro(vector<string> items) {
-	unsigned int max = 0;
+int search_max_vectro(vector<string> items, string title) {
+	unsigned int max = llength(title);
 	string temp;
 	for (unsigned int i = 0; i < items.size(); i++) {
 		temp = items[i];
@@ -109,38 +109,42 @@ int search_max_vectro(vector<string> items) {
 }
 
 void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
-	// Сделать сжатие текста по X
 	DLGSTR local_cfg = dlgcfg;
-	unsigned int max_x = search_max_vectro(items), max_y = items.size(), min_y = 0, maxX, maxY;
-	int fix_border = 0;
-	bool vertical_moving = false/*Выводить ли с боку прогрессбар прокрутки*/, past_pointer = false;/*Чтобы указатели прогресса не уходили вниз*/
+	unsigned int max_x = search_max_vectro(items, local_cfg.title), // Получение длины самого длинного элемента
+				max_y = items.size(), // Получение длины списка
+				min_y = 0, maxX, maxY;
+	int fix_border = 0, fix_title = 0;
+	bool vert_scrollbar = false/*Выводить ли с боку прогрессбар прокрутки*/, past_pointer = false;/*Чтобы указатели прогресса не уходили вниз*/
 	getmaxyx(stdscr, maxY, maxX);
-	if (max_y > items.size()) max_y = items.size();
 	dlgcfg.second_border = items.size();
 	if (local_cfg.border_menu) fix_border = 2;
+	if (llength(local_cfg.title)) fix_title = 1;
 	dlgcfg.yreturn = 0; // Онуление возврата по Y
-	if (local_cfg.ymax != 0) { // Присвоение размера менюшки и проверка на "влезание" в экран
-		max_y = local_cfg.ymax;
-		if ((local_cfg.ypos + max_y + fix_border) >= maxY) {
-			if (((local_cfg.ypos + max_y + fix_border) - maxY) <= local_cfg.ypos) local_cfg.ypos -= ((local_cfg.ypos + max_y + fix_border) - maxY); // Сдвиг окошка вверх, если не хватает места
-			else {
-				local_cfg.keys = 1;
-				local_cfg.style = 1;
-				local_cfg.title.clear();
-				local_cfg.line = "Ooops... I can't find free space for menu!";
-				msg_win(local_cfg);
-				return;
-			}
+	if (local_cfg.ymax != 0) max_y = local_cfg.ymax; // Присвоение размера менюшки
+	if ((local_cfg.ypos + max_y + fix_border + fix_title) >= maxY) { // Проверка на "влезание" в экран
+		if (((local_cfg.ypos + max_y + fix_border + fix_title) - maxY) <= local_cfg.ypos) local_cfg.ypos -= ((local_cfg.ypos + max_y + fix_border + fix_title) - maxY); // Сдвиг окошка вверх, если не хватает места
+		else {
+			local_cfg.keys = 1;
+			local_cfg.style = 1;
+			local_cfg.title.clear();
+			local_cfg.line = "Ooops... I can't find free space for menu!";
+			msg_win(local_cfg);
+			return;
 		}
-	} else if (max_y >= maxY) {
-		local_cfg.keys = 1;
-		local_cfg.style = 1;
-		local_cfg.title.clear();
-		local_cfg.line = "Ooops... Not free space for menu!";
-		msg_win(local_cfg);
-		return;
 	}
-	if (items.size() > max_y) vertical_moving = true;
+	if (local_cfg.xmax != 0) max_x = local_cfg.xmax;
+	if ((local_cfg.xpos + max_x + fix_border) >= maxX) {
+		if (((local_cfg.xpos + max_x + fix_border) - maxX) <= local_cfg.xpos) local_cfg.xpos -= ((local_cfg.xpos + max_x + fix_border) - maxX); // Сдвиг окошка влево, если не хватает места
+		else {
+			local_cfg.keys = 1;
+			local_cfg.style = 1;
+			local_cfg.title.clear();
+			local_cfg.line = "Ooops... I can't find free space for menu!";
+			msg_win(local_cfg);
+			return;
+		}
+	}
+	if ((items.size() > max_y) && (!local_cfg.not_view_scrollbar)) vert_scrollbar = true;
 	if (local_cfg.selected == 0) local_cfg.selected = 1;
 	if (local_cfg.selected > items.size()) local_cfg.selected = items.size(); 
 	if (max_y < local_cfg.selected) { // Если нужно сжать окошка
@@ -159,26 +163,41 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 	if (local_cfg.border_menu) { // Вывод границ, если они нужны
 		for (unsigned int i = 0; i < (max_x + 2); i++) { // Вывод верхней и нижней границы
 			mvprintw(local_cfg.ypos, local_cfg.xpos + i, "-");
-			mvprintw((local_cfg.ypos + max_y + 1), local_cfg.xpos + i, "-");
+			mvprintw((local_cfg.ypos + max_y + 1 + fix_title), local_cfg.xpos + i, "-");
 		}
 		local_cfg.xpos++; // Смещение текста
 		local_cfg.ypos++;
 		for (unsigned int i = 0; i < max_y; i++) {
-			mvprintw(local_cfg.ypos + i, local_cfg.xpos + max_x, "|"); // Вывод правой границы
-			if ((vertical_moving) && (!past_pointer) && ((100 / max_y * (i + 1)) >= (local_cfg.selected * 100 / items.size()))) { // Очень крутая формула вывода прогресса спуска в списке
+			mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos + max_x, "|"); // Вывод правой границы
+			if ((vert_scrollbar) && (!past_pointer) && ((100 / max_y * (i + 1)) >= (local_cfg.selected * 100 / items.size()))) { // Очень крутая формула вывода прогресса спуска в списке
 				past_pointer = true; // Чтобы указатели прогресса не уходили вниз
-				mvprintw(local_cfg.ypos + i, local_cfg.xpos - 1, "]"); // Вывод Указателя
-			} else mvprintw(local_cfg.ypos + i, local_cfg.xpos - 1, "|"); // Вывод левой границы
+				mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos - 1, "]"); // Вывод Указателя
+			} else mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos - 1, "|"); // Вывод левой границы
 		}
 	}
-	if ((vertical_moving) && (!local_cfg.border_menu)) { // Вывод границы слева, если нужна прокрутка
+	if ((vert_scrollbar) && (!local_cfg.border_menu)) { // Вывод границы слева, если нужна прокрутка
 		for (unsigned int i = 0; i < max_y; i++) {
 			if ((!past_pointer) && ((100 / max_y * (i + 1)) >= (local_cfg.selected * 100 / items.size()))) { // Очень крутая формула вывода прогресса спуска в списке
 				past_pointer = true; // Чтобы указатели прогресса не уходили вниз
-				mvprintw(local_cfg.ypos + i, local_cfg.xpos, "]"); // Вывод Указателя
-			} else mvprintw(local_cfg.ypos + i, local_cfg.xpos, "|"); // Вывод левой границы
+				mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos, "]"); // Вывод Указателя
+			} else mvprintw(local_cfg.ypos + i  + fix_title, local_cfg.xpos, "|"); // Вывод левой границы
 		}
 		local_cfg.xpos++; // Смещение текста
+	}
+	local_cfg.ypos += fix_title; // Добавление заголовка
+	if (llength(local_cfg.title) > max_x) { // Обрезка слишком длинного заголовка
+		local_cfg.title.erase(max_x - 3, llength(local_cfg.title));
+		local_cfg.title += "...";
+	}
+	if (fix_title) { // Использование int как bool, 0 == false, >0 == true
+		if (local_cfg.border_menu) {
+			mvprintw(dlgcfg.ypos + 1, local_cfg.xpos + max_x, "|"); // Вывод правой границы
+			mvprintw(dlgcfg.ypos + 1, local_cfg.xpos - 1, "|"); // Вывод левой границы
+		}
+		attron(COLOR_PAIR(local_cfg.style + 1) | A_BOLD);
+		for (unsigned int spaces = 0; spaces < max_x; spaces++, mvprintw(dlgcfg.ypos + local_cfg.border_menu, max_x - spaces + local_cfg.border_menu, " ")); // Заливка заголовка
+		mvprintw(dlgcfg.ypos + local_cfg.border_menu, local_cfg.xpos, "%s", local_cfg.title.c_str()); // Вывод заголовка
+		attroff(COLOR_PAIR(local_cfg.style + 1) | A_BOLD);
 	}
 	attroff(COLOR_PAIR(local_cfg.style) | A_BOLD);
 	string temp;
@@ -187,10 +206,14 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 		temp = items[i];
 		if ((local_cfg.selected - 1) == i) attron(COLOR_PAIR(local_cfg.style + 1)/* | A_BOLD*/); // Выделение пункта
 		else attron(COLOR_PAIR(local_cfg.style) | A_BOLD);
+		if (llength(temp) > max_x) { // Обрезка слишком длинных строк
+			temp.erase(max_x - 3, llength(temp));
+			temp += "...";
+		}
 		mvprintw(local_cfg.ypos + i - min_y, local_cfg.xpos, "%s", temp.c_str()); // Вывод элемента
 		if (llength(temp) < max_x) { // Если не хватает пробелов до границы
 			unsigned int length_temp = llength(temp);
-			for (unsigned int j = 0; j < (max_x - llength(temp)); j++) { // Добавление пробелов
+			for (unsigned int j = 0; j < (max_x - length_temp); j++) { // Добавление пробелов
 				temp += " ";
 				mvprintw(local_cfg.ypos + i - min_y, local_cfg.xpos + length_temp + j, " ");
 			}
