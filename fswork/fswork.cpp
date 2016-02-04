@@ -70,6 +70,7 @@ void files_sort_by(char type_sort, vector<FILEINFO> &filevec) {
 
 int get_files(string path, vector<FILEINFO> &filevec) {
 	DIR *dir;
+	if (path[llength(path) - 1] != '/') path += "/"; // Подправка пути для нормальной загрузки файлов
 	if ((dir=opendir(path.c_str())) == NULL)
 		return -1;
 	else {
