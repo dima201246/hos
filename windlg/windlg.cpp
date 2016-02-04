@@ -31,16 +31,16 @@ using namespace std;
 const string win_ver = "0.1";
 
 void load_pair() {
-	init_pair (0, COLOR_WHITE, COLOR_BLACK);
-	init_pair (1, COLOR_BLACK, COLOR_WHITE);
-	init_pair (2, COLOR_RED, COLOR_BLACK);
-	init_pair (3, COLOR_BLACK, COLOR_RED);
-	init_pair (4, COLOR_GREEN, COLOR_BLACK);
-	init_pair (5, COLOR_BLACK, COLOR_GREEN);
-	init_pair (6, COLOR_BLUE, COLOR_BLACK);
-	init_pair (7, COLOR_BLACK, COLOR_BLUE);
-	init_pair (8, COLOR_YELLOW, COLOR_BLACK);
-	init_pair (9, COLOR_BLACK, COLOR_YELLOW);
+	init_pair (100, COLOR_WHITE, COLOR_BLACK);
+	init_pair (101, COLOR_BLACK, COLOR_WHITE);
+	init_pair (102, COLOR_RED, COLOR_BLACK);
+	init_pair (103, COLOR_BLACK, COLOR_RED);
+	init_pair (104, COLOR_GREEN, COLOR_BLACK);
+	init_pair (105, COLOR_BLACK, COLOR_GREEN);
+	init_pair (106, COLOR_BLUE, COLOR_BLACK);
+	init_pair (107, COLOR_BLACK, COLOR_BLUE);
+	init_pair (108, COLOR_YELLOW, COLOR_BLACK);
+	init_pair (109, COLOR_BLACK, COLOR_YELLOW);
 	return;
 }
 
@@ -168,11 +168,11 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 		local_cfg.selected = max_y + min_y; // Исправление выбора
 	}
 	switch (local_cfg.style) { // Цветовая схема окна
-		case 1: local_cfg.style = 2; break; // RED
-		case 2: local_cfg.style = 4; break; // GREEN
-		case 3: local_cfg.style = 6; break; // BLUE
-		case 4: local_cfg.style = 8; break; // YELLOW
-		default: local_cfg.style = 0; break;
+		case 1: local_cfg.style = 102; break; // RED
+		case 2: local_cfg.style = 104; break; // GREEN
+		case 3: local_cfg.style = 106; break; // BLUE
+		case 4: local_cfg.style = 108; break; // YELLOW
+		default: local_cfg.style = 100; break;
 	}
 	attron(COLOR_PAIR(local_cfg.style) | A_BOLD);
 	if (local_cfg.border_menu) { // Вывод границ, если они нужны
@@ -279,11 +279,11 @@ int msg_win(DLGSTR dlgcfg) {
 	}
 
 	switch (dlgcfg.style) { // Цветовая схема окна
-		case 1: dlgcfg.style = 2; break; // RED
-		case 2: dlgcfg.style = 4; break; // GREEN
-		case 3: dlgcfg.style = 6; break; // BLUE
-		case 4: dlgcfg.style = 8; break; // YELLOW
-		default: dlgcfg.style = 0; break;
+		case 1: dlgcfg.style = 102; break; // RED
+		case 2: dlgcfg.style = 104; break; // GREEN
+		case 3: dlgcfg.style = 106; break; // BLUE
+		case 4: dlgcfg.style = 108; break; // YELLOW
+		default: dlgcfg.style = 100; break;
 	}
 
 	string *array = new string[all_lines];
@@ -425,11 +425,11 @@ int dlg_win(DLGSTR dlgcfg, string& out_put) {
 	}
 
 	switch (dlgcfg.style) { // Цветовая схема окна
-		case 1: dlgcfg.style = 2; break; // RED
-		case 2: dlgcfg.style = 4; break; // GREEN
-		case 3: dlgcfg.style = 6; break; // BLUE
-		case 4: dlgcfg.style = 8; break; // YELLOW
-		default: dlgcfg.style = 0; break;
+		case 1: dlgcfg.style = 102; break; // RED
+		case 2: dlgcfg.style = 104; break; // GREEN
+		case 3: dlgcfg.style = 106; break; // BLUE
+		case 4: dlgcfg.style = 108; break; // YELLOW
+		default: dlgcfg.style = 100; break;
 	}
 
 	string *array = new string[all_lines];
