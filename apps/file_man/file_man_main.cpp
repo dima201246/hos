@@ -71,6 +71,7 @@ void interface_fm() {
 	first_panel.xpos = 0;
 	first_panel.ypos = 1;
 	first_panel.style = 3;
+	// first_panel.title = "TEST";
 	first_panel.border_menu = true;
 	/*For first panel END*/
 	/*For second panel*/
@@ -89,24 +90,30 @@ void interface_fm() {
 	properties_menu.border_menu = true;
 	/*For properties panel END*/
 	bool cycle = true;
-	vector <FILEINFO> filevector; // Вектор для загрузки файлов
-	vector <string> fileout; // Вектор вывода списка файлов
+	vector <FILEINFO> filevector_1; // Вектор для загрузки файлов первой панели
+	vector <FILEINFO> filevector_2; // Вектор для загрузки файлов второйой панели
+	vector <string> fileout_1; // Вектор вывода списка файлов первой панели
+	vector <string> fileout_2; // Вектор вывода списка файлов второйой панели
 	FILEINFO filestr;
 	string link_to_foldren;
 	link_to_foldren.clear();
 
 	link_to_foldren = ".";
 	// dlg_win(winstr, link_to_foldren);
-	while (get_files(link_to_foldren, filevector) == -1) {
+	/*while (get_files(link_to_foldren, filevector) == -1) {
 		winstr.style = 1;
 		winstr.line = "Wrong link!!! Try again!";
 		msg_win(winstr);
 		winstr.style = 0;
 		winstr.line = "Please enter link to foldren";
 		dlg_win(winstr, link_to_foldren);
-	}
-	files_sort_by('n', filevector);
-	load_files(filevector, fileout);
+	}*/
+	get_files(link_to_foldren, filevector_1); // TEST!!!!
+	get_files(link_to_foldren + ".", filevector_2); // TEST!!!!
+	files_sort_by('n', filevector_1);
+	files_sort_by('t', filevector_2);
+	load_files(filevector_1, fileout_1);
+	load_files(filevector_2, fileout_2);
 	load_properties(propvec);
 
 	/*Init head START*/
@@ -138,8 +145,8 @@ void interface_fm() {
 		attroff(COLOR_PAIR(1 + selected_color) | A_BOLD);
 		selected_color = 0;
 		/*Head END*/
-		menu_win(first_panel, fileout);
-		menu_win(second_panel, fileout);
+		menu_win(first_panel, fileout_1);
+		menu_win(second_panel, fileout_2);
 		key_pressed = getch();
 		switch (key_pressed) {
 			case TAB_KEY: if (mode_select != 2) mode_select++;
