@@ -125,6 +125,7 @@ int search_max_vectro(vector<string> items, string title) {
 void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 	load_pair();
 	DLGSTR local_cfg = dlgcfg;
+	if (dlgcfg.selected == 0) dlgcfg.selected = 1;
 	unsigned int max_x = search_max_vectro(items, local_cfg.title), // Получение длины самого длинного элемента
 				max_y = items.size(), // Получение длины списка
 				min_y = 0, maxX, maxY;
