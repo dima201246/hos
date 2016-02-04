@@ -30,6 +30,20 @@ using namespace std;
 
 const string win_ver = "0.1";
 
+void load_pair() {
+	init_pair (0, COLOR_WHITE, COLOR_BLACK);
+	init_pair (1, COLOR_BLACK, COLOR_WHITE);
+	init_pair (2, COLOR_RED, COLOR_BLACK);
+	init_pair (3, COLOR_BLACK, COLOR_RED);
+	init_pair (4, COLOR_GREEN, COLOR_BLACK);
+	init_pair (5, COLOR_BLACK, COLOR_GREEN);
+	init_pair (6, COLOR_BLUE, COLOR_BLACK);
+	init_pair (7, COLOR_BLACK, COLOR_BLUE);
+	init_pair (8, COLOR_YELLOW, COLOR_BLACK);
+	init_pair (9, COLOR_BLACK, COLOR_YELLOW);
+	return;
+}
+
 unsigned int count_lines(string line, unsigned int maxX) { // Счётчик кол-ва строк через знак новой строки
 	unsigned int count = 0, count_chars = 0;
 	if (line.length() != 0) count++;
@@ -109,6 +123,7 @@ int search_max_vectro(vector<string> items, string title) {
 }
 
 void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
+	load_pair();
 	DLGSTR local_cfg = dlgcfg;
 	unsigned int max_x = search_max_vectro(items, local_cfg.title), // Получение длины самого длинного элемента
 				max_y = items.size(), // Получение длины списка
@@ -236,6 +251,7 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 }
 
 int msg_win(DLGSTR dlgcfg) {
+	load_pair();
 	if (dlgcfg.line.length() == 0) return 0;
 	timeout(-1);
 	unsigned int maxX, maxY;
@@ -381,6 +397,7 @@ int msg_win(DLGSTR dlgcfg) {
 }
 
 int dlg_win(DLGSTR dlgcfg, string& out_put) {
+	load_pair();
 	if (dlgcfg.line.length() == 0) return 0;
 	timeout(-1);
 	unsigned int maxX, maxY;
