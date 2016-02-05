@@ -211,7 +211,7 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 			mvprintw(dlgcfg.ypos + 1, local_cfg.xpos - 1, "|"); // Вывод левой границы
 		}
 		attron(COLOR_PAIR(local_cfg.style + 1) | A_BOLD);
-		for (unsigned int spaces = 0; spaces < max_x; spaces++, mvprintw(dlgcfg.ypos + local_cfg.border_menu, max_x - spaces + local_cfg.border_menu, " ")); // Заливка заголовка
+		for (unsigned int spaces = 0; spaces < max_x; spaces++, mvprintw(dlgcfg.ypos + local_cfg.border_menu, local_cfg.xpos + max_x - spaces + local_cfg.border_menu - 1, " ")); // Заливка заголовка
 		mvprintw(dlgcfg.ypos + local_cfg.border_menu, local_cfg.xpos, "%s", local_cfg.title.c_str()); // Вывод заголовка
 		attroff(COLOR_PAIR(local_cfg.style + 1) | A_BOLD);
 	}
@@ -243,11 +243,11 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 				dlgcfg.yreturn = local_cfg.ypos + i;
 		} else attroff(COLOR_PAIR(local_cfg.style) | A_BOLD);
 	}
-	if (i < max_y) { // Если осталось пустое место
+	if (i < (max_y - fix_title)) { // Если осталось пустое место
 		string eraser;
 		eraser.clear();
 		for (unsigned int es = 0; es < max_x; es++, eraser += " "); // Создание строки с пробелами
-		for (unsigned int es = 0; es < (max_y - i); es++, mvprintw(local_cfg.ypos + i + es, local_cfg.xpos, "%s", eraser.c_str())); // Заполнение пробелами 
+		for (unsigned int es = 0; es < (max_y - i - fix_title); es++, mvprintw(local_cfg.ypos + i + es, local_cfg.xpos, "%s", eraser.c_str())); // Заполнение пробелами 
 	}
 	#if WINDOWS_XP_SIMULATION == 1 // Just for fan :)
 	if (dlgcfg.border_menu) {
