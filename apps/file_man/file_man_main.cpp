@@ -1,5 +1,6 @@
 #include "../../fswork/fswork.h"
 #include "../../windlg/windlg.h"
+#include "../../lang/lang.h"
 #include <curses.h>
 
 #define TAB_KEY 9
@@ -60,6 +61,8 @@ void interface_fm() {
 	unsigned int maxX, maxY;
 	getmaxyx(stdscr, maxY, maxX);
 	vector <string> propvec;
+	string link_first_panel = ".",
+			link_second_panel = ".";
 	/*For windlg*/
 	DLGSTR winstr = {}; // Только так!!!
 	winstr.line = "Please enter link to foldren";
@@ -67,20 +70,31 @@ void interface_fm() {
 	/*For first panel*/
 	DLGSTR first_panel = {};
 	first_panel.xmax = maxX / 2 - 2;
-	first_panel.ymax = maxY - 3;
+	first_panel.ymax = maxY - 4;
 	first_panel.xpos = 0;
 	first_panel.ypos = 1;
 	first_panel.style = 3;
-	// first_panel.title = "TEST";
+	first_panel.title = link_first_panel;
+	if (llength(first_panel.title) > maxX / 2 - 2) {
+		while (llength(first_panel.title) + 3 > (maxX / 2 - 2))
+			first_panel.title.erase(0, 1);
+		first_panel.title.insert(0, "...");
+	}
 	first_panel.border_menu = true;
 	/*For first panel END*/
 	/*For second panel*/
 	DLGSTR second_panel = {};
 	second_panel.xmax = maxX / 2 - 2;
-	second_panel.ymax = maxY - 3;
+	second_panel.ymax = maxY - 4;
 	second_panel.xpos = maxX / 2 + 1;
 	second_panel.ypos = 1;
 	second_panel.style = 0;
+	second_panel.title = link_second_panel;
+	if (llength(second_panel.title) > maxX / 2 - 2) {
+		while (llength(second_panel.title) + 3 > (maxX / 2 - 2))
+			second_panel.title.erase(0, 1);
+		second_panel.title.insert(0, "...");
+	}
 	second_panel.border_menu = true;
 	/*For second panel END*/
 	/*For properties panel*/
@@ -95,21 +109,23 @@ void interface_fm() {
 	vector <string> fileout_1; // Вектор вывода списка файлов первой панели
 	vector <string> fileout_2; // Вектор вывода списка файлов второйой панели
 	FILEINFO filestr;
-	string link_to_foldren;
-	link_to_foldren.clear();
-
-	link_to_foldren = ".";
-	// dlg_win(winstr, link_to_foldren);
-	/*while (get_files(link_to_foldren, filevector) == -1) {
+	while (get_files(link_first_panel, filevector_1) == -1) {
 		winstr.style = 1;
 		winstr.line = "Wrong link!!! Try again!";
 		msg_win(winstr);
 		winstr.style = 0;
 		winstr.line = "Please enter link to foldren";
-		dlg_win(winstr, link_to_foldren);
-	}*/
-	get_files(link_to_foldren, filevector_1); // TEST!!!!
-	get_files(link_to_foldren + ".", filevector_2); // TEST!!!!
+		dlg_win(winstr, link_first_panel);
+	}
+	while (get_files(link_second_panel, filevector_2) == -1) {
+		winstr.style = 1;
+		winstr.line = "Wrong link!!! Try again!";
+		msg_win(winstr);
+		winstr.style = 0;
+		winstr.line = "Please enter link to foldren";
+		dlg_win(winstr, link_second_panel);
+	}
+	get_files(link_second_panel, filevector_2); // TEST!!!!
 	files_sort_by('n', filevector_1);
 	files_sort_by('t', filevector_2);
 	load_files(filevector_1, fileout_1);
