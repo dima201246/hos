@@ -85,7 +85,6 @@ void load_array(string *array, unsigned int all_lines, string line, unsigned int
 	}
 	array[count] = temp;
 	if (max_line < (array[count].length())) max_line = array[count].length();
-	return;
 }
 
 string out_line(string line, unsigned pos/*Позиция указателя*/, unsigned right_pos/*На сколько сдвинута строка вправо*/, unsigned int maxX) {

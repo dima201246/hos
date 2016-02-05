@@ -7,8 +7,8 @@
 
 using namespace std;
 
-void load_pair_fm() {
-	init_pair (0, COLOR_WHITE, COLOR_BLACK);
+void load_pair_fm() {							// Определение фоновых комбинации
+	init_pair (0, COLOR_WHITE, COLOR_BLACK);	// цветов, для эстетики
 	init_pair (1, COLOR_BLACK, COLOR_WHITE);
 	init_pair (2, COLOR_RED, COLOR_BLACK);
 	init_pair (3, COLOR_BLACK, COLOR_RED);
@@ -18,7 +18,6 @@ void load_pair_fm() {
 	init_pair (7, COLOR_BLACK, COLOR_BLUE);
 	init_pair (8, COLOR_YELLOW, COLOR_BLACK);
 	init_pair (9, COLOR_BLACK, COLOR_YELLOW);
-	return;
 }
 
 void load_properties(vector <string>& propvec) {
@@ -28,7 +27,6 @@ void load_properties(vector <string>& propvec) {
 	propvec.insert(propvec.end(), "Move");
 	propvec.insert(propvec.end(), "Copy");
 	propvec.insert(propvec.end(), "Test..");
-	return;
 }
 
 void load_files(vector <FILEINFO> filevector, vector <string>& fileout) {
@@ -38,7 +36,6 @@ void load_files(vector <FILEINFO> filevector, vector <string>& fileout) {
 		temp = filevector[vec];
 		fileout.insert(fileout.end(), temp.name.c_str());
 	}
-	return;
 }
 
 void properties_open(DLGSTR properties_menu, vector <string> propvec/*, link_to_file*/) {
@@ -50,23 +47,23 @@ void properties_open(DLGSTR properties_menu, vector <string> propvec/*, link_to_
 		switch (key) {
 			case KEY_UP: if (properties_menu.selected != 1) properties_menu.selected--; break;
 			case KEY_DOWN: if (properties_menu.selected != properties_menu.second_border) properties_menu.selected++; break;
-			case 27: return; break;
+			case 27: return;
 		}
 	}
-	return;
 }
 
 
 void interface_fm() {
 	unsigned int maxX, maxY;
-	getmaxyx(stdscr, maxY, maxX);
-	vector <string> propvec;
+	getmaxyx(stdscr, maxY, maxX);						// Получение размера главного окна.
+	vector <string> propvec;							
 	string link_first_panel = ".",
 			link_second_panel = ".";
 	/*For windlg*/
 	DLGSTR winstr = {}; // Только так!!!
 	winstr.line = "Please enter link to foldren";
 	/*For windlg END*/
+
 	/*For first panel*/
 	DLGSTR first_panel = {};
 	first_panel.xmax = maxX / 2 - 2;
@@ -75,13 +72,14 @@ void interface_fm() {
 	first_panel.ypos = 1;
 	first_panel.style = 3;
 	first_panel.title = link_first_panel;
-	if (llength(first_panel.title) > maxX / 2 - 2) {
+	if (llength(first_panel.title) > maxX / 2 - 2) {	// ??TEMP?? Разъясни что здесь творится
 		while (llength(first_panel.title) + 3 > (maxX / 2 - 2))
 			first_panel.title.erase(0, 1);
 		first_panel.title.insert(0, "...");
 	}
 	first_panel.border_menu = true;
 	/*For first panel END*/
+	
 	/*For second panel*/
 	DLGSTR second_panel = {};
 	second_panel.xmax = maxX / 2 - 2;
@@ -90,6 +88,7 @@ void interface_fm() {
 	second_panel.ypos = 1;
 	second_panel.style = 0;
 	second_panel.title = link_second_panel;
+
 	if (llength(second_panel.title) > maxX / 2 - 2) {
 		while (llength(second_panel.title) + 3 > (maxX / 2 - 2))
 			second_panel.title.erase(0, 1);
@@ -97,12 +96,14 @@ void interface_fm() {
 	}
 	second_panel.border_menu = true;
 	/*For second panel END*/
+
 	/*For properties panel*/
 	DLGSTR properties_menu = {};
 	properties_menu.ymax = 4;
 	properties_menu.style = 2;
 	properties_menu.border_menu = true;
 	/*For properties panel END*/
+	
 	bool cycle = true;
 	vector <FILEINFO> filevector_1; // Вектор для загрузки файлов первой панели
 	vector <FILEINFO> filevector_2; // Вектор для загрузки файлов второйой панели
@@ -148,7 +149,8 @@ void interface_fm() {
 	/*Mode END*/
 
 	while (cycle) {
-		timeout(-1);
+		timeout(-1);							// Режим бесконечного ожидания ввода для getch()
+		
 		/*Head START*/
 		switch (mode_select) {
 			case 0: selected_color = 6; first_panel.style = 0; second_panel.style = 0; break;
@@ -161,13 +163,16 @@ void interface_fm() {
 		attroff(COLOR_PAIR(1 + selected_color) | A_BOLD);
 		selected_color = 0;
 		/*Head END*/
+
 		menu_win(first_panel, fileout_1);
 		menu_win(second_panel, fileout_2);
+		
+		// Передача управления пользователю.
 		key_pressed = getch();
 		switch (key_pressed) {
-			case TAB_KEY: if (mode_select != 2) mode_select++;
-						else mode_select = 0;
-						break;
+			case TAB_KEY: 	mode_select++;
+							mode_select %= 3;				// Выбор между тремя областями экрана
+						  break;
 			case KEY_UP: switch (mode_select) {
 							case 1: if (first_panel.selected != 1) first_panel.selected--; break;
 							case 2: if (second_panel.selected != 1) second_panel.selected--; break;
