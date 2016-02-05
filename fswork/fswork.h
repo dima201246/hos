@@ -4,8 +4,9 @@
 	#include <string>
 	#include <time.h>
 	struct FILEINFO {					
-		std::string name;		// Имя файла
-		time_t mtime;		// Структура, содержащая много полезной информации
+		std::string name;	// Имя файла
+		time_t mtime;	// Структура, содержащая много полезной информации
+		bool d_type; //Папка или нет
 		// ... информация о файле ... 
 	};
 	bool FileExists(const std::string&);
