@@ -70,6 +70,7 @@ void files_sort_by(char type_sort, vector<FILEINFO> &filevec) {
 
 int get_files(string path, vector<FILEINFO> &filevec) {
 	DIR *dir;
+	if (llength(path) == 0) return -1;
 	if (path[llength(path) - 1] != '/') path += "/"; // Подправка пути для нормальной загрузки файлов
 	if ((dir=opendir(path.c_str())) == NULL)
 		return -1;
@@ -78,6 +79,7 @@ int get_files(string path, vector<FILEINFO> &filevec) {
 		struct dirent *f_cur;
 		struct stat fs_cur;						
 		string tmp;
+		filevec.clear(); // Очистка вектора
 		while ((f_cur=readdir(dir))!= NULL) {
 			file_info.name = f_cur->d_name;
 			tmp = path + (char *) f_cur -> d_name;		// Получаем полный адрес файла для stat()
