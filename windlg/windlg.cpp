@@ -243,11 +243,11 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 				dlgcfg.yreturn = local_cfg.ypos + i;
 		} else attroff(COLOR_PAIR(local_cfg.style) | A_BOLD);
 	}
-	if (i < (max_y - fix_title)) { // Если осталось пустое место
+	if (i < (max_y)) { // Если осталось пустое место
 		string eraser;
 		eraser.clear();
 		for (unsigned int es = 0; es < max_x; es++, eraser += " "); // Создание строки с пробелами
-		for (unsigned int es = 0; es < (max_y - i - fix_title); es++, mvprintw(local_cfg.ypos + i + es, local_cfg.xpos, "%s", eraser.c_str())); // Заполнение пробелами 
+		for (unsigned int es = 0; es < (max_y - i); es++, mvprintw(local_cfg.ypos + i + es - fix_title, local_cfg.xpos, "%s", eraser.c_str())); // Заполнение пробелами 
 	}
 	#if WINDOWS_XP_SIMULATION == 1 // Just for fan :)
 	if (dlgcfg.border_menu) {
