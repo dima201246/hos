@@ -217,7 +217,8 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 	}
 	attroff(COLOR_PAIR(local_cfg.style) | A_BOLD);
 	string temp;
-	for (unsigned int i = min_y; i < items.size(); i++) {
+	unsigned int i; // Вынес для заполнения оставшейся части пробелами, дабы изображение не залипало 
+	for (i = min_y; i < items.size(); i++) {
 		if (i >= max_y + min_y) continue;
 		temp = items[i];
 		if ((local_cfg.selected - 1) == i) attron(COLOR_PAIR(local_cfg.style + 1)/* | A_BOLD*/); // Выделение пункта
@@ -241,6 +242,12 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 			if (dlgcfg.yreturn == 0)
 				dlgcfg.yreturn = local_cfg.ypos + i;
 		} else attroff(COLOR_PAIR(local_cfg.style) | A_BOLD);
+	}
+	if (i < max_y) { // Если осталось пустое место
+		string eraser;
+		eraser.clear();
+		for (unsigned int es = 0; es < max_x; es++, eraser += " "); // Создание строки с пробелами
+		for (unsigned int es = 0; es < (max_y - i); es++, mvprintw(local_cfg.ypos + i + es, local_cfg.xpos, "%s", eraser.c_str())); // Заполнение пробелами 
 	}
 	#if WINDOWS_XP_SIMULATION == 1 // Just for fan :)
 	if (dlgcfg.border_menu) {
