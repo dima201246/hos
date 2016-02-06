@@ -20,6 +20,10 @@ void load_pair_fm() {							// Определение фоновых комби�
 	init_pair (9, COLOR_BLACK, COLOR_YELLOW);
 }
 
+void abaut_fm() {
+	return;
+}
+
 void load_properties(vector <string>& propvec) {
 	propvec.insert(propvec.end(), "Open");
 	propvec.insert(propvec.end(), "Info");
@@ -27,6 +31,33 @@ void load_properties(vector <string>& propvec) {
 	propvec.insert(propvec.end(), "Move");
 	propvec.insert(propvec.end(), "Copy");
 	propvec.insert(propvec.end(), "Test..");
+}
+
+int menu_open(unsigned int& selected) {
+	vector <string> menuvec;
+	menuvec.insert(menuvec.end(), "About");
+	menuvec.insert(menuvec.end(), "Exit");
+	DLGSTR menu_panel = {};
+	menu_panel.xpos = 0;
+	menu_panel.ypos = 1;
+	menu_panel.style = 3;
+	menu_panel.border_menu = true;
+	bool cycle = true;
+	int key;
+	while (cycle) {
+		menu_win(menu_panel, menuvec);
+		key = getch();
+		switch (key) {
+			case 27: cycle = false; break;
+			case KEY_UP: if (menu_panel.selected != 1) menu_panel.selected--; break;
+			case KEY_DOWN: if (menu_panel.selected != menu_panel.second_border) menu_panel.selected++; break;
+			case '\n': switch (menu_panel.selected) {
+							case 1: abaut_fm(); break;
+							case 2: return 10; break;
+						} break;
+		}
+	}
+	return 0;
 }
 
 void load_files(vector <FILEINFO> filevector, vector <string>& fileout) {
@@ -55,10 +86,11 @@ void properties_open(DLGSTR properties_menu, vector <string> propvec/*, link_to_
 
 void interface_fm() {
 	unsigned int maxX, maxY;
-	getmaxyx(stdscr, maxY, maxX);						// Получение размера главного окна.
-	vector <string> propvec;							
-	string link_first_panel = ".",
-			link_second_panel = ".";
+	getmaxyx(stdscr, maxY, maxX);	
+	vector <string> propvec;
+	string link_first_panel = "/",
+			link_second_panel = "/";
+
 	/*For windlg*/
 	DLGSTR winstr = {}; // Только так!!!
 	winstr.line = "Please enter link to foldren";
@@ -148,6 +180,7 @@ void interface_fm() {
 	  2 - Second panel*/
 	/*Mode END*/
 
+	unsigned int selected_menu = 1;
 	while (cycle) {
 		timeout(-1);							// Режим бесконечного ожидания ввода для getch()
 		
@@ -157,10 +190,12 @@ void interface_fm() {
 			case 1: first_panel.style = 3; second_panel.style = 0; break;
 			case 2: second_panel.style = 3; first_panel.style = 0; break;
 		}
-		attron(COLOR_PAIR(1 + selected_color) | A_BOLD);
+		attron(COLOR_PAIR(1) | A_BOLD);
 		mvprintw(0, 0, "%s", head.c_str());
+		attron(COLOR_PAIR(1 + selected_color) | A_BOLD);
 		mvprintw(0, 0, "(M)enu");
 		attroff(COLOR_PAIR(1 + selected_color) | A_BOLD);
+		attroff(COLOR_PAIR(1) | A_BOLD);
 		selected_color = 0;
 		/*Head END*/
 
@@ -182,6 +217,7 @@ void interface_fm() {
 							case 2: if (second_panel.selected != second_panel.second_border) second_panel.selected++; break;
 						} break;
 			case '\n': switch (mode_select) {
+							case 0:	if (menu_open(selected_menu) == 10) cycle = false; break;
 							case 1: properties_menu.xpos = first_panel.xreturn;
 									properties_menu.ypos = first_panel.yreturn;
 									properties_open(properties_menu, propvec/*, link_to_file*/);
