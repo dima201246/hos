@@ -180,10 +180,8 @@ void interface_fm() {
 	load_files(filevector_2, fileout_2);
 	load_properties(propvec);
 
-	unsigned int p1 = 0;										// счетчики для файловых векторов
-	unsigned int p2 = 0;
-	first_panel.selected_st = 	&filevector_1.at(p1);			// Установка указателей на структуры
-	second_panel.selected_st =  &filevector_2.at(p2);			// содержащие информацию о файлах
+	first_panel.selected_st = 	&filevector_1.at(first_panel.selected);		// Установка указателей на структуры
+	second_panel.selected_st =  &filevector_2.at(second_panel.selected);	// содержащие информацию о файлах
 
 	/*Init head START*/
 	load_pair_fm();
@@ -229,27 +227,19 @@ void interface_fm() {
 							mode_select %= 3;				// Выбор между тремя областями экрана
 						  break;
 			case KEY_UP: switch (mode_select) {
-							case 1: if (first_panel.selected != 1) { 
-										first_panel.selected--;
-										first_panel.selected_st = &filevector_1.at(--p1);		// Установка указателя на структуру
- 									}
+							case 1: if (first_panel.selected != 1) 
+										first_panel.selected_st = &filevector_1.at(first_panel.selected--);		// Установка указателя на структуру
 								break;
-							case 2: if (second_panel.selected != 1) { 
-										second_panel.selected--; 
-										second_panel.selected_st = &filevector_2.at(--p2);		// Установка указателя на структуру
-									}
+							case 2: if (second_panel.selected != 1) 
+										second_panel.selected_st = &filevector_2.at(second_panel.selected--);		// Установка указателя на структуру
 							break;
 						} break;
 			case KEY_DOWN: switch (mode_select) {
-							case 1: if (first_panel.selected != first_panel.second_border) {
-										first_panel.selected++; 
-										first_panel.selected_st = &filevector_1.at(++p1);		// Установка указателя на структуру	
-									}
+							case 1: if (first_panel.selected != first_panel.second_border) 
+										first_panel.selected_st = &filevector_1.at(first_panel.selected++);		// Установка указателя на структуру	
 										break;
-							case 2: if (second_panel.selected != second_panel.second_border) {
-										second_panel.selected++; 
-										second_panel.selected_st = &filevector_2.at(++p2);		// Установка указателя на структуру	
-										}
+							case 2: if (second_panel.selected != second_panel.second_border) 
+										second_panel.selected_st = &filevector_2.at(second_panel.selected++);		// Установка указателя на структуру	
 										break;
 						} break;
 			case '\n': switch (mode_select) {
