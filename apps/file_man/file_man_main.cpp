@@ -228,10 +228,10 @@ void interface_fm() {
 						  break;
 			case KEY_UP: switch (mode_select) {
 							case 1: if (first_panel.selected != 1) 
-										first_panel.selected_st = &filevector_1.at(first_panel.selected--);		// Установка указателя на структуру
+										first_panel.selected_st = &filevector_1.at((--first_panel.selected)-1);		// Установка указателя на структуру
 								break;
 							case 2: if (second_panel.selected != 1) 
-										second_panel.selected_st = &filevector_2.at(second_panel.selected--);		// Установка указателя на структуру
+										second_panel.selected_st = &filevector_2.at((--second_panel.selected)-1);		// Установка указателя на структуру
 							break;
 						} break;
 			case KEY_DOWN: switch (mode_select) {
