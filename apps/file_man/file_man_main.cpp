@@ -5,6 +5,8 @@
 
 #define TAB_KEY 9
 
+#define DEBUG 									// На данный момент 11:44 6 февраля 2016
+												// для проверки передачи адреса файла
 using namespace std;
 
 void load_pair_fm() {							// Определение фоновых комбинации
@@ -21,7 +23,7 @@ void load_pair_fm() {							// Определение фоновых комби�
 }
 
 void abaut_fm() {
-	return;
+		
 }
 
 void load_properties(vector <string>& propvec) {
@@ -69,11 +71,25 @@ void load_files(vector <FILEINFO> filevector, vector <string>& fileout) {
 	}
 }
 
-void properties_open(DLGSTR properties_menu, vector <string> propvec/*, link_to_file*/) {
+void properties_open(DLGSTR properties_menu, vector <string> propvec,string f_link = "./") {
 	bool cycle = true;
 	int key = 0;
 	while (cycle) {
-		menu_win(properties_menu, propvec);
+
+		#ifdef DEBUG
+			timeout(-1);
+			DLGSTR teststr = {};
+			teststr.style = 1;
+			teststr.line = f_link;
+			while (key != '\n') {
+				msg_win(teststr);
+				key = getch();
+				}
+			return;
+		#else	
+		menu_win(properties_menu, propvec);		
+		#endif
+
 		key = getch();
 		switch (key) {
 			case KEY_UP: if (properties_menu.selected != 1) properties_menu.selected--; break;
@@ -158,12 +174,16 @@ void interface_fm() {
 		winstr.line = "Please enter link to foldren";
 		dlg_win(winstr, link_second_panel);
 	}
-	get_files(link_second_panel, filevector_2); // TEST!!!!
 	files_sort_by('n', filevector_1);
 	files_sort_by('t', filevector_2);
 	load_files(filevector_1, fileout_1);
 	load_files(filevector_2, fileout_2);
 	load_properties(propvec);
+
+	unsigned int p1 = 0;										// счетчики для файловых векторов
+	unsigned int p2 = 0;
+	first_panel.selected_st = 	&filevector_1.at(p1);			// Установка указателей на структуры
+	second_panel.selected_st =  &filevector_2.at(p2);			// содержащие информацию о файлах
 
 	/*Init head START*/
 	load_pair_fm();
@@ -204,27 +224,43 @@ void interface_fm() {
 		
 		// Передача управления пользователю.
 		key_pressed = getch();
-		switch (key_pressed) {
+		switch (key_pressed) { 
 			case TAB_KEY: 	mode_select++;
 							mode_select %= 3;				// Выбор между тремя областями экрана
 						  break;
 			case KEY_UP: switch (mode_select) {
-							case 1: if (first_panel.selected != 1) first_panel.selected--; break;
-							case 2: if (second_panel.selected != 1) second_panel.selected--; break;
+							case 1: if (first_panel.selected != 1) { 
+										first_panel.selected--;
+										first_panel.selected_st = &filevector_1.at(--p1);		// Установка указателя на структуру
+ 									}
+								break;
+							case 2: if (second_panel.selected != 1) { 
+										second_panel.selected--; 
+										second_panel.selected_st = &filevector_2.at(--p2);		// Установка указателя на структуру
+									}
+							break;
 						} break;
 			case KEY_DOWN: switch (mode_select) {
-							case 1: if (first_panel.selected != first_panel.second_border) first_panel.selected++; break;
-							case 2: if (second_panel.selected != second_panel.second_border) second_panel.selected++; break;
+							case 1: if (first_panel.selected != first_panel.second_border) {
+										first_panel.selected++; 
+										first_panel.selected_st = &filevector_1.at(++p1);		// Установка указателя на структуру	
+									}
+										break;
+							case 2: if (second_panel.selected != second_panel.second_border) {
+										second_panel.selected++; 
+										second_panel.selected_st = &filevector_2.at(++p2);		// Установка указателя на структуру	
+										}
+										break;
 						} break;
 			case '\n': switch (mode_select) {
 							case 0:	if (menu_open(selected_menu) == 10) cycle = false; break;
 							case 1: properties_menu.xpos = first_panel.xreturn;
 									properties_menu.ypos = first_panel.yreturn;
-									properties_open(properties_menu, propvec/*, link_to_file*/);
+									properties_open(properties_menu, propvec,((FILEINFO *) first_panel.selected_st) -> f_path);
 									break;
 							case 2: properties_menu.xpos = second_panel.xreturn;
 									properties_menu.ypos = second_panel.yreturn;
-									properties_open(properties_menu, propvec/*, link_to_file*/);
+									properties_open(properties_menu, propvec, ((FILEINFO *) second_panel.selected_st) -> f_path);
 									break;
 						} break;
 		}

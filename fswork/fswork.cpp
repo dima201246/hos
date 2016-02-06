@@ -85,6 +85,7 @@ int get_files(string path, vector<FILEINFO> &filevec) {
 			tmp = path + (char *) f_cur -> d_name;		// Получаем полный адрес файла для stat()
 			stat(tmp.c_str(), &fs_cur); 				// Получение информации о файле 
 			file_info.mtime = fs_cur.st_mtime;			// Сохраняем время последней модификации
+			file_info.f_path = tmp;						// Saving of full path to file
 			if ((file_info.name != "..") && (file_info.name != ".")) { 
 				filevec.insert(filevec.end(), file_info);  // Костылей нет. p.s честно p.s.s ну почти...
 			}
