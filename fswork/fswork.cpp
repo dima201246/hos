@@ -5,7 +5,7 @@
 // #include <fcntl.h>
 // #include <stdio.h>
 // #include <stdlib.h>
-#include <dirent.h> // !!!
+#include <dirent.h>
 #include <vector>
 #include "../lang/lang.h"
 #include "../configurator/configurator.h"
@@ -27,7 +27,7 @@ bool makedir(string path) {
 	return false;
 }
 
-inline bool FileExists(const string& path) {	
+/*inline - не работает с ним нихрена!!!*/bool FileExists(const string& path) {	
 	return ifstream(path.c_str()).good();
 }
 

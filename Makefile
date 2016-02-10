@@ -3,7 +3,7 @@ WallFlag = -Wall
 OutPut = hos_alpha
 curses = -lncurses
 
-Modules =  windlg.o configurator.o desktop.o fswork.o lang.o
+Modules =  windlg.o configurator.o desktop.o fswork.o lang.o menu_apps.o
 
 bootloader = ./bootloader/bootloader.cpp
 
@@ -13,13 +13,14 @@ all: win_dlg_c configurator_c desktop_c fswork_c lang_c
 	chmod u=rwx,g=rx,o=rx ./$(OutPut)
 	./$(OutPut)
 
-win_dlg_c:
+win_dlg_c:       
 	$(CC) $(WallFlag) -c ./windlg/windlg.cpp -o windlg.o
 
 configurator_c:
 	$(CC) $(WallFlag) -c ./configurator/configurator.cpp -o configurator.o
 
 desktop_c:
+	$(CC) $(WallFlag) -c ./desktop/header/menu_apps.cpp -o menu_apps.o	
 	$(CC) $(WallFlag) -c ./desktop/desktop.cpp -o desktop.o
 
 fswork_c:

@@ -1,7 +1,7 @@
-#define LOCAL_TEST 0
-
 //#include "../shutdown/shutdown.h"
 #include "../windlg/windlg.h"
+#include "../fswork/fswork.h"
+
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -61,24 +61,8 @@ int work_desktop() {
 	return 0;
 }
 
-#if LOCAL_TEST == 1
-int main(/*...*/) {
-	string user_name = "0";
-	setlocale(LC_ALL, "");
-	initscr();
-	start_color();
-	keypad (stdscr, TRUE);
-	noecho();
-	curs_set(0);
-	erase();
-	init_pair (1, COLOR_BLACK, COLOR_WHITE);
-#else
 int main_desktop(string user_name/*...*/) {
-#endif
 	local_user = user_name;
 	work_desktop();
-#if LOCAL_TEST == 1
-	endwin();
-#endif
 	return 0;
 }
