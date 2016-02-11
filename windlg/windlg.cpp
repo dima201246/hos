@@ -122,6 +122,10 @@ int search_max_vectro(vector<string> items, string title) {
 	return max;
 }
 
+void red_text_win() {
+	return;
+}
+
 void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 	load_pair();
 	DLGSTR local_cfg = dlgcfg;
