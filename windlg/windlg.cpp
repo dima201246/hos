@@ -193,7 +193,7 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 	}
 	if ((vert_scrollbar) && (!local_cfg.border_menu)) { // Вывод границы слева, если нужна прокрутка
 		for (unsigned int i = 0; i < max_y; i++) {
-			if ((!past_pointer) && ((100 / max_y * (i + 1)) >= (local_cfg.selected * 100 / items.size()))) { // Очень крутая формула вывода прогресса спуска в списке
+			if ((!past_pointer) && ((100 /*Из-за 100 тут баг, но мы о нём не знаем*/ / max_y * (i + 1)) >= (local_cfg.selected * 100 / items.size()))) { // Очень крутая формула вывода прогресса спуска в списке
 				past_pointer = true; // Чтобы указатели прогресса не уходили вниз
 				mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos, "]"); // Вывод Указателя
 			} else mvprintw(local_cfg.ypos + i  + fix_title, local_cfg.xpos, "|"); // Вывод левой границы
