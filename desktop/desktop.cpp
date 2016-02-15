@@ -2,11 +2,10 @@
 #include "../windlg/windlg.h"
 #include "../fswork/fswork.h"
 
+#include "./header/menu_apps.h"
 
 #include <unistd.h>
 #include <stdlib.h>
-#include <vector>
-#include <string>
 #include <curses.h>
 
 using namespace std;
@@ -64,5 +63,8 @@ int work_desktop() {
 int main_desktop(string user_name/*...*/) {
 	local_user = user_name;
 	work_desktop();
+	/*vector <string> app_list;
+	get_apps_list(app_list);*/
+	getch();
 	return 0;
 }
