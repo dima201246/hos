@@ -3,16 +3,16 @@
 
 	:DV company 2015
 */
+#include "configurator.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <fstream>
-#include <vector>
 
 using namespace std;
 
 bool always_read = false, edit_found_value = false;
 
-bool save_commit (unsigned first_pos,string line) {
+bool save_commit(unsigned first_pos,string line) {
 	bool find_char = false;
 	for (unsigned int j = first_pos; j < line.length(); j++) {
 		if ((line[j] == '#') && (line[j - 1] != '\\')) return true;
@@ -162,6 +162,26 @@ string add_to_file(string link_to_file, string parametr) {
 			o << base[i] << endl; // Запись
 		o << parametr << endl; // Запись
 		o.close(); // Закрыть файл для записи
+		return "0x2";
+	}
+	return "0x0";
+}
+
+#include <curses.h>
+
+string load_to_vector(string link_to_file, vector <string>& list) {
+	FILE *fp;
+	if ((fp = fopen(link_to_file.c_str(), "r")) != NULL) {
+		list.clear();
+		string readText;
+		ifstream i(link_to_file.c_str()); // Открытие файла
+		while(true) {
+			getline(i, readText);
+			if (i)
+				list.insert(list.end(), readText);
+			else break;
+		}
+		i.close(); // Закрытие файла
 		return "0x2";
 	}
 	return "0x0";
