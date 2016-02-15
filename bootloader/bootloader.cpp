@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 	erase();
 	
 	/*DEBUG*/
-	vector <string> items;
+	/*vector <string> items;
 	teststr.style = 2;
 	teststr.border_menu = true;
 	teststr.selected = 2;
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 	teststr.ypos = teststr.yreturn;
 	teststr.style = 4;
 	menu_win(teststr, items);
-	getch();
+	getch();*/
 	/*DEBUG*/
 
 	/*if (!FileExists("hos_configs")) {
@@ -87,8 +87,7 @@ int main(int argc, char *argv[]) {
 		return 32;
 	}*/
 
-	// main_desktop("user_name");
-	//add_to_file("test", "test");
+	main_desktop("user_name");
 	endwin();
 	return 0;
 }
