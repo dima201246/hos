@@ -26,7 +26,7 @@ void open_menu(vector <string>& app_list) {
 			case 27: cycle = false; break;
 			case KEY_UP: if (menu_panel.selected != 1) menu_panel.selected--; break;
 			case KEY_DOWN: if (menu_panel.selected != menu_panel.second_border) menu_panel.selected++; break;
-			case '\n': app_start(menu_panel.selected, ""); break;
+			case '\n': app_start(menu_panel.selected, ""); return; break;
 		}
 	}
 	return;
@@ -71,7 +71,7 @@ int work_desktop(vector <string> app_list, string user_name) {
 			case KEY_RIGHT: if (selected != 2) selected++; break;
 			case KEY_LEFT: if (selected != 0) selected--; break;
 			case '\n': switch (selected) {
-							case 0: open_menu(app_list); break;
+							case 0: open_menu(app_list); new_draw = true; break;
 							case 2: cycle = false; break;
 						}
 			case 27: if (open_label) open_label = false;
