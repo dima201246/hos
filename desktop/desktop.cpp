@@ -1,6 +1,7 @@
 //#include "../shutdown/shutdown.h"
 #include "../windlg/windlg.h"
 #include "../fswork/fswork.h"
+#include "../apps_starter/apps_starter.h"
 
 #include "./header/menu_apps.h"
 
@@ -25,10 +26,7 @@ void open_menu(vector <string>& app_list) {
 			case 27: cycle = false; break;
 			case KEY_UP: if (menu_panel.selected != 1) menu_panel.selected--; break;
 			case KEY_DOWN: if (menu_panel.selected != menu_panel.second_border) menu_panel.selected++; break;
-			/*case '\n': switch (menu_panel.selected) {
-							case 1: abaut_fm(); break;
-							case 2: return; break;
-						} break;*/
+			case '\n': app_start(menu_panel.selected, ""); break;
 		}
 	}
 	return;
