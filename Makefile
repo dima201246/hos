@@ -3,11 +3,11 @@ WallFlag = -Wall
 OutPut = hos_alpha
 curses = -lncurses
 
-Modules =  windlg.o configurator.o desktop.o fswork.o lang.o menu_apps.o
+Modules =  windlg.o configurator.o desktop.o fswork.o lang.o menu_apps.o apps_starter.o
 
 bootloader = ./bootloader/bootloader.cpp
 
-all: win_dlg_c configurator_c desktop_c fswork_c lang_c
+all: win_dlg_c configurator_c desktop_c fswork_c lang_c apps_starter_c
 	$(CC) $(WallFlag) -c $(bootloader) -o main.o
 	$(CC) $(Modules) main.o -o $(OutPut) $(curses)
 	chmod u=rwx,g=rx,o=rx ./$(OutPut)
@@ -28,6 +28,9 @@ fswork_c:
 
 lang_c:
 	$(CC) $(WallFlag) -c ./lang/lang.cpp -o lang.o
+
+apps_starter_c:
+	$(CC) $(WallFlag) -c ./apps_starter/apps_starter.cpp -o apps_starter.o
 
 clean:
 	rm -rf *.o
