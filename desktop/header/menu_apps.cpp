@@ -14,6 +14,7 @@ int get_apps_list(vector<string>& names) {
 	if (!FileExists(APPS_FILE)) {
 		vector <FILEINFO> apps_vec;
 		get_files(APPS_DIR, apps_vec); // Получение списка папок с (предполагается) приложениями 
+		files_sort_by('n', apps_vec); // Сортировка по имени
 		for (unsigned int i = 0; i < apps_vec.size(); i++) {
 			if ((FileExists(APPS_DIR + apps_vec[i].name + "/app.config")) && (configurator(APPS_DIR + apps_vec[i].name + "/app.config", "type", "", false) == "app")) {
 				count++;
