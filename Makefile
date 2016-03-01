@@ -7,29 +7,29 @@ Modules =  windlg.o configurator.o desktop.o fswork.o lang.o menu_apps.o apps_st
 
 bootloader = ./bootloader/bootloader.cpp
 
-all: win_dlg_c configurator_c desktop_c fswork_c lang_c apps_starter_c
+all: win_dlg.o desktop.o fswork.o lang.o apps_starter.o configurator.o
 	$(CC) $(WallFlag) -c $(bootloader) -o main.o
 	$(CC) $(Modules) main.o -o $(OutPut) $(curses)
 	chmod u=rwx,g=rx,o=rx ./$(OutPut)
 	./$(OutPut)
 
-win_dlg_c:       
+win_dlg.o:       
 	$(CC) $(WallFlag) -c ./windlg/windlg.cpp -o windlg.o
 
-configurator_c:
+configurator.o:
 	$(CC) $(WallFlag) -c ./configurator/configurator.cpp -o configurator.o
 
-desktop_c:
+desktop.o:
 	$(CC) $(WallFlag) -c ./desktop/header/menu_apps.cpp -o menu_apps.o	
 	$(CC) $(WallFlag) -c ./desktop/desktop.cpp -o desktop.o
 
-fswork_c:
+fswork.o:
 	$(CC) $(WallFlag) -c ./fswork/fswork.cpp -o fswork.o
 
-lang_c:
+lang.o:
 	$(CC) $(WallFlag) -c ./lang/lang.cpp -o lang.o
 
-apps_starter_c:
+apps_starter.o:
 	$(CC) $(WallFlag) -c ./apps_starter/apps_starter.cpp -o apps_starter.o
 
 clean:
