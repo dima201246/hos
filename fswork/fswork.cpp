@@ -1,18 +1,14 @@
-#include <fstream>
-// #include <sys/types.h>
-// #include <unistd.h>
-// #include <string>
-// #include <fcntl.h>
-// #include <stdio.h>
-// #include <stdlib.h>
-#include <dirent.h>
-#include <vector>
+
 #include "../lang/lang.h"
 #include "../configurator/configurator.h"
 #include "fswork.h"
+#include "stat_file.h"
+
+#include <fstream>
+#include <vector>
+#include <dirent.h>
 #include <curses.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <time.h>
 #include <cstring>
 
@@ -77,14 +73,17 @@ int get_files(string path, vector<FILEINFO> &filevec) {
 	else {
 		FILEINFO file_info;
 		struct dirent *f_cur;
-		struct stat fs_cur;						
 		string tmp;
 		filevec.clear(); // Очистка вектора
 		while ((f_cur=readdir(dir))!= NULL) {
 			file_info.name = f_cur->d_name;
 			tmp = path + (char *) f_cur -> d_name;		// Получаем полный адрес файла для stat()
-			stat(tmp.c_str(), &fs_cur); 				// Получение информации о файле 
-			file_info.mtime = fs_cur.st_mtime;			// Сохраняем время последней модификации
+			
+			// stat(tmp.c_str(), &fs_cur); 				// Получение информации о файле 
+			// file_info.mtime = fs_cur.st_mtime;			// Сохраняем время последней модификации
+
+			file_info.mtime = stat_file(tmp.c_str());			// Сохраняем время последней модификации
+			
 			file_info.f_path = tmp;						// Saving of full path to file
 			if ((file_info.name != "..") && (file_info.name != ".")) { 
 				filevec.insert(filevec.end(), file_info);  // Костылей нет. p.s честно p.s.s ну почти...
