@@ -1,29 +1,15 @@
-CC = g++
-WallFlag = -Wall 
-OutPut = file_man
-curses = -lncurses
+CC			= g++
+WallFlag	= -Wall 
+OutPut		= file_man
+curses		= -lncurses
+ARCH		= 64
+main_cpp	= file_man_main.cpp
 
-Modules = fswork.o lang.o configurator.o windlg.o
-
-main_cpp = file_man_main.cpp
-
-all: fswork_c lang_c configurator_c win_dlg_c
+all:
 	$(CC) $(WallFlag) -c $(main_cpp) -o main.o
-	$(CC) $(Modules) main.o -o $(OutPut) $(curses)
+	$(CC) main.o -o $(OutPut) $(curses) -L../../lib -lhos_x$(ARCH) -lconfigurator_x$(ARCH) -Wl,-rpath,../../lib
 	chmod u=rwx,g=rx,o=rx ./$(OutPut)
 	./$(OutPut)
-
-win_dlg_c:
-	$(CC) $(WallFlag) -c ./../../windlg/windlg.cpp -o windlg.o
-
-configurator_c:
-	$(CC) $(WallFlag) -c ./../../configurator/configurator.cpp -o configurator.o
-
-fswork_c:
-	$(CC) $(WallFlag) -c ./../../fswork/fswork.cpp -o fswork.o
-
-lang_c:
-	$(CC) $(WallFlag) -c ./../../lang/lang.cpp -o lang.o
 
 clean:
 	rm -rf *.o
