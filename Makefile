@@ -5,12 +5,12 @@ FLAGS 		= -c -Wall -g
 OutPut		= hos_alpha
 OUT_LIB		= libhos_x$(ARCH).so
 
-Modules		= configurator.o desktop.o menu_apps.o apps_starter.o
+Modules		= desktop.o menu_apps.o apps_starter.o
 bootloader	= ./bootloader/bootloader.cpp
 
 all:	$(Modules)
 		$(CC) $(FLAGS) -c $(bootloader) -o main.o
-		$(CC) $(Modules) main.o -o $(OutPut) -lcurses -Llib -lhos_x$(ARCH) -Wl,-rpath,lib
+		$(CC) $(Modules) main.o -o $(OutPut) -lcurses -Llib -lhos_x$(ARCH) -lconfigurator_x$(ARCH) -Wl,-rpath,lib
 		chmod u=rwx,g=rx,o=rx ./$(OutPut)
 
 start:
@@ -24,9 +24,6 @@ hos_lib:
 		$(CC) $(FLAGS_LIB) screen/screen.cpp -o screen.o -m$(ARCH)
 		$(CC) $(FLAGS_LIB) lang/lang.cpp -o lang.o -m$(ARCH)
 		$(CC) -shared fswork.o stat_file.o windlg.o screen.o lang.o -o lib/$(OUT_LIB) -m$(ARCH)
-
-configurator.o:
-		$(CC) $(FLAGS) ./configurator/configurator.cpp -o configurator.o
 
 desktop.o:
 		$(CC) $(FLAGS) ./desktop/desktop.cpp -o desktop.o
