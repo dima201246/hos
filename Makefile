@@ -1,46 +1,43 @@
-CC = g++
-WallFlag = -Wall -g
-OutPut = hos_alpha
-curses = -lncurses
+CC			= g++
+ARCH		= 64
+FLAGS_LIB	= -O2 -c -fPIC -Wall -g
+FLAGS 		= -c -Wall -g
+OutPut		= hos_alpha
+OUT_LIB		= libhos_x$(ARCH).so
 
-Modules =  windlg.o configurator.o desktop.o fswork.o lang.o menu_apps.o apps_starter.o libscreen.o
+Modules		= configurator.o desktop.o menu_apps.o apps_starter.o
+bootloader	= ./bootloader/bootloader.cpp
 
-bootloader = ./bootloader/bootloader.cpp
+all:	$(Modules)
+		$(CC) $(FLAGS) -c $(bootloader) -o main.o
+		$(CC) $(Modules) main.o -o $(OutPut) -lcurses -Llib -lhos_x$(ARCH) -Wl,-rpath,lib
+		chmod u=rwx,g=rx,o=rx ./$(OutPut)
 
-all: win_dlg.o desktop.o fswork.o lang.o apps_starter.o configurator.o libscreen.o
-	$(CC) $(WallFlag) -c $(bootloader) -o main.o
-	$(CC) $(Modules) stat_file.o main.o -o $(OutPut) $(curses)
-	chmod u=rwx,g=rx,o=rx ./$(OutPut)
-
-start:
-	./$(OutPut)
-
-win_dlg.o:       
-	$(CC) $(WallFlag) -c ./windlg/windlg.cpp -o windlg.o
+hos_lib:
+		mkdir -p lib
+		$(CC) $(FLAGS_LIB) fswork/fswork.cpp -o fswork.o -m$(ARCH)
+		$(CC) $(FLAGS_LIB) fswork/stat_file.c -o stat_file.o -m$(ARCH)
+		$(CC) $(FLAGS_LIB) windlg/windlg.cpp -o windlg.o -m$(ARCH)
+		$(CC) $(FLAGS_LIB) screen/screen.cpp -o screen.o -m$(ARCH)
+		$(CC) $(FLAGS_LIB) lang/lang.cpp -o lang.o -m$(ARCH)
+		$(CC) -shared fswork.o stat_file.o windlg.o screen.o lang.o -o lib/$(OUT_LIB) -m$(ARCH)
 
 configurator.o:
-	$(CC) $(WallFlag) -c ./configurator/configurator.cpp -o configurator.o
+		$(CC) $(FLAGS) ./configurator/configurator.cpp -o configurator.o
 
 desktop.o:
-	$(CC) $(WallFlag) -c ./desktop/header/menu_apps.cpp -o menu_apps.o	
-	$(CC) $(WallFlag) -c ./desktop/desktop.cpp -o desktop.o
+		$(CC) $(FLAGS) ./desktop/desktop.cpp -o desktop.o
 
-fswork.o:
-	gcc $(WallFlag) -c ./fswork/stat_file.c -o stat_file.o
-	$(CC) $(WallFlag) -c ./fswork/fswork.cpp -o fswork.o
-
-lang.o:
-	$(CC) $(WallFlag) -c ./lang/lang.cpp -o lang.o
+menu_apps.o:
+		$(CC) $(FLAGS) ./desktop/header/menu_apps.cpp -o menu_apps.o	
 
 apps_starter.o:
-	$(CC) $(WallFlag) -c ./apps_starter/apps_starter.cpp -o apps_starter.o
-
-libscreen.o:
-	$(CC) $(WallFlag) -c ./libscreen/libscreen.cpp -o libscreen.o
+		$(CC) $(FLAGS) ./apps_starter/apps_starter.cpp -o apps_starter.o
 
 clean:
 	rm -rf *.o
 
 clean-all:
 	rm -rf *.o
+	rm -rf lib/$(OUT_LIB)
 	rm $(OutPut)
