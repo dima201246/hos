@@ -13,6 +13,9 @@ all:	$(Modules)
 		$(CC) $(Modules) main.o -o $(OutPut) -lcurses -Llib -lhos_x$(ARCH) -Wl,-rpath,lib
 		chmod u=rwx,g=rx,o=rx ./$(OutPut)
 
+start:
+		./$(OutPut)
+
 hos_lib:
 		mkdir -p lib
 		$(CC) $(FLAGS_LIB) fswork/fswork.cpp -o fswork.o -m$(ARCH)
