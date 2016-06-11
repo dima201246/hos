@@ -1,7 +1,7 @@
 #include "../lang/lang.h"
 #include "../configurator/configurator.h"
 #include "../windlg/windlg.h"
-#include "../libscreen/libscreen.h"
+#include "../screen/screen.h"
 #include "apps_starter.h"
 
 int app_start(int number_of_app, const char* parametrs) {
