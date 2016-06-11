@@ -386,11 +386,20 @@ int msg_win(DLGSTR dlgcfg) {
 		cn = getch();
 		switch (cn) {
 			case CtrlF1: info_win(); break;
-			case KEY_LEFT: if (active_input != 1) active_input--; break;
-			case KEY_RIGHT: if (active_input != dlgcfg.keys) active_input++; break;
-			case TAB_KEY:
-					if (active_input != dlgcfg.keys) active_input++;
-					else active_input = 1; break;
+			case KEY_LEFT:	if (active_input != 1)
+								active_input--;
+							break;
+
+			case KEY_RIGHT:	if (active_input != dlgcfg.keys)
+								active_input++;
+							break;
+
+			case TAB_KEY:	if (active_input != dlgcfg.keys) {
+								active_input++;
+							} else {
+								active_input = 1;
+							}
+							break;
 			// case 27: out_put.clear(); delete [] array; return 0; break;
 			case '\n': if (active_input != 0) {
 							delete [] array;
