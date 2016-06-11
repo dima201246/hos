@@ -15,7 +15,7 @@ void open_menu(vector <string>& app_list) {
 	DLGSTR menu_panel = {};
 	menu_panel.xpos = 1;
 	menu_panel.ypos = 1;
-	// menu_panel.style = 3;
+	menu_panel.style = 3;
 	menu_panel.border_menu = true;
 	bool cycle = true;
 	int key;
@@ -33,17 +33,13 @@ void open_menu(vector <string>& app_list) {
 }
 
 int draw_desktop(int selected, bool open_label, bool new_draw, unsigned int maxX, unsigned int maxY) {
-	unsigned x, y;
-	printw("                                                           \n");
-	// if (new_draw) {
-		if (selected == 0) attron(COLOR_PAIR(1) | A_BOLD); // Белый цвет
-		for (x = 0; x < maxX; x++) {
+	if (new_draw) {
+		for (unsigned int x = 0; x < maxX; x++) {
 			mvprintw(maxY - 1, x, "-");
 			mvprintw(0, x, "-");
 		}
-		for (y = 0; y < maxY; y++) {mvprintw(y, 0, "|"); mvprintw(y, maxX - 1, "|");}
-		if (selected == 0) attroff(COLOR_PAIR(1) | A_BOLD);
-	// }
+		for (unsigned int y = 0; y < maxY; y++) {mvprintw(y, 0, "|"); mvprintw(y, maxX - 1, "|");}
+	}
 		if (selected == 0) attron(COLOR_PAIR(1) | A_BOLD); // Белый цвет
 		mvprintw(0, 1, "Menu");
 		if (selected == 0) attroff(COLOR_PAIR(1) | A_BOLD);
@@ -53,16 +49,10 @@ int draw_desktop(int selected, bool open_label, bool new_draw, unsigned int maxX
 		if (selected == 2) attron(COLOR_PAIR(1) | A_BOLD); // Белый цвет
 		mvprintw(0, 11, "Exit");
 		if (selected == 2) attroff(COLOR_PAIR(1) | A_BOLD);
-		refresh();
 	return 0;
 }
 
 int work_desktop(vector <string> app_list, string user_name) {
-	string test_output;
-	DLGSTR teststr = {}; // Только так!!!
-	teststr.title = "Pre pre pre ... Alpha";
-	teststr.style = 1;
-	teststr.line = "Dear user, it's not full version of OS!/nThis is just an example of how might look this OS.";
 	unsigned int maxY, maxYb = 0, maxX, maxXb = 0;
 	bool cycle = true, open_label = false, new_draw = false;
 	int key_pressed, selected = 2;
@@ -73,8 +63,8 @@ int work_desktop(vector <string> app_list, string user_name) {
 			erase();
 		}
 		timeout(0);
-		draw_desktop(selected, open_label, true, maxX, maxY);
-		// draw_desktop(selected, open_label, new_draw, maxX, maxY);
+		// if (new_draw) update_screen();
+		draw_desktop(selected, open_label, new_draw, maxX, maxY);
 		new_draw = false;
 		key_pressed = getch();
 		switch (key_pressed) {
@@ -82,7 +72,7 @@ int work_desktop(vector <string> app_list, string user_name) {
 			case KEY_LEFT: if (selected != 0) selected--; break;
 			case '\n': switch (selected) {
 							case 0: open_menu(app_list); new_draw = true; break;
-							case 1: msg_win(teststr); break;
+							case 1: break;
 							case 2: cycle = false; break;
 						}
 			case 27: if (open_label) open_label = false;
