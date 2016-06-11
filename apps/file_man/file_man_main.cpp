@@ -278,8 +278,6 @@ int main(int argc, char* argv[]) {
 		printw("%i %s %s\n", (int)test_str.name[0], test_str.name.c_str(), ctime(&test_str.mtime));
 	}*/
 	
-	// endwin();
-		erase();
-		refresh();
+	endwin();
 	return 0;
 }
