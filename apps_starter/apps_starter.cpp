@@ -5,8 +5,8 @@
 #include "apps_starter.h"
 
 int app_start(int number_of_app, const char* parametrs) {
-	std::string full_path = configurator(APPS_FILE, str(number_of_app) + "_app_path", "", false) + "/" + configurator(APPS_FILE, str(number_of_app) + "_app_launcher", "", false);
-
+	std::string name_app	= configurator(APPS_FILE, str(number_of_app) + "_app_launcher", "", false);
+	std::string path_to_dir	= configurator(APPS_FILE, str(number_of_app) + "_app_path", "", false);
 	erase();
 	endwin();
 
@@ -14,6 +14,7 @@ int app_start(int number_of_app, const char* parametrs) {
 	pid_t	chpid	= fork();
 
 	if (chpid == 0) {
+		chdir(path_to_dir.c_str());
 		if (execl(full_path.c_str(), parametrs, NULL) == -1) // parent process
 			exit(0);
 	} else {
