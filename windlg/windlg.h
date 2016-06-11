@@ -1,7 +1,12 @@
 #ifndef WINDLG_H
 #define WINDLG_H
+
 	#include <string>
 	#include <vector>
+	#include <unistd.h>
+	#include <stdio.h>
+	#include <curses.h>
+
 	struct DLGSTR {
 		std::string title, // Title
 		line, // Text

@@ -1,7 +1,3 @@
-#include <unistd.h>
-#include <stdio.h>
-#include <curses.h>
-
 #include "windlg.h"
 #include "../lang/lang.h"
 
