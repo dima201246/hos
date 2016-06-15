@@ -15,7 +15,7 @@ int app_start(int number_of_app, const char* parametrs) {
 
 	if (chpid == 0) {
 		chdir(path_to_dir.c_str());
-		if (execl(full_path.c_str(), parametrs, NULL) == -1) // parent process
+		if (execl(name_app.c_str(), parametrs, NULL) == -1) // parent process
 			exit(0);
 	} else {
 		waitpid(chpid,&status,WUNTRACED);
