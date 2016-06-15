@@ -4,6 +4,7 @@
 #include <curses.h>
 
 #define TAB_KEY 9
+#define BACK_KEY 127
 
 #define DEBUG 									// На данный момент 11:44 6 февраля 2016
 												// для проверки передачи адреса файла
@@ -32,7 +33,6 @@ void load_properties(vector <string>& propvec) {
 	propvec.insert(propvec.end(), "Delete");
 	propvec.insert(propvec.end(), "Move");
 	propvec.insert(propvec.end(), "Copy");
-	propvec.insert(propvec.end(), "Test..");
 }
 
 int menu_open(unsigned int& selected) {
@@ -71,40 +71,44 @@ void load_files(vector <FILEINFO> filevector, vector <string>& fileout) {
 	}
 }
 
-void properties_open(DLGSTR properties_menu, vector <string> propvec,string f_link = "./") {
+int properties_open(DLGSTR properties_menu, vector <string> propvec) {
 	bool cycle = true;
 	int key = 0;
 	while (cycle) {
-
-		#ifdef DEBUG
-			timeout(-1);
-			DLGSTR teststr = {};
-			teststr.style = 1;
-			teststr.line = f_link;
-			while (key != '\n') {
-				msg_win(teststr);
-				key = getch();
-				}
-			return;
-		#else	
-		menu_win(properties_menu, propvec);		
-		#endif
-
-		key = getch();
+		menu_win(properties_menu, propvec);
+		
+		key	= getch();
+		
 		switch (key) {
-			case KEY_UP: if (properties_menu.selected != 1) properties_menu.selected--; break;
-			case KEY_DOWN: if (properties_menu.selected != properties_menu.second_border) properties_menu.selected++; break;
-			case 27: return;
+			case KEY_UP:	if (properties_menu.selected != 1)
+								properties_menu.selected--;
+							break;
+			case KEY_DOWN:	if (properties_menu.selected != properties_menu.second_border)
+								properties_menu.selected++;
+							break;
+
+			case '\n':		return properties_menu.selected;
+
+			case 27:		return 0;
+							break;
 		}
 	}
 }
 
+void init_panel(unsigned int maxX, DLGSTR &panel, string title_path) {
+	panel.title = title_path;
+	if (llength(panel.title) > maxX / 2 - 2) {	// ??TEMP?? Разъясни что здесь творится
+		while (llength(panel.title) + 3 > (maxX / 2 - 2)) // Отвечаю - это обрезка полного пути, он выодится в шапке,
+			panel.title.erase(0, 1); // если он слишком длинный начало обрезается и вставляется три точки
+		panel.title.insert(0, "...");
+	}
+}
 
 void interface_fm() {
 	unsigned int maxX, maxY;
 	getmaxyx(stdscr, maxY, maxX);	
 	vector <string> propvec;
-	string link_first_panel = "/",
+	string	link_first_panel = "/",
 			link_second_panel = "/";
 
 	/*For windlg*/
@@ -119,13 +123,8 @@ void interface_fm() {
 	first_panel.xpos = 0;
 	first_panel.ypos = 1;
 	first_panel.style = 3;
-	first_panel.title = link_first_panel;
-	if (llength(first_panel.title) > maxX / 2 - 2) {	// ??TEMP?? Разъясни что здесь творится
-		while (llength(first_panel.title) + 3 > (maxX / 2 - 2))
-			first_panel.title.erase(0, 1);
-		first_panel.title.insert(0, "...");
-	}
 	first_panel.border_menu = true;
+	init_panel(maxX, first_panel, link_first_panel);
 	/*For first panel END*/
 	
 	/*For second panel*/
@@ -136,13 +135,8 @@ void interface_fm() {
 	second_panel.ypos = 1;
 	second_panel.style = 0;
 	second_panel.title = link_second_panel;
-
-	if (llength(second_panel.title) > maxX / 2 - 2) {
-		while (llength(second_panel.title) + 3 > (maxX / 2 - 2))
-			second_panel.title.erase(0, 1);
-		second_panel.title.insert(0, "...");
-	}
 	second_panel.border_menu = true;
+	init_panel(maxX, second_panel, link_second_panel);
 	/*For second panel END*/
 
 	/*For properties panel*/
@@ -180,8 +174,8 @@ void interface_fm() {
 	load_files(filevector_2, fileout_2);
 	load_properties(propvec);
 
-	first_panel.selected_st = 	&filevector_1.at(first_panel.selected);		// Установка указателей на структуры
-	second_panel.selected_st =  &filevector_2.at(second_panel.selected);	// содержащие информацию о файлах
+	first_panel.selected_st		= &filevector_1.at(first_panel.selected);		// Установка указателей на структуры
+	second_panel.selected_st	=  &filevector_2.at(second_panel.selected);	// содержащие информацию о файлах
 
 	/*Init head START*/
 	load_pair_fm();
@@ -204,10 +198,20 @@ void interface_fm() {
 		
 		/*Head START*/
 		switch (mode_select) {
-			case 0: selected_color = 6; first_panel.style = 0; second_panel.style = 0; break;
-			case 1: first_panel.style = 3; second_panel.style = 0; break;
-			case 2: second_panel.style = 3; first_panel.style = 0; break;
+			case 0:	selected_color = 6;
+					first_panel.style = 0;
+					second_panel.style = 0;
+					break;
+
+			case 1:	first_panel.style = 3;
+					second_panel.style = 0;
+					break;
+
+			case 2:	second_panel.style = 3;
+					first_panel.style = 0;
+					break;
 		}
+
 		attron(COLOR_PAIR(1) | A_BOLD);
 		mvprintw(0, 0, "%s", head.c_str());
 		attron(COLOR_PAIR(1 + selected_color) | A_BOLD);
@@ -219,38 +223,67 @@ void interface_fm() {
 
 		menu_win(first_panel, fileout_1);
 		menu_win(second_panel, fileout_2);
-		
+
 		// Передача управления пользователю.
 		key_pressed = getch();
 		switch (key_pressed) { 
-			case TAB_KEY: 	mode_select++;
-							mode_select %= 3;				// Выбор между тремя областями экрана
-						  break;
-			case KEY_UP: switch (mode_select) {
-							case 1: if (first_panel.selected != 1) 
-										first_panel.selected_st = &filevector_1.at((--first_panel.selected)-1);		// Установка указателя на структуру
-								break;
-							case 2: if (second_panel.selected != 1) 
-										second_panel.selected_st = &filevector_2.at((--second_panel.selected)-1);		// Установка указателя на структуру
-							break;
-						} break;
-			case KEY_DOWN: switch (mode_select) {
-							case 1: if (first_panel.selected != first_panel.second_border) 
-										first_panel.selected_st = &filevector_1.at(first_panel.selected++);		// Установка указателя на структуру	
-										break;
-							case 2: if (second_panel.selected != second_panel.second_border) 
-										second_panel.selected_st = &filevector_2.at(second_panel.selected++);		// Установка указателя на структуру	
-										break;
-						} break;
-			case '\n': switch (mode_select) {
-							case 0:	if (menu_open(selected_menu) == 10) cycle = false; break;
-							case 1: properties_menu.xpos = first_panel.xreturn;
-									properties_menu.ypos = first_panel.yreturn;
-									properties_open(properties_menu, propvec,((FILEINFO *) first_panel.selected_st) -> f_path);
+
+			case BACK_KEY:	switch (mode_select) {
+
+							case 1: link_first_panel.erase(llength(link_first_panel) - 1, 1);
+									while (link_first_panel[llength(link_first_panel) - 1] != '/')
+										link_first_panel.erase(llength(link_first_panel) - 1, 1);
+									init_panel(maxX, first_panel, link_first_panel);
+									get_files(link_first_panel, filevector_1);
+									files_sort_by('n', filevector_1);
+									load_files(filevector_1, fileout_1);
 									break;
-							case 2: properties_menu.xpos = second_panel.xreturn;
-									properties_menu.ypos = second_panel.yreturn;
-									properties_open(properties_menu, propvec, ((FILEINFO *) second_panel.selected_st) -> f_path);
+
+						} break;
+
+			case TAB_KEY:	mode_select++;
+							mode_select %= 3;				// Выбор между тремя областями экрана
+							break;
+
+			case KEY_UP:	switch (mode_select) {
+								case 1: if (first_panel.selected != 1) 
+											first_panel.selected_st = &filevector_1.at((--first_panel.selected)-1);		// Установка указателя на структуру
+									break;
+								case 2: if (second_panel.selected != 1) 
+											second_panel.selected_st = &filevector_2.at((--second_panel.selected)-1);		// Установка указателя на структуру
+								break;
+							} break;
+			case KEY_DOWN:	switch (mode_select) {
+								case 1: if (first_panel.selected != first_panel.second_border) {
+											first_panel.selected_st = &filevector_1.at(first_panel.selected++);		// Установка указателя на структуру	
+										}
+										break;
+								case 2: if (second_panel.selected != second_panel.second_border) {
+											second_panel.selected_st = &filevector_2.at(second_panel.selected++);		// Установка указателя на структуру	
+										}
+										break;
+							} break;
+
+			case '\n':	switch (mode_select) {
+							case 0:	if (menu_open(selected_menu) == 10) {
+										cycle = false;
+									}
+									break;
+
+							case 1: properties_menu.xpos	= first_panel.xreturn;
+									properties_menu.ypos	= first_panel.yreturn;
+									switch (properties_open(properties_menu, propvec)) {
+										case 1:	link_first_panel	= ((FILEINFO *) first_panel.selected_st) -> f_path + "/";
+												init_panel(maxX, first_panel, link_first_panel);
+												get_files(link_first_panel, filevector_1);
+												files_sort_by('n', filevector_1);
+												load_files(filevector_1, fileout_1);
+									}
+									break;
+							
+							case 2: properties_menu.xpos	= second_panel.xreturn;
+									properties_menu.ypos	= second_panel.yreturn;
+									properties_open(properties_menu, propvec);
 									break;
 						} break;
 		}
