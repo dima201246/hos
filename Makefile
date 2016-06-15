@@ -10,7 +10,7 @@ bootloader	= ./bootloader/bootloader.cpp
 
 all:	$(Modules)
 		$(CC) $(FLAGS) -c $(bootloader) -o main.o
-		$(CC) $(Modules) main.o -o $(OutPut) -lcurses -Llib -lhos_x$(ARCH) -lconfigurator_x$(ARCH) -Wl,-rpath,lib
+		$(CC) $(Modules) main.o -o $(OutPut) -lcurses -Llib -lhos_x$(ARCH) -Wl,-rpath,lib
 		chmod u=rwx,g=rx,o=rx ./$(OutPut)
 
 start:
@@ -18,12 +18,13 @@ start:
 
 hos_lib:
 		mkdir -p lib
-		$(CC) $(FLAGS_LIB) fswork/fswork.cpp -o fswork.o -m$(ARCH)
-		$(CC) $(FLAGS_LIB) fswork/stat_file.c -o stat_file.o -m$(ARCH)
-		$(CC) $(FLAGS_LIB) windlg/windlg.cpp -o windlg.o -m$(ARCH)
-		$(CC) $(FLAGS_LIB) screen/screen.cpp -o screen.o -m$(ARCH)
-		$(CC) $(FLAGS_LIB) lang/lang.cpp -o lang.o -m$(ARCH)
-		$(CC) -shared fswork.o stat_file.o windlg.o screen.o lang.o -o lib/$(OUT_LIB) -m$(ARCH)
+		$(CC) $(FLAGS_LIB) fswork/fswork.cpp -m$(ARCH)
+		$(CC) $(FLAGS_LIB) fswork/stat_file.c -m$(ARCH)
+		$(CC) $(FLAGS_LIB) windlg/windlg.cpp -m$(ARCH)
+		$(CC) $(FLAGS_LIB) screen/screen.cpp -m$(ARCH)
+		$(CC) $(FLAGS_LIB) lang/lang.cpp -m$(ARCH)
+		$(CC) $(FLAGS_LIB) configurator/configurator.cpp -m$(ARCH)
+		$(CC) -shared -o lib/$(OUT_LIB) fswork.o stat_file.o windlg.o screen.o lang.o configurator.o -m$(ARCH)
 
 desktop.o:
 		$(CC) $(FLAGS) ./desktop/desktop.cpp -o desktop.o
