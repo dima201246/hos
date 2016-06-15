@@ -1,0 +1,5 @@
+*.o
+lib
+apps/apps.list
+hos_alpha
+apps/file_man/file_man
