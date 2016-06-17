@@ -6,6 +6,17 @@
 	#include <unistd.h>
 	#include <stdio.h>
 	#include <curses.h>
+	#include "../lang/lang.h"
+	#include "../screen/screen.h"
+
+	/*Styles*/
+	#define WHITE_WIN 0
+	#define RED_WIN 1
+	#define GREEN_WIN 2
+	#define BLUE_WIN 3
+	#define YELLOW_WIN 4
+	#define MAGENTA_WIN 5
+	#define CYAN_WIN 6
 
 	struct DLGSTR {
 		std::string title, // Title
@@ -43,5 +54,7 @@
 	2 - green text
 	3 - blue text
 	4 - yellow text
+	5 - magenta text
+	6 - cyan text
 	*/
 #endif
