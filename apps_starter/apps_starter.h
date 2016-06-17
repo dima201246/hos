@@ -6,6 +6,11 @@
 	#include <stdio.h>
 	#include <unistd.h>
 
+	#include "../lang/lang.h"
+	#include "../configurator/configurator.h"
+	#include "../windlg/windlg.h"
+	#include "../screen/screen.h"
+
 	#define APPS_FILE "./apps/apps.list"
 	#define APPS_DIR "./apps/" // Внимание, всегда должна оканчиваться слешем!!!
 

@@ -1,7 +1,3 @@
-#include "../lang/lang.h"
-#include "../configurator/configurator.h"
-#include "../windlg/windlg.h"
-#include "../screen/screen.h"
 #include "apps_starter.h"
 
 int app_start(int number_of_app, const char* parametrs) {
@@ -20,6 +16,7 @@ int app_start(int number_of_app, const char* parametrs) {
 	} else {
 		waitpid(chpid,&status,WUNTRACED);
 		init_display();
+		init_color();
 	}
 	return 0;
 }
