@@ -22,7 +22,7 @@
 		xmax, ymax,
 		selected; // Initial choice
 		unsigned int xreturn, yreturn, second_border;
-		bool border_menu, avtive_menu, not_view_scrollbar;
+		bool border_menu, active_menu, not_view_scrollbar;
 		void *selected_st;			// Pointer to selected struct, that contein info
 	};
 	
