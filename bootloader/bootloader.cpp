@@ -1,37 +1,25 @@
 /*
 	:DV company (c) 1997-2016
-	!!!DO NOT COPY!!!
-	HOS - NOT OPEN SOURCE
 */
 
-// #include "../lang/lang.h"
+#include <unistd.h>
+#include <curses.h>
+#include <vector>
+#include <sys/stat.h>
+
 #include "../windlg/windlg.h"
 #include "../configurator/configurator.h"
 #include "../desktop/desktop.h"
 #include "../fswork/fswork.h"
-
-#include <unistd.h>
-// #include <stdio.h>
-#include <curses.h>
-#include <vector>
-//#include <errno.h>
-
-#include <sys/stat.h>
-// #include <sys/types.h>
-
+#include "../screen/screen.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
-	initscr();
-	start_color();
-	keypad (stdscr, true);
-	noecho();
-	curs_set(0);
-	erase();
-	
-	timeout(-1);
+	init_display();
+	init_color();
+
 	string test_output;
 	DLGSTR teststr = {}; // Только так!!!
 	teststr.title = "Pre pre pre ... Alpha";
@@ -41,10 +29,10 @@ int main(int argc, char *argv[]) {
 	erase();
 	
 	/*DEBUG*/
-	/*vector <string> items;
+	vector <string> items;
 	teststr.style = 2;
 	teststr.border_menu = true;
-	teststr.selected = 2;
+	teststr.selected = 3;
 	// teststr.not_view_scrollbar = true;
 	teststr.ymax = 4;
 	// teststr.xmax = 6;
@@ -53,8 +41,8 @@ int main(int argc, char *argv[]) {
 	items.insert(items.end(), "Green");
 	items.insert(items.end(), "Blue");
 	items.insert(items.end(), "Yellow");
-	items.insert(items.end(), "Yellow");
-	items.insert(items.end(), "Yellow");
+	items.insert(items.end(), "Magenta");
+	items.insert(items.end(), "Cyan");
 	items.insert(items.end(), "Yellow");
 	items.insert(items.end(), "Yellow123234234");
 
@@ -66,11 +54,13 @@ int main(int argc, char *argv[]) {
 			case KEY_UP: if (teststr.selected != 1) teststr.selected--; break;
 			case KEY_DOWN: if (teststr.selected != teststr.second_border) teststr.selected++; break;
 			case '\n': switch (teststr.selected) {
-						case 1: teststr.style = 0; break;
-						case 2: teststr.style = 1; break;
-						case 3: teststr.style = 2; break;
-						case 4: teststr.style = 3; break;
-						case 5: teststr.style = 4; break;
+						case 1: teststr.style = WHITE_WIN; break;
+						case 2: teststr.style = RED_WIN; break;
+						case 3: teststr.style = GREEN_WIN; break;
+						case 4: teststr.style = BLUE_WIN; break;
+						case 5: teststr.style = YELLOW_WIN; break;
+						case 6: teststr.style = MAGENTA_WIN; break;
+						case 7: teststr.style = CYAN_WIN; break;
 					} break;
 		}
 	}
@@ -78,7 +68,7 @@ int main(int argc, char *argv[]) {
 	teststr.ypos = teststr.yreturn;
 	teststr.style = 4;
 	menu_win(teststr, items);
-	getch();*/
+	getch();
 	/*DEBUG*/
 
 	/*if (!FileExists("hos_configs")) {
