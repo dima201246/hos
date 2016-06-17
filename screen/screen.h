@@ -23,4 +23,10 @@
 	#define TEXT_BLACK_MAGENTA	12
 	#define TEXT_BLACK_CYAN		13
 
+	#define TEXT_YELLOW_BLACK	15
+	#define TEXT_BLUE_BLACK		16
+	#define TEXT_GREEN_BLACK	17
+	#define TEXT_RED_BLACK		18
+	#define TEXT_MAGENTA_BLACK	19
+	#define TEXT_CYAN_BLACK		20
 #endif  
