@@ -30,7 +30,7 @@ void open_menu(vector <string>& app_list) {
 								menu_panel.selected++;
 							break;
 
-			case '\n':		app_start(menu_panel.selected, "");
+			case '\n':		app_start(menu_panel.selected, NULL);
 							return;
 							break;
 		}
