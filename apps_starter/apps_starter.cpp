@@ -18,6 +18,8 @@ void init_signals()
 {
 	signal(SIGINT, &sighandler);
 	signal(SIGTSTP, &sighandler);
+	signal(SIGTTIN, SIG_IGN);
+	signal(SIGTTOU, SIG_IGN);
 }
 
 int app_start(int number_of_app, char** argv) {
@@ -49,7 +51,6 @@ int app_start(int number_of_app, char** argv) {
 	} else {
 		waitpid(chpid, &status,WUNTRACED);
 		tcsetpgrp(STDIN_FILENO, getpid());
-		tcsetpgrp(STDOUT_FILENO, getpid());
 		tcgetattr(STDIN_FILENO, &j.tmode);
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &hos_tmode);
 		init_display();
