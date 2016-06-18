@@ -1,0 +1,15 @@
+name_app = desktop
+
+1_conf_file = test.setfile2
+1_item = Test this shit #/*Название пункта*/
+1_item_comment = Non comment # /*Комментарий пункта*/
+1_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+1_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+2_conf_file = test.setfile3
+2_item = Test this shit2172634876123874618276348971263984761298736489712634897621983764987162389746128976438972134 #/*Название пункта*/
+2_item_comment = Non comment 3roiqwfaopijeropcq3jwoeijfosierhjt98wu349p8tujp98w34hjt985h35ht98h49wh5t98hw45ht98h4w59# /*Комментарий пункта*/
+2_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+2_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+all_items = 2#/*Сколько всего пунктов*/
