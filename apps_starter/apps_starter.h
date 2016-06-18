@@ -6,7 +6,7 @@
 	#include <stdio.h>
 	#include <unistd.h>
 	#include <signal.h>
-
+	
 	#include "../lang/lang.h"
 	#include "../configurator/configurator.h"
 	#include "../windlg/windlg.h"

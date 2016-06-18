@@ -1,6 +1,6 @@
 #include "apps_starter.h"
 
-std::vector<job> apps_vect;
+std::vector<job> apps_vect;			// Определение вектора запущенных программ
 
 void sighandler(int signo)
 {
@@ -28,9 +28,16 @@ int app_start(int number_of_app, char** argv) {
 	int		status;
 	pid_t	chpid	= fork();
 
+	job j = {
+		.name = name_app,
+		.pid = chpid
+	};
+	apps_vect.insert(apps_vect.end(), j);
+
 	if (chpid == 0) {
 		chdir(path_to_dir.c_str());
-		if (execv(name_app.c_str(), argv) == -1) // parent process
+		setpgid(getpid(), getpid());			 	// Создаём группу процессов
+		if (execv(name_app.c_str(), argv) == -1) 	// parent process
 			exit(0);
 	} else {
 		waitpid(chpid, &status,WUNTRACED);
