@@ -88,7 +88,8 @@ int work_desktop(vector <string> app_list, string user_name) {
 								case 0:	open_menu(app_list);
 										break;
 
-								case 1:	break;
+								case 1:	settings(DESKTOP_SETTINGS_FILE);
+										break;
 
 								case 2:	cycle	= false;
 										break;

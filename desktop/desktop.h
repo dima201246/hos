@@ -9,9 +9,11 @@
 	#include "../apps_starter/apps_starter.h"
 	#include "../time/time.h"
 	#include "../screen/screen.h"
+	#include "../settings/settings.h"
 
 	#include "header/menu_apps.h"
 
+	#define DESKTOP_SETTINGS_FILE "./test.setfile"
 
 	int main_desktop(std::string);
 #endif
