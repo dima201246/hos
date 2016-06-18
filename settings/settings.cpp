@@ -104,16 +104,15 @@ int settings(string	path_to_settings_file) {
 					first_write, // С кокого элемента будет выводиться
 					last_write, // До какого, включительно будет выводиться
 					position_write, // С какой строки начинать писать
-					start_cut_selected_name, // Обрезка выделенного пункта
-					end_cut_selected_name, // -//-
-					start_cut_selected_comment, // -//-
-					end_cut_selected_comment, // -//-
+					cut_selected_name, // Обрезка выделенного пункта
+					cut_selected_comment, // -//-
+					wait_selected_name, // Задержка при достижении начала или конца строки
+					wait_selected_comment, // -//-
 					right_border; // С какой позиции писать значение
 
 	bool			cycle,
-					reverse_selected_name,
-					reverse_selected_comment, // Проматывать обратно выбранное значение
-					want_to_moving_selected; // Надо ли вообще проматывать выбранный пункт
+					want_to_moving_selected_name, // Надо ли вообще проматывать выбранный пункт
+					want_to_moving_selected_comment; // Надо ли вообще проматывать выбранный пункт
 
 	string			temp,
 					name_item, // Имя пункта
@@ -123,6 +122,7 @@ int settings(string	path_to_settings_file) {
 					path_to_conf_item, // Путь к конфигурационному файлу для этого пункта
 					selected_name,	// Имя выделенного пункта
 					selected_comment, // Комментарий выделенного пункта
+					selected_type,	// Тип выбранного пункта
 					selected_value;	// Значение выбранного пункта
 
 	conf_str		temp_conf_str;
@@ -194,24 +194,39 @@ int settings(string	path_to_settings_file) {
 		items_list.insert(items_list.end(), item_temp); // Заполнение списка-вектора для вывода на экран
 	}
 
-	first_write		= 0;
-	last_write		= all_items;
-	position_write	= 1;
-	selected		= 1;
-	key_pressed		= KEY_UP;
-	right_border	= (maxX - 2) - maxX / 4;
+	first_write				= 0;
+	last_write				= all_items;
+	position_write			= 1;
+	selected				= 1;
+	key_pressed				= KEY_UP;
+	right_border			= (maxX - 2) - maxX / 4;
+	cut_selected_name		= 0;
+	cut_selected_comment	= 0;
+	wait_selected_name		= 0;
+	wait_selected_comment	= 0;
+
+want_to_moving_selected_name = true;
+want_to_moving_selected_comment = true;
 
 	while (cycle) {
-		timeout(500);
+		timeout(200);
 		position_write	= 2;
 		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN)) { // Вывод невыделенных пунктов
 			for (i	= first_write; i < last_write; i++) {
+				item_temp = items_list[i];
 
 				if (selected == i) { // Пропуск выделенного пункта
-					position_write	+= 3;
+					selected_name			= item_temp.name_item;
+					selected_comment		= item_temp.comment_item;
+					selected_type			= item_temp.type_item;
+					selected_value			= item_temp.value_item;
+					cut_selected_name		= 0;
+					wait_selected_name		= 0;
+					cut_selected_comment	= 0;
+					wait_selected_comment	= 0;
+					position_write			+= 3;
 					continue;
 				}
-				item_temp = items_list[i];
 
 				for (j	= 0; j < maxX - 2; j++, mvprintw(position_write, j, " "), mvprintw(position_write + 1, j, " ")); // Зачистка поля
 
@@ -249,9 +264,77 @@ int settings(string	path_to_settings_file) {
 		/*DRAW SELECTED ELEMENT START*/
 		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN)) { // Вывод невыделенных пунктов
 			attron(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
-			for (j	= 0; j < maxX - 2; j++, mvprintw(2 + selected * 3, j, " "), mvprintw(2 + selected * 3, j, " ")); // Заполнение цветом выделения
+			for (j	= 0; j < maxX - 2; j++, mvprintw(2 + selected * 3, j, " "), mvprintw(3 + selected * 3, j, " ")); // Заполнение цветом выделения
 			attroff(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
+		
+			if (selected_type == "bool") {
+				if (selected_value == "1") {
+					attron(COLOR_PAIR(TEXT_GREEN_WHITE) | A_BOLD);
+					mvprintw(2 + selected * 3, maxX - ((maxX - right_border) / 2), "ON");
+					attroff(COLOR_PAIR(TEXT_GREEN_WHITE) | A_BOLD);
+				} else {
+					attron(COLOR_PAIR(TEXT_RED_WHITE) | A_BOLD);
+					mvprintw(2 + selected * 3, maxX - ((maxX - right_border) / 2), "OFF");
+					attroff(COLOR_PAIR(TEXT_RED_WHITE) | A_BOLD);
+				}
+			}
 		}
+
+		attron(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
+
+		if (want_to_moving_selected_name) {
+			if (wait_selected_name == 0) { // Двигатель имени пункта
+				temp	= selected_name;
+				temp.erase(0, cut_selected_name); // Обрезка начала
+
+				if (cut_selected_name == 0) // Если начато всё сначала остановиться и подождать
+					wait_selected_name	= WAIT_START;
+
+				cut_selected_name++; // Сколько символов нужно обрезать спереди
+
+				if (llength(temp) + 3 > right_border) { // Обрезка конца
+					temp.erase(right_border - 3, llength(temp));
+				} else {
+					wait_selected_name	= WAIT_END; // Если достигло конца, то подождать
+					cut_selected_name	= 0;
+				}
+
+				mvprintw(2 + selected * 3, 2, "%s", temp.c_str()); // Вывести на экран
+			} else {
+				wait_selected_name--; // Счётчик ожидания
+			}
+
+		} else {
+			mvprintw(2 + selected * 3, 2, "%s", selected_name.c_str());
+		}
+
+		if (want_to_moving_selected_comment) {
+			if (wait_selected_comment == 0) { // Двигатель имени пункта
+				temp	= selected_comment;
+				temp.erase(0, cut_selected_comment); // Обрезка начала
+
+				if (cut_selected_comment == 0) // Если начато всё сначала остановиться и подождать
+					wait_selected_comment	= WAIT_START;
+
+				cut_selected_comment++; // Сколько символов нужно обрезать спереди
+
+				if (llength(temp) + 4 > right_border) { // Обрезка конца
+					temp.erase(right_border - 4, llength(temp));
+				} else {
+					wait_selected_comment	= WAIT_END; // Если достигло конца, то подождать
+					cut_selected_comment	= 0;
+				}
+
+				mvprintw(3 + selected * 3, 3, "%s", temp.c_str()); // Вывести на экран
+			} else {
+				wait_selected_comment--; // Счётчик ожидания
+			}
+
+		} else {
+			mvprintw(3 + selected * 3, 3, "%s", selected_comment.c_str());
+		}
+
+		attroff(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
 		/*DRAW SELECTED ELEMENT END*/
 
 		key_pressed	= getch();
