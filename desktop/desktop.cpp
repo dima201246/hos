@@ -72,7 +72,7 @@ int work_desktop(vector <string> app_list, string user_name) {
 			erase();
 		}
 
-		timeout(0);
+		timeout(500);
 		draw_desktop(selected, open_label, maxX, maxY);
 		key_pressed = getch();
 		switch (key_pressed) {
