@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 	init_signals();
 	apps_vect.clear();
 
-	string test_output;
+	/*string test_output;
 	DLGSTR teststr = {}; // Только так!!!
 	teststr.title = "Pre pre pre ... Alpha";
 	teststr.style = 1;
@@ -31,7 +31,6 @@ int main(int argc, char *argv[]) {
 	msg_win(teststr);
 	erase();
 	
-	/*DEBUG*/
 	vector <string> items;
 	teststr.style = 2;
 	teststr.border_menu = true;
@@ -71,7 +70,7 @@ int main(int argc, char *argv[]) {
 	teststr.ypos = teststr.yreturn;
 	teststr.style = 4;
 	menu_win(teststr, items);
-	getch();
+	getch();*/
 	/*DEBUG*/
 
 	/*if (!FileExists("hos_configs")) {
