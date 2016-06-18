@@ -163,9 +163,6 @@ int settings(string	path_to_settings_file) {
 	mvprintw (0, 1, "%s %s", settings_lng.c_str(), set_name.c_str());
 	attroff(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
 
-	/*erase();
-	printw("all_items: %d size: %d\n", all_items, confs_vec.size());
-	printw("temp: %s\n", temp.c_str());*/
 	for (i	= 1; i <= all_items; i++) { // Загрузка всех конфигурационных файлов
 		path_to_conf_item	= conf(str(i) + "_conf_file", setfile_vec); // Путь к файлу конфигураций
 
@@ -194,34 +191,18 @@ int settings(string	path_to_settings_file) {
 			return -1;
 		}
 
-		items_list.insert(items_list.end(), item_temp);
+		items_list.insert(items_list.end(), item_temp); // Заполнение списка-вектора для вывода на экран
 	}
-
-	/*erase();
-	for (i = 0; i < items_list.size(); i++) {
-		item_temp	= items_list[i];
-		printw("%d %s\n", i, item_temp.value_item.c_str());
-	}
-	getch();*/
-
-	/*for (i = 0; i < confs_vec.size(); i++) {
-		temp_conf_str	= confs_vec[i];
-		printw("%d %s\n", i, temp_conf_str.path_to_configuration_file.c_str());
-		temp_vec	= temp_conf_str.point_to_vector;
-		printw("Test: %s\n", temp_vec[0].c_str());
-		
-	}
-	getch();*/
 
 	first_write		= 0;
 	last_write		= all_items;
 	position_write	= 1;
-	selected		= 2;
+	selected		= 1;
 	key_pressed		= KEY_UP;
 	right_border	= (maxX - 2) - maxX / 4;
 
 	while (cycle) {
-		timeout(0);
+		timeout(500);
 		position_write	= 2;
 		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN)) { // Вывод невыделенных пунктов
 			for (i	= first_write; i < last_write; i++) {
@@ -266,6 +247,11 @@ int settings(string	path_to_settings_file) {
 		}
 
 		/*DRAW SELECTED ELEMENT START*/
+		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN)) { // Вывод невыделенных пунктов
+			attron(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
+			for (j	= 0; j < maxX - 2; j++, mvprintw(2 + selected * 3, j, " "), mvprintw(2 + selected * 3, j, " ")); // Заполнение цветом выделения
+			attroff(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
+		}
 		/*DRAW SELECTED ELEMENT END*/
 
 		key_pressed	= getch();
