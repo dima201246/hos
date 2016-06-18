@@ -35,6 +35,8 @@ int app_start(int number_of_app, char** argv) {
 	apps_vect.insert(apps_vect.end(), j);
 
 	if (chpid == 0) {
+		signal(SIGTTIN, SIG_IGN);
+		signal(SIGTTOU, SIG_IGN);
 		chdir(path_to_dir.c_str());
 		setpgid(getpid(), getpid());			 	// Создаём группу процессов
 		if (execv(name_app.c_str(), argv) == -1) 	// parent process
