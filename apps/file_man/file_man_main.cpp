@@ -98,7 +98,7 @@ int properties_open(DLGSTR properties_menu, vector <string> propvec) {
 void init_panel(unsigned int maxX, DLGSTR &panel, string title_path) {
 	panel.title = title_path;
 	if (llength(panel.title) > maxX / 2 - 2) {	// ??TEMP?? Разъясни что здесь творится
-		while (llength(panel.title) + 3 > (maxX / 2 - 2)) // Отвечаю - это обрезка полного пути, он выодится в шапке,
+		while (llength(panel.title) + 3 > (maxX / 2 - 2)) // Отвечаю - это обрезка полного пути, он выводится в шапке,
 			panel.title.erase(0, 1); // если он слишком длинный начало обрезается и вставляется три точки
 		panel.title.insert(0, "...");
 	}
