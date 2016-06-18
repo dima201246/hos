@@ -6,6 +6,7 @@
 	#include <stdio.h>
 	#include <unistd.h>
 	#include <signal.h>
+	#include <termios.h>
 	
 	#include "../lang/lang.h"
 	#include "../configurator/configurator.h"
@@ -19,9 +20,11 @@
 	struct job {				// Структура запущенной программы
 		std::string	name;		// Имя программы
 		pid_t		pid;		// PID программы
+		struct termios tmode;	// Настройки терминала для данной программы
 		bool		running;	// Работает ли процесс или он остановлен
 	};
 
+	extern	struct termios hos_tmode;
 	extern	std::vector<job> apps_vect;
 
 	/* Инициализация обработки сигналов */
