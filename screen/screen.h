@@ -29,4 +29,11 @@
 	#define TEXT_RED_BLACK		18
 	#define TEXT_MAGENTA_BLACK	19
 	#define TEXT_CYAN_BLACK		20
+
+	#define TEXT_YELLOW_WHITE	21
+	#define TEXT_BLUE_WHITE		22
+	#define TEXT_GREEN_WHITE	23
+	#define TEXT_RED_WHITE		24
+	#define TEXT_MAGENTA_WHITE	25
+	#define TEXT_CYAN_WHITE		26
 #endif  
