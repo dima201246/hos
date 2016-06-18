@@ -7,6 +7,7 @@
 #include <vector>
 #include <sys/stat.h>
 
+#include "../apps_starter/apps_starter.h"
 #include "../windlg/windlg.h"
 #include "../configurator/configurator.h"
 #include "../desktop/desktop.h"
@@ -19,6 +20,8 @@ int main(int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
 	init_display();
 	init_color();
+	init_signals();
+	apps_vect.clear();
 
 	string test_output;
 	DLGSTR teststr = {}; // Только так!!!

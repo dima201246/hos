@@ -1,6 +1,25 @@
 #include "apps_starter.h"
 
-int app_start(int number_of_app, const char* parametrs) {
+std::vector<job> apps_vect;
+
+void sighandler(int signo)
+{
+	if (signo == SIGTSTP) {
+
+	}
+
+	if (signo == SIGINT) {
+		
+	}
+}
+
+void init_signals()
+{
+	signal(SIGINT, &sighandler);
+	signal(SIGTSTP, &sighandler);
+}
+
+int app_start(int number_of_app, char** argv) {
 	std::string name_app	= configurator(APPS_FILE, str(number_of_app) + "_app_launcher", "", false);
 	std::string path_to_dir	= configurator(APPS_FILE, str(number_of_app) + "_app_path", "", false);
 	erase();
@@ -11,10 +30,10 @@ int app_start(int number_of_app, const char* parametrs) {
 
 	if (chpid == 0) {
 		chdir(path_to_dir.c_str());
-		if (execl(name_app.c_str(), parametrs, NULL) == -1) // parent process
+		if (execv(name_app.c_str(), argv) == -1) // parent process
 			exit(0);
 	} else {
-		waitpid(chpid,&status,WUNTRACED);
+		waitpid(chpid, &status,WUNTRACED);
 		init_display();
 		init_color();
 	}
