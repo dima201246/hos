@@ -24,8 +24,9 @@ hos_lib:
 		$(CC) $(FLAGS_LIB) windlg/windlg.cpp -m$(ARCH)
 		$(CC) $(FLAGS_LIB) screen/screen.cpp -m$(ARCH)
 		$(CC) $(FLAGS_LIB) lang/lang.cpp -m$(ARCH)
+		$(CC) $(FLAGS_LIB) settings/settings.cpp -m$(ARCH)
 		$(CC) $(FLAGS_LIB) configurator/configurator.cpp -m$(ARCH)
-		$(CC) -shared -o lib/$(OUT_LIB) fswork.o stat_file.o windlg.o screen.o lang.o configurator.o time.o -m$(ARCH)
+		$(CC) -shared -o lib/$(OUT_LIB) fswork.o stat_file.o windlg.o screen.o lang.o configurator.o time.o settings.o -m$(ARCH)
 
 desktop.o:
 		$(CC) $(FLAGS) ./desktop/desktop.cpp -o desktop.o
