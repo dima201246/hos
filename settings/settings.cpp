@@ -13,8 +13,34 @@ struct items_list_str {
 					type_item,
 					path_to_conf,
 					parametr,
-					value_item;
+					value_item,
+					action;
+
+	vector <string>	list_values;
 };
+
+void load_list_values(string	values_line, vector <string>	&list_values) {
+	list_values.clear();
+
+	string	temp_vl;
+
+	temp_vl.clear();
+
+	values_line	+= ",";
+
+	for (unsigned int	vl	= 0; vl < llength(values_line); vl++) {
+		if ((values_line[vl] == ',') && (vl != 0) && (values_line[vl - 1] != '\\') && (!temp_vl.empty())) {
+			list_values.insert(list_values.end(), temp_vl);
+			temp_vl.clear();
+			continue;
+		}
+
+		if ((values_line[vl] == '\\') && (values_line[vl + 1] == ','))
+			continue;
+
+		temp_vl	+= values_line[vl]; 
+	}
+}
 
 void draw_border(string	settings_lng, string	set_name, unsigned int	maxX, unsigned int	maxY) {
 	erase();
@@ -23,7 +49,7 @@ void draw_border(string	settings_lng, string	set_name, unsigned int	maxX, unsign
 
 	for (i	= 0; i < maxX; i++, mvprintw(0, i, "-"), mvprintw(maxY - 1, i, "-")); // Рисование верхней и нижней рамок
 
-	for (i	= 0; i < maxY; i++, mvprintw(i - 1, 0, "|"), mvprintw(i - 1, maxX - 1, "|")); // Рисование левой и правой рамок
+	for (i	= 0; i < maxY - 1; i++, mvprintw(i - 1, 0, "|"), mvprintw(i - 1, maxX - 1, "|")); // Рисование левой и правой рамок
 
 	if (llength(settings_lng) + llength(set_name) > maxX - 3) {
 		set_name.erase(maxX - 6 - llength(settings_lng), llength(set_name));
@@ -50,13 +76,23 @@ bool search_in_struct(string path, vector <conf_str> conf_vec, conf_str &out_str
 	return false;
 }
 
-bool load_item(vector <string> setfile_vec, unsigned int num, string &name_item, string &comment_item, string &type_item, string &parametr_config_item, string &path_to_conf_item) {
-	string temp;
-	attron(COLOR_PAIR(TEXT_BLACK_RED) | A_BOLD);
+bool load_item(	vector <string>	setfile_vec,
+				unsigned int	num,
+				string			&name_item,
+				string			&comment_item,
+				string			&type_item,
+				string			&parametr_config_item,
+				string			&path_to_conf_item,
+				string			&list,
+				string			&action) {
+	string	temp;
+	DLGSTR	failwin	= {};
+	failwin.style	= RED_WIN;
+	failwin.title	= "Error reading settings file";
 
 	if ((temp = conf(str(num) + "_item", setfile_vec)) == "0x1") {
-		mvprintw(0, 0, "Setfile is incorrect! Not found item parametr!");
-		getch();
+		failwin.line	= "Setfile is incorrect! Not found item parametr!";
+		msg_win(failwin);
 		return false;
 	} else {
 		name_item	= temp;
@@ -69,38 +105,52 @@ bool load_item(vector <string> setfile_vec, unsigned int num, string &name_item,
 	}
 
 	if ((temp = conf(str(num) + "_type_input", setfile_vec)) == "0x1") {
-		mvprintw(0, 0, "Setfile is incorrect! Not found type_input parametr!");
-		getch();
+		failwin.line	= "Setfile is incorrect! Not found type_input parametr!";
+		msg_win(failwin);
 		return false;
 	} else {
 		type_item	= temp;
 	}
 
 	if ((temp = conf(str(num) + "_parametr_config", setfile_vec)) == "0x1") {
-		mvprintw(0, 0, "Setfile is incorrect! Not found parametr_config parametr!");
-		getch();
+		failwin.line	= "Setfile is incorrect! Not found parametr_config parametr!";
+		msg_win(failwin);
 		return false;
 	} else {
 		parametr_config_item	= temp;
 	}
 
 	if ((temp = conf(str(num) + "_conf_file", setfile_vec)) == "0x1") {
-		mvprintw(0, 0, "Setfile is incorrect! Not found conf_file parametr!");
-		getch();
+		failwin.line	= "Setfile is incorrect! Not found conf_file parametr!";
+		msg_win(failwin);
 		return false;
 	} else {
 		path_to_conf_item	= temp;
 	}
 
-	attroff(COLOR_PAIR(TEXT_RED_BLACK) | A_BOLD);
+	if ((temp = conf(str(num) + "_action", setfile_vec)) == "0x1") {
+		action.clear();
+	} else {
+		action				= temp;
+	}
+
+	if ((temp = conf(str(num) + "_list", setfile_vec)) == "0x1") {
+		list.clear();
+	} else {
+		list				= temp;
+	}
 
 	return true;
 }
 
 int settings(string	path_to_settings_file) {
+	DLGSTR					failwin	= {};
+	failwin.style			= RED_WIN;
+
 	if (!FileExists(path_to_settings_file)) {
-		printw("Not found!");
-		getch();
+		failwin.title		= "Can't find setfile!";
+		failwin.line		= path_to_settings_file;
+		msg_win(failwin);
 		return -1;
 	}
 
@@ -143,7 +193,9 @@ int settings(string	path_to_settings_file) {
 					selected_name,	// Имя выделенного пункта
 					selected_comment, // Комментарий выделенного пункта
 					selected_type,	// Тип выбранного пункта
-					selected_value;	// Значение выбранного пункта
+					selected_value,	// Значение выбранного пункта
+					action_item, // Действие пункта
+					list_item; // Список значений пункта
 
 	conf_str		temp_conf_str;
 
@@ -161,8 +213,9 @@ int settings(string	path_to_settings_file) {
 	timeout(-1);
 
 	if ((temp = conf("all_items", setfile_vec)) == "0x1") {
-		printw("Setfile is incorrect! Not found all_items parametr!\n");
-		getch();
+		failwin.title 		= "Error reading settings file";
+		failwin.line		= "Setfile is incorrect! Not found all_items parametr!";
+		msg_win(failwin);
 		return -1;
 	} else {
 		all_items	= atoi(temp.c_str());
@@ -172,7 +225,7 @@ int settings(string	path_to_settings_file) {
 
 	draw_border(settings_lng, set_name, maxX, maxY);
 
-	for (i	= 1; i <= all_items; i++) { // Загрузка всех конфигурационных файлов
+	for (i	= 1; i <= all_items; i++) { // Загрузка всех конфигурационных файлов и заполнение вектора, который будет выводиться на экран
 		path_to_conf_item	= conf(str(i) + "_conf_file", setfile_vec); // Путь к файлу конфигураций
 
 		if ((confs_vec.size() == 0) || (!search_in_struct(path_to_conf_item, confs_vec, temp_conf_str))) { // Проверка есть ли уже такой загруженный файл конфигураций
@@ -182,23 +235,29 @@ int settings(string	path_to_settings_file) {
 			confs_vec.insert(confs_vec.end(), temp_conf_str);
 		}
 
-		if (!load_item(setfile_vec, i, name_item, comment_item, type_item, parametr_config_item, path_to_conf_item)) { // Получение значений пункта
+		if (!load_item(setfile_vec, i, name_item, comment_item, type_item, parametr_config_item, path_to_conf_item, list_item, action_item)) { // Получение значений пункта
 			return -1;
 		}
 
-		item_temp.name_item		= name_item;
-		item_temp.comment_item	= comment_item;
-		item_temp.type_item		= type_item;
-		item_temp.path_to_conf	= path_to_conf_item;
-		item_temp.parametr		= parametr_config_item;
+		item_temp.name_item		= name_item; // Заполнение временной переменной
+		item_temp.comment_item	= comment_item; // Комментарий
+		item_temp.type_item		= type_item; // Тип пункта
+		item_temp.path_to_conf	= path_to_conf_item; // Путь к конфигурационному файлу
+		item_temp.parametr		= parametr_config_item; // Параметр в конфигурационном файле
+		item_temp.action		= action_item; // Действие
+
+		if (!list_item.empty()) { // Загрузка списка значений пункта, если он есть
+			load_list_values(list_item, item_temp.list_values);
+		}
+
 		search_in_struct(path_to_conf_item, confs_vec, temp_conf_str);
 		temp_vec				= temp_conf_str.point_to_vector;
 		item_temp.value_item	= conf(parametr_config_item, temp_vec);
 
 		if (item_temp.value_item == "0x1") {
-			erase();
-			printw("Error read value %s in %s", parametr_config_item.c_str(), path_to_conf_item.c_str());
-			getch();
+			failwin.title 		= "Error reading configuration file";
+			failwin.line		= "Error read value " + parametr_config_item + " in " + path_to_conf_item;
+			msg_win(failwin);
 			return -1;
 		}
 
@@ -283,6 +342,14 @@ int settings(string	path_to_settings_file) {
 						mvprintw(position_write, maxX - ((maxX - right_border) / 2), "OFF");
 						attroff(COLOR_PAIR(TEXT_RED_BLACK) | A_BOLD);
 					}
+				}  else {
+					attron(COLOR_PAIR(TEXT_WHITE_BLACK) | A_BOLD);
+					if (llength(item_temp.value_item) > (maxX - right_border - 3)) {
+						item_temp.value_item.erase((maxX - right_border - 6), llength(item_temp.value_item));
+						item_temp.value_item	+= "...";
+					}
+					mvprintw(position_write, right_border + 1, "%s", item_temp.value_item.c_str());
+					attroff(COLOR_PAIR(TEXT_WHITE_BLACK) | A_BOLD);
 				}
 
 				position_write	+= 3;
@@ -305,6 +372,14 @@ int settings(string	path_to_settings_file) {
 					mvprintw(2 + (selected - first_write) * 3, maxX - ((maxX - right_border) / 2), "OFF");
 					attroff(COLOR_PAIR(TEXT_RED_WHITE) | A_BOLD);
 				}
+			} else {
+				attron(COLOR_PAIR(TEXT_BLUE_WHITE) | A_BOLD);
+				if (llength(selected_value) > (maxX - right_border - 3)) {
+					selected_value.erase((maxX - right_border - 6), llength(selected_value));
+					selected_value	+= "...";
+				}
+				mvprintw(2 + (selected - first_write) * 3, right_border + 1, "%s", selected_value.c_str());
+				attroff(COLOR_PAIR(TEXT_BLUE_WHITE) | A_BOLD);
 			}
 		}
 
@@ -390,10 +465,9 @@ int settings(string	path_to_settings_file) {
 							}
 							break;
 
-			case '\n':		if (item_temp.type_item == "bool") {
+			case '\n':		item_temp		= items_list[selected];
+							if (item_temp.type_item == "bool") {
 								DLGSTR	setwin	= {}; // Только так!!!
-
-								item_temp		= items_list[selected];
 
 								setwin.title	= item_temp.name_item;
 								setwin.line		= item_temp.comment_item;
@@ -413,17 +487,62 @@ int settings(string	path_to_settings_file) {
 
 								if ((select == 1) && (item_temp.value_item != "1")) {
 										item_temp.value_item	= "1";
-										configurator(item_temp.path_to_conf, item_temp.parametr, "1", true);
+										configurator(item_temp.path_to_conf, item_temp.parametr, item_temp.value_item, true);
 										items_list[selected]	= item_temp;
 								}
 
 								if ((select == 2) && (item_temp.value_item != "0")) {
 										item_temp.value_item	= "0";
-										configurator(item_temp.path_to_conf, item_temp.parametr, "0", true);
+										configurator(item_temp.path_to_conf, item_temp.parametr, item_temp.value_item, true);
 										items_list[selected]	= item_temp;
 								}
 
 								draw_border(settings_lng, set_name, maxX, maxY);
+							}
+
+							if (item_temp.type_item == "list") {
+								DLGSTR			setwin		= {}; // Только так!!!
+								vector <string>	menu_vec;
+
+								item_temp					= items_list[selected];
+
+								setwin.style				= CYAN_WIN;
+								setwin.title				= item_temp.name_item;
+								setwin.border_menu			= true;
+								setwin.xpos					= maxX - ((maxX - right_border) / 2);
+								setwin.ypos					= 2 + (selected - first_write) * 3;
+								setwin.not_view_scrollbar	= false;
+								setwin.ymax					= maxY / 2;
+								key_pressed					= 0;
+								menu_vec					= item_temp.list_values;
+
+								timeout(-1);
+
+								while ((key_pressed != '\n') && (key_pressed != 27)) {
+									menu_win(setwin, menu_vec);
+									
+									key_pressed		= getch();
+
+									switch (key_pressed) {
+										case KEY_UP:	if (setwin.selected != 0)
+															setwin.selected--;
+														break;
+
+										case KEY_DOWN:	if (setwin.selected != item_temp.list_values.size())
+															setwin.selected++;
+														break;
+
+										case '\n':		if (item_temp.value_item != item_temp.list_values[setwin.selected - 1]) {
+															item_temp.value_item	= item_temp.list_values[setwin.selected - 1];
+															configurator(item_temp.path_to_conf, item_temp.parametr, item_temp.value_item, true);
+															items_list[selected]	= item_temp;
+														}
+														break;
+									}
+								}
+								
+								draw_border(settings_lng, set_name, maxX, maxY);
+								key_pressed			= KEY_UP;
 							}
 							break;
 
