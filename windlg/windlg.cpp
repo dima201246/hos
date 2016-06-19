@@ -460,6 +460,7 @@ int msg_win(DLGSTR dlgcfg) {
 	bool			cycle			= true;
 	
 	string			line_out,
+					free_space, // Очиститель области
 					banka;
 
 	max_line	+= 4; // Границы и пропуск до границ
@@ -475,57 +476,60 @@ int msg_win(DLGSTR dlgcfg) {
 	left_border_x	= maxX / 2 - (max_line / 2);
 
 	dlgcfg.line.clear();
+	free_space.clear();
 
 	line_out	= "|";
 
 	if (dlgcfg.title.length() != 0)
 			title_fix	= 1;
 
+	for (i	= 0; i < max_line; i++) {
+		attron(COLOR_PAIR(dlgcfg.style) | A_BOLD);
+		mvprintw(0, left_border_x + i, "="); // Верхняя граница окна
+		free_space += " ";
+		mvprintw(all_lines + 4 + title_fix, left_border_x + i, "="); // Нижняя граница окна
+		attroff(COLOR_PAIR(dlgcfg.style) | A_BOLD);
+			
+		if ((i <= (max_line - 2)) && (dlgcfg.title.length() != 0)) { // Залитие заголовка цветом 
+			attron(COLOR_PAIR(color_selected) | A_BOLD);
+			mvprintw(1, left_border_x + 1 + i, " ");
+			attroff(COLOR_PAIR(color_selected) | A_BOLD);
+		}
+	}
+
+	for (i	= 0; i < all_lines + 3 + title_fix; i++, mvprintw(i, left_border_x, "%s", free_space.c_str())); // Зачистка области
+
+	if (dlgcfg.title.length() > (max_line - 2)) {
+		dlgcfg.title.erase(max_line - 5, dlgcfg.title.length());
+		dlgcfg.title	+= "...";
+	}
+
+	if (dlgcfg.title.length() != 0) { // Вывод или не вывод заголовка
+		attron(COLOR_PAIR(color_selected) | A_BOLD);
+		mvprintw(1, left_border_x + 1, "%s", dlgcfg.title.c_str());
+		attroff(COLOR_PAIR(color_selected) | A_BOLD);
+	}
+
+	attron(COLOR_PAIR(dlgcfg.style) | A_BOLD);
+	mvprintw(1, left_border_x, "|"); // Левая граница
+	mvprintw(1, right_border_x, "|"); // Правая граница
+
+	for (i = 0; i < all_lines; i++) { // Вывод текста и границ
+		mvprintw(i + 2 + title_fix, maxX / 2 - (array[i].length() / 2), "%s", array[i].c_str()); // Вывод текста
+	}
+
+	for (int k = 0; k <= 3 + title_fix; k++) { // Вывод оставшихся границ окна
+		mvprintw(i + k, left_border_x, "|");
+		mvprintw(i + k, right_border_x, "|");
+	}
+
+	attroff(COLOR_PAIR(dlgcfg.style) | A_BOLD);
+
 	while (cycle) {
-		erase();
-		
 		#if DEBUG == 1
 		mvprintw(0, 0, "cn: %i", cn);
 		mvprintw(all_lines + 7, 0, "max_line: %i\nMaxX: %i\nMaxY: %i", max_line, maxX, maxY);
 		#endif
-		
-		for (i	= 0; i < max_line; i++) {
-			attron(COLOR_PAIR(dlgcfg.style) | A_BOLD);
-			mvprintw(0, left_border_x + i, "="); // Верхняя граница окна
-			mvprintw(all_lines + 4	 + title_fix, left_border_x + i, "="); // Нижняя граница окна
-			attroff(COLOR_PAIR(dlgcfg.style) | A_BOLD);
-			
-			if ((i <= (max_line - 2)) && (dlgcfg.title.length() != 0)) { // Залитие заголовка цветом 
-				attron(COLOR_PAIR(color_selected) | A_BOLD);
-				mvprintw(1, left_border_x + 1 + i, " ");
-				attroff(COLOR_PAIR(color_selected) | A_BOLD);
-			}
-		}
-
-		if (dlgcfg.title.length() > (max_line - 2)) {
-			dlgcfg.title.erase(max_line - 5, dlgcfg.title.length());
-			dlgcfg.title	+= "...";
-		}
-
-		if (dlgcfg.title.length() != 0) { // Вывод или не вывод заголовка
-			attron(COLOR_PAIR(color_selected) | A_BOLD);
-			mvprintw(1, left_border_x + 1, "%s", dlgcfg.title.c_str());
-			attroff(COLOR_PAIR(color_selected) | A_BOLD);
-		}
-
-		attron(COLOR_PAIR(dlgcfg.style) | A_BOLD);
-		mvprintw(1, left_border_x, "|"); // Левая граница
-		mvprintw(1, right_border_x, "|"); // Правая граница
-
-		for (i = 0; i < all_lines; i++) // Вывод текста и границ
-			mvprintw(i + 2 + title_fix, maxX / 2 - (array[i].length() / 2), "%s", array[i].c_str()); // Вывод текста
-
-		for (int k = 0; k <= 3 + title_fix; k++) { // Вывод оставшихся границ окна
-			mvprintw(i + k, left_border_x, "|");
-			mvprintw(i + k, right_border_x, "|");
-		}
-
-		attroff(COLOR_PAIR(dlgcfg.style) | A_BOLD);
 
 		if (active_input == 1)
 			attron(COLOR_PAIR(color_selected) | A_BOLD);
