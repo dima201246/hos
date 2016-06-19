@@ -284,14 +284,17 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 	}
 
 	if (fix_title) { // Использование int как bool, 0 == false, >0 == true
+
 		if (local_cfg.border_menu) {
-			mvprintw(dlgcfg.ypos + 1, local_cfg.xpos + max_x, "|"); // Вывод правой границы
-			mvprintw(dlgcfg.ypos + 1, local_cfg.xpos - 1, "|"); // Вывод левой границы
+			mvprintw(local_cfg.ypos - 1, local_cfg.xpos + max_x, "|"); // Вывод правой границы
+			mvprintw(local_cfg.ypos - 1, local_cfg.xpos - 1, "|"); // Вывод левой границы
 		}
 
 		attron(COLOR_PAIR(color_selected) | A_BOLD);
+
 		for (unsigned int spaces = 0; spaces < max_x; spaces++, mvprintw(dlgcfg.ypos + local_cfg.border_menu, local_cfg.xpos + max_x - spaces + local_cfg.border_menu - 1, " ")); // Заливка заголовка
-		mvprintw(dlgcfg.ypos + local_cfg.border_menu, local_cfg.xpos, "%s", local_cfg.title.c_str()); // Вывод заголовка
+
+		mvprintw(local_cfg.ypos - 1, local_cfg.xpos, "%s", local_cfg.title.c_str()); // Вывод заголовка
 		attroff(COLOR_PAIR(color_selected) | A_BOLD);
 	}
 
@@ -497,7 +500,8 @@ int msg_win(DLGSTR dlgcfg) {
 		}
 	}
 
-	for (i	= 0; i < all_lines + 3 + title_fix; i++, mvprintw(i, left_border_x, "%s", free_space.c_str())); // Зачистка области
+
+	for (i	= (dlgcfg.title.length() == 0) ? 0 : 1; i < all_lines + 3 + title_fix; i++, mvprintw(i, left_border_x, "%s", free_space.c_str())); // Зачистка области
 
 	if (dlgcfg.title.length() > (max_line - 2)) {
 		dlgcfg.title.erase(max_line - 5, dlgcfg.title.length());
