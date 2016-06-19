@@ -1,15 +1,75 @@
 name_app = desktop
 
 1_conf_file = test.setfile2
-1_item = Test this shit #/*Название пункта*/
+1_item = 1Test this shit #/*Название пункта*/
 1_item_comment = Non comment # /*Комментарий пункта*/
 1_parametr_config = all_items #/*Пункт в конфигурационном файле*/
 1_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
 
 2_conf_file = test.setfile3
-2_item = Test this shit2172634876123874618276348971263984761298736489712634897621983764987162389746128976438972134 #/*Название пункта*/
+2_item = 2Test this shit2172634876123874618276348971263984761298736489712634897621983764987162389746128976438972134 #/*Название пункта*/
 2_item_comment = Non comment 3roiqwfaopijeropcq3jwoeijfosierhjt98wu349p8tujp98w34hjt985h35ht98h49wh5t98hw45ht98h4w59# /*Комментарий пункта*/
 2_parametr_config = all_items #/*Пункт в конфигурационном файле*/
 2_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
 
-all_items = 2#/*Сколько всего пунктов*/
+3_conf_file = test.setfile2
+3_item = 3Test this shit #/*Название пункта*/
+3_item_comment = Non comment # /*Комментарий пункта*/
+3_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+3_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+4_conf_file = test.setfile3
+4_item = 4Test this shit2172634876123874618276348971263984761298736489712634897621983764987162389746128976438972134 #/*Название пункта*/
+4_item_comment = Non comment 3roiqwfaopijeropcq3jwoeijfosierhjt98wu349p8tujp98w34hjt985h35ht98h49wh5t98hw45ht98h4w59# /*Комментарий пункта*/
+4_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+4_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+5_conf_file = test.setfile2
+5_item = 5Test this shit #/*Название пункта*/
+5_item_comment = Non comment # /*Комментарий пункта*/
+5_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+5_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+6_conf_file = test.setfile3
+6_item = 6Test this shit2172634876123874618276348971263984761298736489712634897621983764987162389746128976438972134 #/*Название пункта*/
+6_item_comment = Non comment 3roiqwfaopijeropcq3jwoeijfosierhjt98wu349p8tujp98w34hjt985h35ht98h49wh5t98hw45ht98h4w59# /*Комментарий пункта*/
+6_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+6_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+7_conf_file = test.setfile2
+7_item = 7Test this shit #/*Название пункта*/
+7_item_comment = Non comment # /*Комментарий пункта*/
+7_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+7_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+8_conf_file = test.setfile3
+8_item = 8Test this shit2172634876123874618276348971263984761298736489712634897621983764987162389746128976438972134 #/*Название пункта*/
+8_item_comment = Non comment 3roiqwfaopijeropcq3jwoeijfosierhjt98wu349p8tujp98w34hjt985h35ht98h49wh5t98hw45ht98h4w59# /*Комментарий пункта*/
+8_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+8_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+9_conf_file = test.setfile2
+9_item = 9Test this shit #/*Название пункта*/
+9_item_comment = Non comment # /*Комментарий пункта*/
+9_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+9_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+10_conf_file = test.setfile3
+10_item = 10Test this shit2172634876123874618276348971263984761298736489712634897621983764987162389746128976438972134 #/*Название пункта*/
+10_item_comment = Non comment 3roiqwfaopijeropcq3jwoeijfosierhjt98wu349p8tujp98w34hjt985h35ht98h49wh5t98hw45ht98h4w59# /*Комментарий пункта*/
+10_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+10_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+11_conf_file = test.setfile2
+11_item = 11Test this shit #/*Название пункта*/
+11_item_comment = Non comment # /*Комментарий пункта*/
+11_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+11_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+12_conf_file = test.setfile3
+12_item = 12Test this shit2172634876123874618276348971263984761298736489712634897621983764987162389746128976438972134 #/*Название пункта*/
+12_item_comment = Non comment 3roiqwfaopijeropcq3jwoeijfosierhjt98wu349p8tujp98w34hjt985h35ht98h49wh5t98hw45ht98h4w59# /*Комментарий пункта*/
+12_parametr_config = all_items #/*Пункт в конфигурационном файле*/
+12_type_input = bool #/*Тип ввода, bool - 1 или 0, text - текст, digit - целое число, double - число с плавающей точкой*/
+
+all_items = 12#/*Сколько всего пунктов*/

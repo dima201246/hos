@@ -7,8 +7,8 @@
 	#include "../fswork/fswork.h"
 	#include "../windlg/windlg.h"
 
-	#define WAIT_START 15
-	#define WAIT_END 10
+	#define WAIT_START 10
+	#define WAIT_END 5
 
 	int settings(std::string/*путь к файлу настроек*/);
 

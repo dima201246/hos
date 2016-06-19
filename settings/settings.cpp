@@ -11,8 +11,29 @@ struct items_list_str {
 	string			name_item,
 					comment_item,
 					type_item,
+					path_to_conf,
+					parametr,
 					value_item;
 };
+
+void draw_border(string	settings_lng, string	set_name, unsigned int	maxX, unsigned int	maxY) {
+	erase();
+
+	unsigned int	i	= 0;
+
+	for (i	= 0; i < maxX; i++, mvprintw(0, i, "-"), mvprintw(maxY - 1, i, "-")); // Рисование верхней и нижней рамок
+
+	for (i	= 0; i < maxY; i++, mvprintw(i - 1, 0, "|"), mvprintw(i - 1, maxX - 1, "|")); // Рисование левой и правой рамок
+
+	if (llength(settings_lng) + llength(set_name) > maxX - 3) {
+		set_name.erase(maxX - 6 - llength(settings_lng), llength(set_name));
+		set_name	+= "...";
+	}
+
+	attron(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
+	mvprintw (0, 1, "%s %s", settings_lng.c_str(), set_name.c_str());
+	attroff(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
+}
 
 bool search_in_struct(string path, vector <conf_str> conf_vec, conf_str &out_struct) { // Поиск в векторе нужного конфигурационного файла
 	unsigned int	v;
@@ -82,7 +103,6 @@ int settings(string	path_to_settings_file) {
 		getch();
 		return -1;
 	}
-	erase();
 
 	vector <string>			setfile_vec, // Вектор для основного файла настроек
 							temp_vec;
@@ -150,18 +170,7 @@ int settings(string	path_to_settings_file) {
 
 	cycle		= true;
 
-	for (i	= 0; i < maxX; i++, mvprintw(0, i, "-"), mvprintw(maxY - 1, i, "-")); // Рисование верхней и нижней рамок
-
-	for (i	= 0; i < maxY; i++, mvprintw(i - 1, 0, "|"), mvprintw(i - 1, maxX - 1, "|")); // Рисование левой и правой рамок
-
-	if (llength(settings_lng) + llength(set_name) > maxX - 3) {
-		set_name.erase(maxX - 6 - llength(settings_lng), llength(set_name));
-		set_name	+= "...";
-	}
-
-	attron(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
-	mvprintw (0, 1, "%s %s", settings_lng.c_str(), set_name.c_str());
-	attroff(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
+	draw_border(settings_lng, set_name, maxX, maxY);
 
 	for (i	= 1; i <= all_items; i++) { // Загрузка всех конфигурационных файлов
 		path_to_conf_item	= conf(str(i) + "_conf_file", setfile_vec); // Путь к файлу конфигураций
@@ -180,6 +189,8 @@ int settings(string	path_to_settings_file) {
 		item_temp.name_item		= name_item;
 		item_temp.comment_item	= comment_item;
 		item_temp.type_item		= type_item;
+		item_temp.path_to_conf	= path_to_conf_item;
+		item_temp.parametr		= parametr_config_item;
 		search_in_struct(path_to_conf_item, confs_vec, temp_conf_str);
 		temp_vec				= temp_conf_str.point_to_vector;
 		item_temp.value_item	= conf(parametr_config_item, temp_vec);
@@ -194,24 +205,28 @@ int settings(string	path_to_settings_file) {
 		items_list.insert(items_list.end(), item_temp); // Заполнение списка-вектора для вывода на экран
 	}
 
-	first_write				= 0;
-	last_write				= all_items;
-	position_write			= 1;
-	selected				= 1;
-	key_pressed				= KEY_UP;
-	right_border			= (maxX - 2) - maxX / 4;
-	cut_selected_name		= 0;
-	cut_selected_comment	= 0;
-	wait_selected_name		= 0;
-	wait_selected_comment	= 0;
+	first_write						= 0;
+	position_write					= 0;
+	selected						= 0;
+	key_pressed						= KEY_UP;
+	right_border					= (maxX - 2) - maxX / 4;
+	cut_selected_name				= 0;
+	cut_selected_comment			= 0;
+	wait_selected_name				= 0;
+	wait_selected_comment			= 0;
+	want_to_moving_selected_name	= false;
+	want_to_moving_selected_comment	= false;
 
-want_to_moving_selected_name = true;
-want_to_moving_selected_comment = true;
+	if ((all_items * 3 + 2) > maxY) {
+		last_write					= (maxY - 2) / 3;
+	} else {
+		last_write					= all_items;
+	}
 
 	while (cycle) {
 		timeout(200);
 		position_write	= 2;
-		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN)) { // Вывод невыделенных пунктов
+		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN) || (key_pressed == '\n')) { // Вывод невыделенных пунктов
 			for (i	= first_write; i < last_write; i++) {
 				item_temp = items_list[i];
 
@@ -224,6 +239,19 @@ want_to_moving_selected_comment = true;
 					wait_selected_name		= 0;
 					cut_selected_comment	= 0;
 					wait_selected_comment	= 0;
+
+					if ((llength(selected_name) + 3) > right_border) {
+						want_to_moving_selected_name	= true;
+					} else {
+						want_to_moving_selected_name	= false;
+					}
+
+					if ((llength(selected_comment) + 4) > right_border) {
+						want_to_moving_selected_comment	= true;
+					} else {
+						want_to_moving_selected_comment	= false;
+					}
+
 					position_write			+= 3;
 					continue;
 				}
@@ -262,19 +290,19 @@ want_to_moving_selected_comment = true;
 		}
 
 		/*DRAW SELECTED ELEMENT START*/
-		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN)) { // Вывод невыделенных пунктов
+		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN) || (key_pressed == '\n')) { // Вывод невыделенных пунктов
 			attron(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
-			for (j	= 0; j < maxX - 2; j++, mvprintw(2 + selected * 3, j, " "), mvprintw(3 + selected * 3, j, " ")); // Заполнение цветом выделения
+			for (j	= 0; j < maxX - 2; j++, mvprintw(2 + (selected - first_write) * 3, j, " "), mvprintw(3 + (selected - first_write) * 3, j, " ")); // Заполнение цветом выделения
 			attroff(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
 		
 			if (selected_type == "bool") {
 				if (selected_value == "1") {
 					attron(COLOR_PAIR(TEXT_GREEN_WHITE) | A_BOLD);
-					mvprintw(2 + selected * 3, maxX - ((maxX - right_border) / 2), "ON");
+					mvprintw(2 + (selected - first_write) * 3, maxX - ((maxX - right_border) / 2), "ON");
 					attroff(COLOR_PAIR(TEXT_GREEN_WHITE) | A_BOLD);
 				} else {
 					attron(COLOR_PAIR(TEXT_RED_WHITE) | A_BOLD);
-					mvprintw(2 + selected * 3, maxX - ((maxX - right_border) / 2), "OFF");
+					mvprintw(2 + (selected - first_write) * 3, maxX - ((maxX - right_border) / 2), "OFF");
 					attroff(COLOR_PAIR(TEXT_RED_WHITE) | A_BOLD);
 				}
 			}
@@ -299,13 +327,13 @@ want_to_moving_selected_comment = true;
 					cut_selected_name	= 0;
 				}
 
-				mvprintw(2 + selected * 3, 2, "%s", temp.c_str()); // Вывести на экран
+				mvprintw(2 + (selected - first_write) * 3, 2, "%s", temp.c_str()); // Вывести на экран
 			} else {
 				wait_selected_name--; // Счётчик ожидания
 			}
 
 		} else {
-			mvprintw(2 + selected * 3, 2, "%s", selected_name.c_str());
+			mvprintw(2 + (selected - first_write) * 3, 2, "%s", selected_name.c_str());
 		}
 
 		if (want_to_moving_selected_comment) {
@@ -325,13 +353,13 @@ want_to_moving_selected_comment = true;
 					cut_selected_comment	= 0;
 				}
 
-				mvprintw(3 + selected * 3, 3, "%s", temp.c_str()); // Вывести на экран
+				mvprintw(3 + (selected - first_write) * 3, 3, "%s", temp.c_str()); // Вывести на экран
 			} else {
 				wait_selected_comment--; // Счётчик ожидания
 			}
 
 		} else {
-			mvprintw(3 + selected * 3, 3, "%s", selected_comment.c_str());
+			mvprintw(3 + (selected - first_write) * 3, 3, "%s", selected_comment.c_str());
 		}
 
 		attroff(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
@@ -340,8 +368,67 @@ want_to_moving_selected_comment = true;
 		key_pressed	= getch();
 
 		switch (key_pressed) {
-			case 27:	cycle = false;
-						break;
+			case KEY_UP:	if (selected != 0) {
+
+								if (selected == first_write) {
+									first_write--; 
+									last_write--; 
+								}
+
+								selected--;
+							}
+							break;
+
+			case KEY_DOWN:	if (selected != all_items - 1) {
+
+								if (selected == last_write - 1) {
+									first_write++; 
+									last_write++; 
+								}
+
+								selected++;
+							}
+							break;
+
+			case '\n':		if (item_temp.type_item == "bool") {
+								DLGSTR	setwin	= {}; // Только так!!!
+
+								item_temp		= items_list[selected];
+
+								setwin.title	= item_temp.name_item;
+								setwin.line		= item_temp.comment_item;
+								setwin.style	= CYAN_WIN;
+								setwin.keys		= 3;
+								setwin.f_button	= "ON";
+								setwin.s_button	= "OFF";
+								setwin.t_button	= "Cancel";
+
+								if (item_temp.value_item == "1") {
+									setwin.selected	= 2;
+								} else {
+									setwin.selected	= 1;
+								}
+
+								int	select	= msg_win(setwin);
+
+								if ((select == 1) && (item_temp.value_item != "1")) {
+										item_temp.value_item	= "1";
+										configurator(item_temp.path_to_conf, item_temp.parametr, "1", true);
+										items_list[selected]	= item_temp;
+								}
+
+								if ((select == 2) && (item_temp.value_item != "0")) {
+										item_temp.value_item	= "0";
+										configurator(item_temp.path_to_conf, item_temp.parametr, "0", true);
+										items_list[selected]	= item_temp;
+								}
+
+								draw_border(settings_lng, set_name, maxX, maxY);
+							}
+							break;
+
+			case 27:		cycle = false;
+							break;
 		}
 	}
 
