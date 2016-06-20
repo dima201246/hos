@@ -1,6 +1,6 @@
 CC			= g++
 ARCH		= 64
-FLAGS_LIB	= -O2 -c -fPIC -Wall -g
+FLAGS_LIB	= -c -fPIC -Wall -g
 FLAGS 		= -c -Wall -g
 OutPut		= hos_alpha
 OUT_LIB		= libhos_x$(ARCH).so

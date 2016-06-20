@@ -88,7 +88,7 @@ bool load_item(	vector <string>	setfile_vec,
 	string	temp;
 	DLGSTR	failwin	= {};
 	failwin.style	= RED_WIN;
-	failwin.title	= "Error reading settings file";
+	failwin.title	= "Error reading settings file on " + str(num) + " item";
 
 	if ((temp = conf(str(num) + "_item", setfile_vec)) == "0x1") {
 		failwin.line	= "Setfile is incorrect! Not found item parametr!";
@@ -470,7 +470,13 @@ int settings(string	path_to_settings_file) {
 								DLGSTR	setwin	= {}; // Только так!!!
 
 								setwin.title	= item_temp.name_item;
-								setwin.line		= item_temp.comment_item;
+
+								if (item_temp.comment_item.empty()) {
+									setwin.line		= item_temp.name_item;
+								} else {
+									setwin.line		= item_temp.comment_item;
+								}
+
 								setwin.style	= CYAN_WIN;
 								setwin.keys		= 3;
 								setwin.f_button	= "ON";

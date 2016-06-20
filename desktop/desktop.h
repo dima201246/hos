@@ -13,7 +13,7 @@
 
 	#include "header/menu_apps.h"
 
-	#define DESKTOP_SETTINGS_FILE "./test.setfile"
+	#define DESKTOP_SETTINGS_FILE "configs/system.setfile"
 
 	int main_desktop(std::string);
 #endif
