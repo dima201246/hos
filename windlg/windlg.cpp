@@ -133,7 +133,7 @@ int search_max_vectro(vector<string> items, string title) {
 }
 
 void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
-	DLGSTR local_cfg	= dlgcfg;
+	DLGSTR local_cfg		= dlgcfg;
 
 	if (dlgcfg.selected == 0)
 		dlgcfg.selected = 1;
@@ -142,14 +142,14 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 					max_y	= items.size(), // Получение длины списка
 					min_y	= 0,
 					maxX,
-					maxY;
+					maxY,
+					pointer_position; // Позиция вывода указателя прогресса
 
-	int		fix_border	= 0,
-			fix_title	= 0,
+	int		fix_border		= 0,
+			fix_title		= 0,
 			color_selected; // Цвет выделения
 
-	bool	vert_scrollbar	= false/*Выводить ли с боку прогрессбар прокрутки*/,
-			past_pointer = false;/*Чтобы указатели прогресса не уходили вниз*/
+	bool	vert_scrollbar	= false; // Выводить ли с боку прогрессбар прокрутки
 
 	getmaxyx(stdscr, maxY, maxX);
 
@@ -237,6 +237,7 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 
 		default:			local_cfg.style = TEXT_WHITE_BLACK;
 							color_selected	= TEXT_BLACK_WHITE;
+							color_selected	= TEXT_BLACK_WHITE;
 							break;
 	}
 
@@ -254,25 +255,37 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 
 		for (unsigned int i = 0; i < max_y; i++) {
 			mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos + max_x, "|"); // Вывод правой границы
-			
-			if ((vert_scrollbar) && (!past_pointer) && ((100 / max_y * (i + 1)) >= (local_cfg.selected * 100 / items.size()))) { // Очень крутая формула вывода прогресса спуска в списке
-				past_pointer = true; // Чтобы указатели прогресса не уходили вниз
-				mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos - 1, "]"); // Вывод Указателя
-			} else {
-				mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos - 1, "|"); // Вывод левой границы
-			}
+			mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos - 1, "|"); // Вывод левой границы
 		}
+
+		if (max_y == items.size()) { // Если нет смысла что-либо считать
+			pointer_position = (local_cfg.selected - 1) + local_cfg.ypos;
+		} else {
+			if (items.size() & 1) // Проверка на чётность количество пунктов
+				pointer_position = (((local_cfg.selected - 1) * max_y) / items.size()) + local_cfg.ypos;
+			else
+				pointer_position = ((local_cfg.selected * max_y) / items.size()) + local_cfg.ypos;
+		}
+
+		mvprintw(pointer_position, local_cfg.xpos - 1, "]"); // Вывод Указателя
 	}
 
 	if ((vert_scrollbar) && (!local_cfg.border_menu)) { // Вывод границы слева, если нужна прокрутка
 		for (unsigned int i = 0; i < max_y; i++) {
-			if ((!past_pointer) && ((100 /*Из-за 100 тут баг, но мы о нём не знаем*/ / max_y * (i + 1)) >= (local_cfg.selected * 100 / items.size()))) { // Очень крутая формула вывода прогресса спуска в списке
-				past_pointer = true; // Чтобы указатели прогресса не уходили вниз
-				mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos, "]"); // Вывод Указателя
-			} else {
 				mvprintw(local_cfg.ypos + i  + fix_title, local_cfg.xpos, "|"); // Вывод левой границы
-			}
 		}
+
+		if (max_y == items.size()) { // Если нет смысла что-либо считать
+			pointer_position = (local_cfg.selected - 1) + local_cfg.ypos;
+		} else {
+			if (items.size() & 1) // Проверка на чётность количество пунктов
+				pointer_position = (((local_cfg.selected - 1) * max_y) / items.size()) + local_cfg.ypos;
+			else
+				pointer_position = ((local_cfg.selected * max_y) / items.size()) + local_cfg.ypos;
+		}
+
+		mvprintw(pointer_position, local_cfg.xpos - 1, "]"); // Вывод Указателя
+
 		local_cfg.xpos++; // Смещение текста
 	}
 
@@ -292,7 +305,7 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 
 		attron(COLOR_PAIR(color_selected) | A_BOLD);
 
-		for (unsigned int spaces = 0; spaces < max_x; spaces++, mvprintw(dlgcfg.ypos + local_cfg.border_menu, local_cfg.xpos + max_x - spaces + local_cfg.border_menu - 1, " ")); // Заливка заголовка
+		for (unsigned int spaces = 0; spaces < max_x; spaces++, mvprintw(local_cfg.ypos + local_cfg.border_menu, local_cfg.xpos + max_x - spaces + local_cfg.border_menu - 1, " ")); // Заливка заголовка
 
 		mvprintw(local_cfg.ypos - 1, local_cfg.xpos, "%s", local_cfg.title.c_str()); // Вывод заголовка
 		attroff(COLOR_PAIR(color_selected) | A_BOLD);
