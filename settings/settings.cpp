@@ -507,12 +507,11 @@ int settings(string	path_to_settings_file) {
 								item_temp					= items_list[selected];
 
 								setwin.style				= CYAN_WIN;
-								setwin.title				= item_temp.name_item;
 								setwin.border_menu			= true;
 								setwin.xpos					= maxX - ((maxX - right_border) / 2);
 								setwin.ypos					= 2 + (selected - first_write) * 3;
 								setwin.not_view_scrollbar	= false;
-								setwin.ymax					= maxY / 2;
+								setwin.ymax					= maxY - (4 + (selected - first_write) * 3);
 								key_pressed					= 0;
 								menu_vec					= item_temp.list_values;
 
