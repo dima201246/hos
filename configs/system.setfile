@@ -1,0 +1,26 @@
+name_app = system
+
+1_item = Warning on start
+1_item_comment = Warning about alpha version on start
+1_conf_file = configs/system.conf
+1_parametr_config = alpha_warning_on_start
+1_type_input = bool
+
+2_item = Show clock on desktop
+2_conf_file = configs/system.conf
+2_parametr_config = clock_on_desktop
+2_type_input = bool
+
+3_item = Indexing apps on start
+3_item_comment = While not work
+3_conf_file = configs/system.conf
+3_parametr_config = start_boot_indexing
+3_type_input = bool
+
+4_item = Show animation on settings
+4_item_comment = Scroll long lines
+4_conf_file = configs/system.conf
+4_parametr_config = scroll_long_lines_in_settings
+4_type_input = bool
+
+all_items  = 4
