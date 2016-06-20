@@ -23,4 +23,10 @@ name_app = system
 4_parametr_config = scroll_long_lines_in_settings
 4_type_input = bool
 
-all_items  = 4
+5_item = System color
+5_conf_file = configs/system.conf
+5_parametr_config = system_color
+5_type_input = list
+5_list = white,blue,cyan,red,yellow,magenta,green
+
+all_items  = 5

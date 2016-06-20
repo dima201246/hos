@@ -516,8 +516,11 @@ int settings(string	path_to_settings_file) {
 								setwin.border_menu			= true;
 								setwin.xpos					= maxX - ((maxX - right_border) / 2);
 								setwin.ypos					= 2 + (selected - first_write) * 3;
-								setwin.not_view_scrollbar	= false;
-								setwin.ymax					= maxY - (4 + (selected - first_write) * 3);
+								if (item_temp.list_values.size() + 2 > maxY) {
+									setwin.ymax					= maxY - (4 + (selected - first_write) * 3);
+								} else {
+									setwin.ymax					= 0;
+								}
 								key_pressed					= 0;
 								menu_vec					= item_temp.list_values;
 
@@ -550,6 +553,9 @@ int settings(string	path_to_settings_file) {
 								key_pressed			= KEY_UP;
 							}
 							break;
+
+			case KEY_BACKSPACE:	cycle = false;
+								break;
 
 			case 27:		cycle = false;
 							break;

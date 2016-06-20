@@ -36,4 +36,7 @@
 	#define TEXT_RED_WHITE		24
 	#define TEXT_MAGENTA_WHITE	25
 	#define TEXT_CYAN_WHITE		26
+
+	/*Keys*/
+	#define KEY_BACKSPACE		127
 #endif  
