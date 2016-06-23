@@ -258,15 +258,7 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 			mvprintw(local_cfg.ypos + i + fix_title, local_cfg.xpos - 1, "|"); // Вывод левой границы
 		}
 
-		if (max_y == items.size()) { // Если нет смысла что-либо считать
-			pointer_position = (local_cfg.selected - 1) + local_cfg.ypos;
-		} else {
-			if (items.size() & 1) // Проверка на чётность количество пунктов
-				pointer_position = (((local_cfg.selected - 1) * max_y) / items.size()) + local_cfg.ypos;
-			else
-				pointer_position = ((local_cfg.selected * max_y) / items.size()) + local_cfg.ypos;
-		}
-
+		pointer_position = (((local_cfg.selected - 1) * max_y) / items.size()) + local_cfg.ypos + fix_title;
 		mvprintw(pointer_position, local_cfg.xpos - 1, "]"); // Вывод Указателя
 	}
 

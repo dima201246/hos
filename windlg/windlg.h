@@ -34,7 +34,6 @@
 		selected; // Initial choice
 		unsigned int xreturn, yreturn, second_border;
 		bool border_menu, active_menu, not_view_scrollbar;
-		void *selected_st;			// Pointer to selected struct, that contein info
 	};
 	
 	int dlg_win(DLGSTR, std::string&);
