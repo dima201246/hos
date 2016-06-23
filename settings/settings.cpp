@@ -552,6 +552,50 @@ int settings(string	path_to_settings_file) {
 								draw_border(settings_lng, set_name, maxX, maxY);
 								key_pressed			= KEY_UP;
 							}
+
+							if (item_temp.type_item == "text") {
+								DLGSTR	setwin	= {}; // Только так!!!
+
+								setwin.title	= item_temp.name_item;
+
+								if (item_temp.comment_item.empty()) {
+									setwin.line		= item_temp.name_item;
+								} else {
+									setwin.line		= item_temp.comment_item;
+								}
+
+								setwin.style	= CYAN_WIN;
+								setwin.keys		= 2;
+								setwin.f_button	= "OK";
+								setwin.s_button	= "Cancel";
+
+								string	us_input;
+
+								int		selected_dlg;
+
+								bool	cant_be_empty	= false;
+
+								do {
+									if (cant_be_empty) {
+										DLGSTR	failwin	= {}; // Только так!!!
+										failwin.style	= RED_WIN;
+										failwin.title	= "Error!";
+										failwin.line	= "This field can not be empty!";
+										msg_win(failwin);
+									}
+
+									selected_dlg	= dlg_win(setwin, us_input);
+									cant_be_empty	= true;
+								} while ((selected_dlg == 1) && (us_input.empty()));
+
+								if ((selected_dlg == 1) && (item_temp.value_item != us_input)) {
+										item_temp.value_item	= us_input;
+										configurator(item_temp.path_to_conf, item_temp.parametr, item_temp.value_item, true);
+										items_list[selected]	= item_temp;
+								}
+
+								draw_border(settings_lng, set_name, maxX, maxY);
+							}
 							break;
 
 			case KEY_BACKSPACE:	cycle = false;

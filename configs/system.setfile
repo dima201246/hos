@@ -29,9 +29,10 @@ name_app = system
 5_type_input = list
 5_list = white,blue,cyan,red,yellow,magenta,green
 
-6_item = System color
+6_item = User name
+6_item_comment = Only for test!
 6_conf_file = configs/system.conf
-6_parametr_config = system_color
+6_parametr_config = user_name
 6_type_input = text
 
 all_items  = 6
