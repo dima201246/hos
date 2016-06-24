@@ -35,4 +35,12 @@ name_app = system
 6_parametr_config = user_name
 6_type_input = text
 
-all_items  = 6
+7_item = About HOS
+7_type_input = action
+7_action = about_hos
+
+#8_item = System information
+#8_type_input = action
+#8_action = system_info
+
+all_items  = 7

@@ -1,11 +1,12 @@
-CC			= g++
-ARCH		= 64
-FLAGS_LIB	= -c -fPIC -Wall -g
-FLAGS 		= -c -Wall -g
-OutPut		= hos_alpha
-OUT_LIB		= libhos_x$(ARCH).so
+CC				= g++
+ARCH			= 64
+FLAGS_LIB		= -c -fPIC -Wall -g
+FLAGS 			= -c -Wall -g
+OutPut			= hos_alpha
+OUT_LIB			= libhos_x$(ARCH).so
+_HOS_VERSION	= \"0.0.12\"
 
-Modules		= desktop.o menu_apps.o apps_starter.o
+Modules		= desktop.o menu_apps.o apps_starter.o system.o
 bootloader	= ./bootloader/bootloader.cpp
 
 all:	$(Modules)
@@ -36,6 +37,9 @@ menu_apps.o:
 
 apps_starter.o:
 		$(CC) $(FLAGS) ./apps_starter/apps_starter.cpp -o apps_starter.o
+
+system.o:
+		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) $(FLAGS) ./system/system.cpp -o system.o
 
 clean:
 	rm -rf *.o

@@ -49,7 +49,7 @@ void draw_border(string	settings_lng, string	set_name, unsigned int	maxX, unsign
 
 	for (i	= 0; i < maxX; i++, mvprintw(0, i, "-"), mvprintw(maxY - 1, i, "-")); // Рисование верхней и нижней рамок
 
-	for (i	= 0; i < maxY - 1; i++, mvprintw(i - 1, 0, "|"), mvprintw(i - 1, maxX - 1, "|")); // Рисование левой и правой рамок
+	for (i	= 0; i < maxY; i++, mvprintw(i - 1, 0, "|"), mvprintw(i - 1, maxX - 1, "|")); // Рисование левой и правой рамок
 
 	if (llength(settings_lng) + llength(set_name) > maxX - 3) {
 		set_name.erase(maxX - 6 - llength(settings_lng), llength(set_name));
@@ -90,6 +90,8 @@ bool load_item(	vector <string>	setfile_vec,
 	failwin.style	= RED_WIN;
 	failwin.title	= "Error reading settings file on " + str(num) + " item";
 
+	bool	action_type	= false;
+
 	if ((temp = conf(str(num) + "_item", setfile_vec)) == "0x1") {
 		failwin.line	= "Setfile is incorrect! Not found item parametr!";
 		msg_win(failwin);
@@ -110,9 +112,11 @@ bool load_item(	vector <string>	setfile_vec,
 		return false;
 	} else {
 		type_item	= temp;
+		if (type_item == "action")
+			action_type	= true;
 	}
 
-	if ((temp = conf(str(num) + "_parametr_config", setfile_vec)) == "0x1") {
+	if ((!action_type) && ((temp = conf(str(num) + "_parametr_config", setfile_vec)) == "0x1")) {
 		failwin.line	= "Setfile is incorrect! Not found parametr_config parametr!";
 		msg_win(failwin);
 		return false;
@@ -120,7 +124,7 @@ bool load_item(	vector <string>	setfile_vec,
 		parametr_config_item	= temp;
 	}
 
-	if ((temp = conf(str(num) + "_conf_file", setfile_vec)) == "0x1") {
+	if ((!action_type) && ((temp = conf(str(num) + "_conf_file", setfile_vec)) == "0x1")) {
 		failwin.line	= "Setfile is incorrect! Not found conf_file parametr!";
 		msg_win(failwin);
 		return false;
@@ -254,7 +258,7 @@ int settings(string	path_to_settings_file) {
 		temp_vec				= temp_conf_str.point_to_vector;
 		item_temp.value_item	= conf(parametr_config_item, temp_vec);
 
-		if (item_temp.value_item == "0x1") {
+		if ((item_temp.type_item != "action") && (item_temp.value_item == "0x1")) {
 			failwin.title 		= "Error reading configuration file";
 			failwin.line		= "Error read value " + parametr_config_item + " in " + path_to_conf_item;
 			msg_win(failwin);
@@ -342,13 +346,19 @@ int settings(string	path_to_settings_file) {
 						mvprintw(position_write, maxX - ((maxX - right_border) / 2), "OFF");
 						attroff(COLOR_PAIR(TEXT_RED_BLACK) | A_BOLD);
 					}
-				}  else {
+				}  else if (item_temp.type_item != "action") {
 					attron(COLOR_PAIR(TEXT_WHITE_BLACK) | A_BOLD);
 					if (llength(item_temp.value_item) > (maxX - right_border - 3)) {
 						item_temp.value_item.erase((maxX - right_border - 6), llength(item_temp.value_item));
 						item_temp.value_item	+= "...";
 					}
 					mvprintw(position_write, right_border + 1, "%s", item_temp.value_item.c_str());
+					attroff(COLOR_PAIR(TEXT_WHITE_BLACK) | A_BOLD);
+				}
+
+				if (item_temp.type_item == "action") {
+					attron(COLOR_PAIR(TEXT_WHITE_BLACK) | A_BOLD);
+					mvprintw(position_write, maxX - 3, ">");
 					attroff(COLOR_PAIR(TEXT_WHITE_BLACK) | A_BOLD);
 				}
 
@@ -372,13 +382,19 @@ int settings(string	path_to_settings_file) {
 					mvprintw(2 + (selected - first_write) * 3, maxX - ((maxX - right_border) / 2), "OFF");
 					attroff(COLOR_PAIR(TEXT_RED_WHITE) | A_BOLD);
 				}
-			} else {
+			} else if (selected_type != "action") {
 				attron(COLOR_PAIR(TEXT_BLUE_WHITE) | A_BOLD);
 				if (llength(selected_value) > (maxX - right_border - 3)) {
 					selected_value.erase((maxX - right_border - 6), llength(selected_value));
 					selected_value	+= "...";
 				}
 				mvprintw(2 + (selected - first_write) * 3, right_border + 1, "%s", selected_value.c_str());
+				attroff(COLOR_PAIR(TEXT_BLUE_WHITE) | A_BOLD);
+			}
+
+			if (selected_type == "action") {
+				attron(COLOR_PAIR(TEXT_BLUE_WHITE) | A_BOLD);
+				mvprintw(2 + (selected - first_write) * 3, maxX - 3, ">");
 				attroff(COLOR_PAIR(TEXT_BLUE_WHITE) | A_BOLD);
 			}
 		}
@@ -594,6 +610,11 @@ int settings(string	path_to_settings_file) {
 										items_list[selected]	= item_temp;
 								}
 
+								draw_border(settings_lng, set_name, maxX, maxY);
+							}
+
+							if (item_temp.type_item == "action") {
+								action_parcer(item_temp.action);
 								draw_border(settings_lng, set_name, maxX, maxY);
 							}
 							break;
