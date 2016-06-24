@@ -1,46 +1,46 @@
-name_app = system
+name_app			= system
 
-1_item = Warning on start
-1_item_comment = Warning about alpha version on start
-1_conf_file = configs/system.conf
-1_parametr_config = alpha_warning_on_start
-1_type_input = bool
+1_item				= Warning on start
+1_item_comment		= Warning about alpha version on start
+1_conf_file			= configs/system.conf
+1_parametr_config	= alpha_warning_on_start
+1_type_input		= bool
 
-2_item = Show clock on desktop
-2_conf_file = configs/system.conf
-2_parametr_config = clock_on_desktop
-2_type_input = bool
+2_item				= Show clock on desktop
+2_conf_file			= configs/system.conf
+2_parametr_config	= clock_on_desktop
+2_type_input		= bool
 
-3_item = Indexing apps on start
-3_item_comment = While not work
-3_conf_file = configs/system.conf
-3_parametr_config = start_boot_indexing
-3_type_input = bool
+3_item				= Indexing apps on start
+3_item_comment		= While not work
+3_conf_file			= configs/system.conf
+3_parametr_config	= start_boot_indexing
+3_type_input		= bool
 
-4_item = Show animation on settings
-4_item_comment = Scroll long lines
-4_conf_file = configs/system.conf
-4_parametr_config = scroll_long_lines_in_settings
-4_type_input = bool
+4_item				= Show animation on settings
+4_item_comment		= Scroll long lines
+4_conf_file			= configs/system.conf
+4_parametr_config	= scroll_long_lines_in_settings
+4_type_input		= bool
 
-5_item = System color
-5_conf_file = configs/system.conf
-5_parametr_config = system_color
-5_type_input = list
-5_list = white,blue,cyan,red,yellow,magenta,green
+5_item				= System color
+5_conf_file			= configs/system.conf
+5_parametr_config	= system_color
+5_type_input		= list
+5_list				= white,blue,cyan,red,yellow,magenta,green
 
-6_item = User name
-6_item_comment = Only for test!
-6_conf_file = configs/system.conf
-6_parametr_config = user_name
-6_type_input = text
+6_item				= User name
+6_item_comment		= Only for test!
+6_conf_file			= configs/system.conf
+6_parametr_config	= user_name
+6_type_input		= text
 
-7_item = About HOS
-7_type_input = action
-7_action = about_hos
+7_item				= About HOS
+7_type_input		= action
+7_action			= about_hos
 
-#8_item = System information
-#8_type_input = action
-#8_action = system_info
+#8_item				= System information
+#8_type_input		= action
+#8_action			= system_info
 
-all_items  = 7
+all_items			= 7
