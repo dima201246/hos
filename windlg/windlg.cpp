@@ -266,16 +266,7 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 		for (unsigned int i = 0; i < max_y; i++) {
 				mvprintw(local_cfg.ypos + i  + fix_title, local_cfg.xpos, "|"); // Вывод левой границы
 		}
-
-		if (max_y == items.size()) { // Если нет смысла что-либо считать
-			pointer_position = (local_cfg.selected - 1) + local_cfg.ypos;
-		} else {
-			if (items.size() & 1) // Проверка на чётность количество пунктов
-				pointer_position = (((local_cfg.selected - 1) * max_y) / items.size()) + local_cfg.ypos;
-			else
-				pointer_position = ((local_cfg.selected * max_y) / items.size()) + local_cfg.ypos;
-		}
-
+		pointer_position = (((local_cfg.selected - 1) * max_y) / items.size()) + local_cfg.ypos + fix_title;
 		mvprintw(pointer_position, local_cfg.xpos - 1, "]"); // Вывод Указателя
 
 		local_cfg.xpos++; // Смещение текста
@@ -295,12 +286,11 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 			mvprintw(local_cfg.ypos - 1, local_cfg.xpos - 1, "|"); // Вывод левой границы
 		}
 
-		attron(COLOR_PAIR(color_selected) | A_BOLD);
 
-		for (unsigned int spaces = 0; spaces < max_x; spaces++, mvprintw(local_cfg.ypos + local_cfg.border_menu, local_cfg.xpos + max_x - spaces + local_cfg.border_menu - 1, " ")); // Заливка заголовка
-
+		attron(COLOR_PAIR(color_selected));
+		for (unsigned int spaces = 0; spaces < max_x - 1; spaces++, mvprintw(local_cfg.ypos - 1, local_cfg.xpos + spaces, " ")); // Заливка заголовка
 		mvprintw(local_cfg.ypos - 1, local_cfg.xpos, "%s", local_cfg.title.c_str()); // Вывод заголовка
-		attroff(COLOR_PAIR(color_selected) | A_BOLD);
+		attroff(COLOR_PAIR(color_selected));
 	}
 
 	attroff(COLOR_PAIR(local_cfg.style) | A_BOLD);
