@@ -1,29 +1,14 @@
 #include "../../fswork/fswork.h"
 #include "../../windlg/windlg.h"
 #include "../../lang/lang.h"
-#include <curses.h>
+#include "../../screen/screen.h"
 
 #define TAB_KEY 9
 #define BACK_KEY 127
 
-#define DEBUG 									// На данный момент 11:44 6 февраля 2016
-												// для проверки передачи адреса файла
 using namespace std;
 
-void load_pair_fm() {							// Определение фоновых комбинации
-	init_pair (0, COLOR_WHITE, COLOR_BLACK);	// цветов, для эстетики
-	init_pair (1, COLOR_BLACK, COLOR_WHITE);
-	init_pair (2, COLOR_RED, COLOR_BLACK);
-	init_pair (3, COLOR_BLACK, COLOR_RED);
-	init_pair (4, COLOR_GREEN, COLOR_BLACK);
-	init_pair (5, COLOR_BLACK, COLOR_GREEN);
-	init_pair (6, COLOR_BLUE, COLOR_BLACK);
-	init_pair (7, COLOR_BLACK, COLOR_BLUE);
-	init_pair (8, COLOR_YELLOW, COLOR_BLACK);
-	init_pair (9, COLOR_BLACK, COLOR_YELLOW);
-}
-
-void abaut_fm() {
+void about_fm() {
 		
 }
 
@@ -54,7 +39,7 @@ int menu_open(unsigned int& selected) {
 			case KEY_UP: if (menu_panel.selected != 1) menu_panel.selected--; break;
 			case KEY_DOWN: if (menu_panel.selected != menu_panel.second_border) menu_panel.selected++; break;
 			case '\n': switch (menu_panel.selected) {
-							case 1: abaut_fm(); break;
+							case 1: about_fm(); break;
 							case 2: return 10; break;
 						} break;
 		}
@@ -104,6 +89,22 @@ void init_panel(unsigned int maxX, DLGSTR &panel, string title_path) {
 	}
 }
 
+void read_files(string path, vector <FILEINFO> &file_vector) { // Загрузка списка файлов в вектор
+	DLGSTR				failwin	= {}; // Только так!!!
+	vector <FILEINFO>	temp_file_vector;
+
+	temp_file_vector	= file_vector;
+
+	while (get_files(path, file_vector) == -1) {
+		failwin.style = RED_WIN;
+		failwin.title = path;
+		failwin.line = "Sorry, can't make it!";
+		msg_win(failwin);
+		file_vector	= temp_file_vector;
+		return;
+	}
+}
+
 void interface_fm() {
 	unsigned int maxX, maxY;
 	getmaxyx(stdscr, maxY, maxX);	
@@ -146,41 +147,27 @@ void interface_fm() {
 	properties_menu.border_menu = true;
 	/*For properties panel END*/
 	
-	bool cycle = true;
-	vector <FILEINFO> filevector_1; // Вектор для загрузки файлов первой панели
-	vector <FILEINFO> filevector_2; // Вектор для загрузки файлов второйой панели
-	vector <string> fileout_1; // Вектор вывода списка файлов первой панели
-	vector <string> fileout_2; // Вектор вывода списка файлов второйой панели
-	FILEINFO filestr;
-	while (get_files(link_first_panel, filevector_1) == -1) {
-		winstr.style = 1;
-		winstr.line = "Wrong link!!! Try again!";
-		msg_win(winstr);
-		winstr.style = 0;
-		winstr.line = "Please enter link to foldren";
-		dlg_win(winstr, link_first_panel);
-	}
-	while (get_files(link_second_panel, filevector_2) == -1) {
-		winstr.style = 1;
-		winstr.line = "Wrong link!!! Try again!";
-		msg_win(winstr);
-		winstr.style = 0;
-		winstr.line = "Please enter link to foldren";
-		dlg_win(winstr, link_second_panel);
-	}
-	files_sort_by('n', filevector_1);
+	bool				cycle	= true;
+
+	vector <FILEINFO>	filevector_1; // Вектор для загрузки файлов первой панели
+	vector <FILEINFO>	filevector_2; // Вектор для загрузки файлов второйой панели
+	vector <string>		fileout_1; // Вектор вывода списка файлов первой панели
+	vector <string>		fileout_2; // Вектор вывода списка файлов второйой панели
+	FILEINFO			temp_file;
+
+	read_files(link_first_panel, filevector_1); // Загрузка списка файлов
+	read_files(link_second_panel, filevector_2);
+
+	files_sort_by('n', filevector_1); // Сортировка
 	files_sort_by('t', filevector_2);
+
 	load_files(filevector_1, fileout_1);
 	load_files(filevector_2, fileout_2);
 	load_properties(propvec);
 
-	first_panel.selected_st		= &filevector_1.at(first_panel.selected);		// Установка указателей на структуры
-	second_panel.selected_st	=  &filevector_2.at(second_panel.selected);	// содержащие информацию о файлах
-
 	/*Init head START*/
-	load_pair_fm();
-	int selected_color = 0;
-	string head;
+	int		selected_color = 0;
+	string	head;
 	head.clear();
 	for (unsigned int i = 0; i < maxX; i++, head += " ");
 	/*Init head END*/
@@ -193,32 +180,35 @@ void interface_fm() {
 	/*Mode END*/
 
 	unsigned int selected_menu = 1;
+
+	attron(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD); // Рисование белой линии сверху
+	mvprintw(0, 0, "%s", head.c_str());
+	attroff(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
+
 	while (cycle) {
 		timeout(-1);							// Режим бесконечного ожидания ввода для getch()
 		
 		/*Head START*/
 		switch (mode_select) {
-			case 0:	selected_color = 6;
-					first_panel.style = 0;
-					second_panel.style = 0;
+			case 0:	first_panel.style = WHITE_WIN;
+					second_panel.style = WHITE_WIN;
 					break;
 
-			case 1:	first_panel.style = 3;
-					second_panel.style = 0;
+			case 1:	first_panel.style = BLUE_WIN;
+					second_panel.style = WHITE_WIN;
 					break;
 
-			case 2:	second_panel.style = 3;
-					first_panel.style = 0;
+			case 2:	second_panel.style = BLUE_WIN;
+					first_panel.style = WHITE_WIN;
 					break;
 		}
 
-		attron(COLOR_PAIR(1) | A_BOLD);
-		mvprintw(0, 0, "%s", head.c_str());
-		attron(COLOR_PAIR(1 + selected_color) | A_BOLD);
+		if (mode_select == 0) attron(COLOR_PAIR(TEXT_BLACK_BLUE) | A_BOLD);
+		else attron(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
 		mvprintw(0, 0, "(M)enu");
-		attroff(COLOR_PAIR(1 + selected_color) | A_BOLD);
-		attroff(COLOR_PAIR(1) | A_BOLD);
-		selected_color = 0;
+		if (mode_select == 0) attroff(COLOR_PAIR(TEXT_BLACK_BLUE) | A_BOLD);
+		else attroff(COLOR_PAIR(TEXT_BLACK_WHITE) | A_BOLD);
+
 		/*Head END*/
 
 		menu_win(first_panel, fileout_1);
@@ -237,6 +227,7 @@ void interface_fm() {
 									get_files(link_first_panel, filevector_1);
 									files_sort_by('n', filevector_1);
 									load_files(filevector_1, fileout_1);
+									first_panel.selected	= 0;
 									break;
 
 						} break;
@@ -246,20 +237,20 @@ void interface_fm() {
 							break;
 
 			case KEY_UP:	switch (mode_select) {
-								case 1: if (first_panel.selected != 1) 
-											first_panel.selected_st = &filevector_1.at((--first_panel.selected)-1);		// Установка указателя на структуру
+								case 1: if (first_panel.selected != 0) 
+											first_panel.selected--;
 									break;
-								case 2: if (second_panel.selected != 1) 
-											second_panel.selected_st = &filevector_2.at((--second_panel.selected)-1);		// Установка указателя на структуру
+								case 2: if (second_panel.selected != 0) 
+											second_panel.selected--;
 								break;
 							} break;
 			case KEY_DOWN:	switch (mode_select) {
 								case 1: if (first_panel.selected != first_panel.second_border) {
-											first_panel.selected_st = &filevector_1.at(first_panel.selected++);		// Установка указателя на структуру	
+											first_panel.selected++;
 										}
 										break;
 								case 2: if (second_panel.selected != second_panel.second_border) {
-											second_panel.selected_st = &filevector_2.at(second_panel.selected++);		// Установка указателя на структуру	
+											second_panel.selected++;
 										}
 										break;
 							} break;
@@ -273,12 +264,15 @@ void interface_fm() {
 							case 1: properties_menu.xpos	= first_panel.xreturn;
 									properties_menu.ypos	= first_panel.yreturn;
 									switch (properties_open(properties_menu, propvec)) {
-										case 1:	link_first_panel	= ((FILEINFO *) first_panel.selected_st) -> f_path + "/";
+										case 1:	temp_file = filevector_1[first_panel.selected - 1];
+												link_first_panel	+= temp_file.name + "/";
+												read_files(link_first_panel, filevector_1);
 												init_panel(maxX, first_panel, link_first_panel);
 												get_files(link_first_panel, filevector_1);
 												files_sort_by('n', filevector_1);
 												load_files(filevector_1, fileout_1);
 									}
+									first_panel.selected	= 0;
 									break;
 							
 							case 2: properties_menu.xpos	= second_panel.xreturn;
@@ -293,24 +287,9 @@ void interface_fm() {
 
 int main(int argc, char* argv[]) {
 	setlocale(LC_ALL, "");
-	initscr();
-	start_color();
-	keypad (stdscr, TRUE);
-	noecho();
-	curs_set(0);
-	erase();
-
-	// get_files("./test", test_vec);
-	/*for(unsigned int i = 0; i < test_vec.size(); i++) {
-		test_str = test_vec[i];
-		printw("%s\n", test_str.name.c_str());
-	}*/
+	init_display();
+	init_color();
 	interface_fm();
-	/*for(unsigned int i = 0; i < test_vec.size(); i++) {
-		test_str = test_vec[i];
-		printw("%i %s %s\n", (int)test_str.name[0], test_str.name.c_str(), ctime(&test_str.mtime));
-	}*/
-	
 	endwin();
 	return 0;
 }
