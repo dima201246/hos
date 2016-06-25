@@ -21,6 +21,15 @@ bool save_commit(unsigned int first_pos,string line) {
 	return false;
 }
 
+int search_comment(unsigned int first_pos, string line) {
+	for (unsigned int	j	= first_pos; j < line.length(); j++) {
+		printw("%c\n", line[j]);
+		if ((line[j] == '#') && (line[j - 1] != '\\'))
+			return j;
+	}
+	return 0;
+}
+
 bool search_value(string line, string parametr, string new_value, bool edit, string &returned_value) {
 	bool	only_read		= true /*Пока ищется параметр*/,
 			continue_stat	= false,
@@ -28,10 +37,14 @@ bool search_value(string line, string parametr, string new_value, bool edit, str
 			not_found		= true;
 
 	string	temp_line,
-			temp_return;
+			temp_return,
+			comment;
+
+	int		sh;
 
 	temp_line.clear();
 	temp_return.clear();
+	comment.clear();
 
 	for (unsigned int i = 0; i < line.length(); i++) {
 		if ((only_read) && (!always_read)) { // Чтение, пока не найдено равно или не активно постоянное чтение
@@ -83,8 +96,15 @@ bool search_value(string line, string parametr, string new_value, bool edit, str
 				if (always_read)
 					return false;
 
+				if ((sh	= search_comment(0, line)) > 0) { // Сохранение комментария в изменённом параметре
+					comment	= line;
+					comment.erase(0, sh);
+					comment.insert(0, " ");
+				}
+
 				line.erase(i, line.length());
-				returned_value	= line + " " + new_value;
+
+				returned_value	= line + " " + new_value + comment;
 				return true;
 			} else {
 				if ((!find_first_char) && ((line[i] == ' ') || (line[i] == '\t'))) {
