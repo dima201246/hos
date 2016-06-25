@@ -39,33 +39,6 @@ void open_menu(vector <string>& app_list) {
 	return;
 }
 
-void init_desk_color(int &color, int &sel_color) {
-	string			color_str	= configurator("configs/system.conf", "system_color", "0", false);
-
-	if (color_str == "cyan") {
-		color		= TEXT_CYAN_BLACK;
-		sel_color	= TEXT_BLACK_CYAN;
-	} else if (color_str == "blue"){
-		color		= TEXT_BLUE_BLACK;
-		sel_color	= TEXT_BLACK_BLUE;
-	} else if (color_str == "red"){
-		color		= TEXT_RED_BLACK;
-		sel_color	= TEXT_BLACK_RED;
-	} else if (color_str == "yellow"){
-		color		= TEXT_YELLOW_BLACK;
-		sel_color	= TEXT_BLACK_YELLOW;
-	} else if (color_str == "magenta"){
-		color		= TEXT_MAGENTA_BLACK;
-		sel_color	= TEXT_BLACK_MAGENTA;
-	} else if (color_str == "green"){
-		color		= TEXT_GREEN_BLACK;
-		sel_color	= TEXT_BLACK_GREEN;
-	} else {
-		color		= TEXT_WHITE_BLACK;
-		sel_color	= TEXT_BLACK_WHITE;
-	}
-}
-
 int draw_desktop(int selected, bool open_label, unsigned int maxX, unsigned int maxY, int color, int sel_color) {
 		attron(COLOR_PAIR(color) | A_BOLD);
 		for (unsigned int	x	= 0; x < maxX; x++) {
@@ -110,7 +83,7 @@ int work_desktop(vector <string> app_list, string user_name) {
 					color		= 0,
 					sel_color	= 0;
 
-	init_desk_color(color, sel_color);
+	get_normal_inv_color(configurator(MAIN_CONFIG, "system_color", "0", false), color, sel_color);
 
 	while (cycle) {
 		getmaxyx(stdscr, maxY, maxX); // Получение размера терминала
@@ -135,8 +108,8 @@ int work_desktop(vector <string> app_list, string user_name) {
 								case 0:	open_menu(app_list);
 										break;
 
-								case 1:	settings(DESKTOP_SETTINGS_FILE);
-										init_desk_color(color, sel_color);
+								case 1:	settings(MAIN_SETFILE);
+										get_normal_inv_color(configurator(MAIN_CONFIG, "system_color", "0", false), color, sel_color);
 										break;
 
 								case 2:	cycle	= false;

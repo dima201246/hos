@@ -10,10 +10,9 @@
 	#include "../time/time.h"
 	#include "../screen/screen.h"
 	#include "../settings/settings.h"
+	#include "../system/system.h"
 
 	#include "header/menu_apps.h"
-
-	#define DESKTOP_SETTINGS_FILE "configs/system.setfile"
 
 	int main_desktop(std::string);
 #endif
