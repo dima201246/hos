@@ -2,9 +2,11 @@
 #define SCREEN_H
 
 	#include <curses.h>
+	#include <string>
 
 	void init_display();
 	void init_color();
+	void get_normal_inv_color(std::string /*Строка с названием цвета*/, int&/*Код цвета*/, int&/*Инвертированный цвет*/);
 
 	/*Colors*/
 	#define TEXT_WHITE_BLACK	0

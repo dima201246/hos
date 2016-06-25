@@ -40,3 +40,28 @@ void init_color() {
 	init_pair (TEXT_MAGENTA_WHITE, COLOR_MAGENTA, COLOR_WHITE);
 	init_pair (TEXT_CYAN_WHITE, COLOR_CYAN, COLOR_WHITE);
 }
+
+void get_normal_inv_color(std::string color_str, int &color, int &sel_color) { // Получение кода цвета из имени и его инвертированной состовляющей
+	if (color_str == "cyan") {
+		color		= TEXT_CYAN_BLACK;
+		sel_color	= TEXT_BLACK_CYAN;
+	} else if (color_str == "blue"){
+		color		= TEXT_BLUE_BLACK;
+		sel_color	= TEXT_BLACK_BLUE;
+	} else if (color_str == "red"){
+		color		= TEXT_RED_BLACK;
+		sel_color	= TEXT_BLACK_RED;
+	} else if (color_str == "yellow"){
+		color		= TEXT_YELLOW_BLACK;
+		sel_color	= TEXT_BLACK_YELLOW;
+	} else if (color_str == "magenta"){
+		color		= TEXT_MAGENTA_BLACK;
+		sel_color	= TEXT_BLACK_MAGENTA;
+	} else if (color_str == "green"){
+		color		= TEXT_GREEN_BLACK;
+		sel_color	= TEXT_BLACK_GREEN;
+	} else {
+		color		= TEXT_WHITE_BLACK;
+		sel_color	= TEXT_BLACK_WHITE;
+	}
+}
