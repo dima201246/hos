@@ -6,7 +6,6 @@
 
 // VERSION: 0.29.0
 // LAST UPDATE: 26.05.2016
-#include <ncurses.h>
 #include "configurator.h"
 
 using namespace std;
