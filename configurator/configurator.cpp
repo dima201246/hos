@@ -22,7 +22,6 @@ bool save_commit(unsigned int first_pos,string line) {
 
 int search_comment(unsigned int first_pos, string line) {
 	for (unsigned int	j	= first_pos; j < line.length(); j++) {
-		printw("%c\n", line[j]);
 		if ((line[j] == '#') && (line[j - 1] != '\\'))
 			return j;
 	}
