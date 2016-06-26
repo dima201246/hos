@@ -12,6 +12,8 @@ using namespace std;
 
 bool always_read = false, edit_found_value = false;
 
+vector <string>	main_config_base;
+
 bool save_commit(unsigned int first_pos,string line) {
 	for (unsigned int j = first_pos; j < line.length(); j++) {
 		if ((line[j] == '#') && (line[j - 1] != '\\')) return true;
