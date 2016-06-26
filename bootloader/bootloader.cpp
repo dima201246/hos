@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
 	init_display();
 	init_color();
+
 	init_signals();
 	apps_vect.clear();
 
@@ -32,6 +33,8 @@ int main(int argc, char *argv[]) {
 		endwin();
 		return 32;
 	}
+
+	get_normal_inv_color(conf("system_color", main_config_base), main_system_color, main_system_color_selection);
 
 	main_desktop("user_name");
 	endwin();

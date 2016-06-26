@@ -4,6 +4,9 @@
 	#include <curses.h>
 	#include <string>
 
+	extern	int	main_system_color,
+				main_system_color_selection;
+
 	void init_display();
 	void init_color();
 	void get_normal_inv_color(std::string /*Строка с названием цвета*/, int&/*Код цвета*/, int&/*Инвертированный цвет*/);

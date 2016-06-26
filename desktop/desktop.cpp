@@ -83,7 +83,7 @@ int work_desktop(vector <string> app_list, string user_name) {
 					color		= 0,
 					sel_color	= 0;
 
-	get_normal_inv_color(configurator(MAIN_CONFIG, "system_color", "0", false), color, sel_color);
+	get_normal_inv_color(conf("system_color", main_config_base), color, sel_color);
 
 	while (cycle) {
 		getmaxyx(stdscr, maxY, maxX); // Получение размера терминала
@@ -109,7 +109,7 @@ int work_desktop(vector <string> app_list, string user_name) {
 										break;
 
 								case 1:	settings(MAIN_SETFILE);
-										get_normal_inv_color(configurator(MAIN_CONFIG, "system_color", "0", false), color, sel_color);
+										get_normal_inv_color(conf("system_color", main_config_base), color, sel_color);
 										break;
 
 								case 2:	cycle	= false;

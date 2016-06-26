@@ -1,5 +1,8 @@
 #include "screen.h"
 
+int	main_system_color,
+	main_system_color_selection;
+
 void init_display() {
 	initscr();
 	start_color();

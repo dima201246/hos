@@ -40,27 +40,27 @@ void load_list_values(string	values_line, vector <string>	&list_values) {
 	}
 }
 
-void draw_border(string	settings_lng, string	set_name, unsigned int	maxX, unsigned int	maxY, int	color, int color_selected) {
+void draw_border(string	settings_lng, string	set_name, unsigned int	maxX, unsigned int	maxY) {
 	erase();
 
 	unsigned int	i	= 0;
 
-	attron(COLOR_PAIR(color) | A_BOLD);
+	attron(COLOR_PAIR(main_system_color) | A_BOLD);
 	
 	for (i	= 0; i < maxX; i++, mvprintw(0, i, "-"), mvprintw(maxY - 1, i, "-")); // Рисование верхней и нижней рамок
 
 	for (i	= 0; i < maxY; i++, mvprintw(i - 1, 0, "|"), mvprintw(i - 1, maxX - 1, "|")); // Рисование левой и правой рамок
 
-	attroff(COLOR_PAIR(color) | A_BOLD);
+	attroff(COLOR_PAIR(main_system_color) | A_BOLD);
 
 	if (llength(settings_lng) + llength(set_name) > maxX - 3) {
 		set_name.erase(maxX - 6 - llength(settings_lng), llength(set_name));
 		set_name	+= "...";
 	}
 
-	attron(COLOR_PAIR(color_selected) | A_BOLD);
+	attron(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 	mvprintw (0, 1, "%s %s", settings_lng.c_str(), set_name.c_str());
-	attroff(COLOR_PAIR(color_selected) | A_BOLD);
+	attroff(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 }
 
 bool search_in_struct(string path, vector <conf_str> conf_vec, conf_str &out_struct) { // Поиск в векторе нужного конфигурационного файла
@@ -207,9 +207,7 @@ int settings(string	path_to_settings_file) {
 
 	items_list_str	item_temp;
 
-	int				key_pressed,
-					color,
-					color_selected;
+	int				key_pressed;
 
 	/*LANG ZONE START*/
 	string	settings_lng	= "Settings",
@@ -217,7 +215,6 @@ int settings(string	path_to_settings_file) {
 	/*LANG ZONE END*/
 
 	getmaxyx(stdscr, maxY, maxX);
-	get_normal_inv_color(configurator(MAIN_CONFIG, "system_color", "0", false), color, color_selected);
 
 	timeout(-1);
 
@@ -232,7 +229,7 @@ int settings(string	path_to_settings_file) {
 
 	cycle		= true;
 
-	draw_border(settings_lng, set_name, maxX, maxY, color, color_selected);
+	draw_border(settings_lng, set_name, maxX, maxY);
 
 	for (i	= 1; i <= all_items; i++) { // Загрузка всех конфигурационных файлов и заполнение вектора, который будет выводиться на экран
 		path_to_conf_item	= conf(str(i) + "_conf_file", setfile_vec); // Путь к файлу конфигураций
@@ -331,7 +328,7 @@ int settings(string	path_to_settings_file) {
 					item_temp.name_item	+= "...";
 				}
 
-				attron(COLOR_PAIR(color) | A_BOLD);
+				attron(COLOR_PAIR(main_system_color) | A_BOLD);
 				mvprintw(position_write, 2, "%s", item_temp.name_item.c_str());
 
 				if (!item_temp.comment_item.empty()) {
@@ -341,7 +338,7 @@ int settings(string	path_to_settings_file) {
 					}
 					mvprintw(position_write + 1, 3, "%s", item_temp.comment_item.c_str());
 				}
-				attroff(COLOR_PAIR(color) | A_BOLD);
+				attroff(COLOR_PAIR(main_system_color) | A_BOLD);
 
 				if (item_temp.type_item == "bool") {
 					if (item_temp.value_item == "1") {
@@ -354,19 +351,19 @@ int settings(string	path_to_settings_file) {
 						attroff(COLOR_PAIR(TEXT_RED_BLACK) | A_BOLD);
 					}
 				}  else if (item_temp.type_item != "action") {
-					attron(COLOR_PAIR(color) | A_BOLD);
+					attron(COLOR_PAIR(main_system_color) | A_BOLD);
 					if (llength(item_temp.value_item) > (maxX - right_border - 3)) {
 						item_temp.value_item.erase((maxX - right_border - 6), llength(item_temp.value_item));
 						item_temp.value_item	+= "...";
 					}
 					mvprintw(position_write, right_border + 1, "%s", item_temp.value_item.c_str());
-					attroff(COLOR_PAIR(color) | A_BOLD);
+					attroff(COLOR_PAIR(main_system_color) | A_BOLD);
 				}
 
 				if (item_temp.type_item == "action") {
-					attron(COLOR_PAIR(color) | A_BOLD);
+					attron(COLOR_PAIR(main_system_color) | A_BOLD);
 					mvprintw(position_write, maxX - 3, ">");
-					attroff(COLOR_PAIR(color) | A_BOLD);
+					attroff(COLOR_PAIR(main_system_color) | A_BOLD);
 				}
 
 				position_write	+= 3;
@@ -375,7 +372,7 @@ int settings(string	path_to_settings_file) {
 
 		/*DRAW SELECTED ELEMENT START*/
 		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN) || (key_pressed == '\n')) { // Вывод невыделенных пунктов
-			attron(COLOR_PAIR(color_selected) | A_BOLD);
+			attron(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 			for (j	= 0; j < maxX - 2; j++, mvprintw(2 + (selected - first_write) * 3, j, " "), mvprintw(3 + (selected - first_write) * 3, j, " ")); // Заполнение цветом выделения
 		
 			if (selected_type == "bool") {
@@ -391,10 +388,10 @@ int settings(string	path_to_settings_file) {
 			if (selected_type == "action") {
 				mvprintw(2 + (selected - first_write) * 3, maxX - 3, ">");
 			}
-			attroff(COLOR_PAIR(color_selected) | A_BOLD);
+			attroff(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 		}
 
-		attron(COLOR_PAIR(color_selected) | A_BOLD);
+		attron(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 
 		if (want_to_moving_selected_name) {
 			if (wait_selected_name == 0) { // Двигатель имени пункта
@@ -448,7 +445,7 @@ int settings(string	path_to_settings_file) {
 			mvprintw(3 + (selected - first_write) * 3, 3, "%s", selected_comment.c_str());
 		}
 
-		attroff(COLOR_PAIR(color_selected) | A_BOLD);
+		attroff(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 		/*DRAW SELECTED ELEMENT END*/
 
 		key_pressed	= getch();
@@ -514,7 +511,7 @@ int settings(string	path_to_settings_file) {
 										items_list[selected]	= item_temp;
 								}
 
-								draw_border(settings_lng, set_name, maxX, maxY, color, color_selected);
+								draw_border(settings_lng, set_name, maxX, maxY);
 							}
 
 							if (item_temp.type_item == "list") {
@@ -560,7 +557,7 @@ int settings(string	path_to_settings_file) {
 									}
 								}
 								
-								draw_border(settings_lng, set_name, maxX, maxY, color, color_selected);
+								draw_border(settings_lng, set_name, maxX, maxY);
 								key_pressed			= KEY_UP;
 							}
 
@@ -605,12 +602,12 @@ int settings(string	path_to_settings_file) {
 										items_list[selected]	= item_temp;
 								}
 
-								draw_border(settings_lng, set_name, maxX, maxY, color, color_selected);
+								draw_border(settings_lng, set_name, maxX, maxY);
 							}
 
 							if (item_temp.type_item == "action") {
 								action_parcer(item_temp.action);
-								draw_border(settings_lng, set_name, maxX, maxY, color, color_selected);
+								draw_border(settings_lng, set_name, maxX, maxY);
 							}
 							break;
 
