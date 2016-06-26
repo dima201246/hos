@@ -14,6 +14,11 @@ void sighandler(int signo)
 	}
 }
 
+void fg_job(pid_t pid)
+{
+	
+}
+
 void init_signals()
 {
 	signal(SIGINT, &sighandler);
@@ -38,6 +43,7 @@ int app_start(int number_of_app, char** argv) {
 
 	j.running = true;
 
+	// Помещаем процесс в список запущенных процессов
 	apps_vect.insert(apps_vect.end(), j);
 
 	if (chpid == 0) {
@@ -53,6 +59,11 @@ int app_start(int number_of_app, char** argv) {
 		tcsetpgrp(STDIN_FILENO, getpid());
 		tcgetattr(STDIN_FILENO, &j.tmode);
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &hos_tmode);
+
+		if (WIFSTOPPED(status)) {	/* Если процесс был остановлен во время выполнения */
+			apps_vect.back().running = false;
+		}
+
 		init_display();
 		init_color();
 	}
