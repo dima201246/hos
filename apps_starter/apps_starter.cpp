@@ -46,7 +46,7 @@ int app_start(int number_of_app, char** argv) {
 		tcsetpgrp(STDIN_FILENO, getpid());
 		chdir(path_to_dir.c_str());
 		setpgid(getpid(), getpid());			 	// Создаём группу процессов
-		if (execv(name_app.c_str(), argv) == -1) 	// parent process
+		if (execl(name_app.c_str(), "", NULL) == -1) 	// parent process
 			exit(0);
 	} else {
 		waitpid(chpid, &status,WUNTRACED);
