@@ -10,7 +10,7 @@
 	#include "../time/time.h"
 	#include "../screen/screen.h"
 	#include "../settings/settings.h"
-	#include "../system/system.h"
+	#include "../system/system_defines.h"
 
 	#include "header/menu_apps.h"
 

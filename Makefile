@@ -25,7 +25,7 @@ hos_lib:
 		$(CC) $(FLAGS_LIB) windlg/windlg.cpp -m$(ARCH)
 		$(CC) $(FLAGS_LIB) screen/screen.cpp -m$(ARCH)
 		$(CC) $(FLAGS_LIB) lang/lang.cpp -m$(ARCH)
-		$(CC) $(FLAGS_LIB) settings/settings.cpp -m$(ARCH)
+		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) $(FLAGS_LIB) settings/settings.cpp -m$(ARCH)
 		$(CC) $(FLAGS_LIB) configurator/configurator.cpp -m$(ARCH)
 		$(CC) -shared -o lib/$(OUT_LIB) fswork.o stat_file.o windlg.o screen.o lang.o configurator.o time.o settings.o -m$(ARCH)
 
@@ -39,7 +39,7 @@ apps_starter.o:
 		$(CC) $(FLAGS) ./apps_starter/apps_starter.cpp -o apps_starter.o
 
 system.o:
-		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) $(FLAGS) ./system/system.cpp -o system.o
+		$(CC) $(FLAGS) ./system/system.cpp -o system.o
 
 clean:
 	rm -rf *.o
