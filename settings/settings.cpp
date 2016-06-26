@@ -1,6 +1,4 @@
-#include "settings.h"
-
-using namespace std;
+#include "settings_head.h"
 
 struct conf_str {
 	string			path_to_configuration_file; // Путь к конфигурационному файлу

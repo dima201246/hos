@@ -6,7 +6,7 @@
 	#include "../configurator/configurator.h"
 	#include "../fswork/fswork.h"
 	#include "../windlg/windlg.h"
-	#include "../system/system.h"
+	#include "../system/system_defines.h"
 
 	#define WAIT_START 10
 	#define WAIT_END 5
