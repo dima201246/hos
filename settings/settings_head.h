@@ -25,7 +25,7 @@ void about_hos() {
 
 	printw("\nSites:\n");
 	printw("    https://github.com/dima201246/hos\n");
-	printw("    https://dv-company.ru.com\n");
+	printw("    http://dv-company.ru.com\n");
 
 
 	printw("\nPress any key...");
