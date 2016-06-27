@@ -14,9 +14,37 @@ void sighandler(int signo)
 	}
 }
 
-void fg_job(pid_t pid)
+void fg_job(job &j)
 {
-	
+	int status;
+	std::vector<job>::iterator it;
+	j.running = true;
+
+	tcsetpgrp(STDIN_FILENO, j.pid);
+
+	kill(-j.pid, SIGCONT);
+	waitpid(j.pid, &status, WUNTRACED);
+
+	if(WIFSTOPPED(status)) {
+		j.running = false;
+		tcsetpgrp(STDIN_FILENO, getpid());
+		tcgetattr(STDIN_FILENO, &j.tmode);
+		tcsetattr(STDIN_FILENO, TCSADRAIN, &hos_tmode);
+	}
+
+	if(WIFEXITED(status)) {
+		tcsetpgrp(STDIN_FILENO, getpid());
+		tcsetattr(STDIN_FILENO, TCSADRAIN, &hos_tmode);
+		for(it = apps_vect.begin() ; it != apps_vect.end(); it++)
+			if (it->pid == j.pid)
+				apps_vect.erase(it);
+	}
+}
+
+void bg_jobs(job &j)
+{
+	j.running = true;
+	kill(-j.pid, SIGCONT);
 }
 
 void init_signals()
@@ -25,6 +53,34 @@ void init_signals()
 	signal(SIGTSTP, &sighandler);
 	signal(SIGTTIN, SIG_IGN);
 	signal(SIGTTOU, SIG_IGN);
+}
+
+void list_process() {
+	timeout(-1);
+
+	std::vector <std::string>	apps_names;
+
+	std::vector <job>::iterator	it;
+
+	DLGSTR						apps_dlg	= {};
+
+	unsigned int				maxX,
+								maxY;
+
+	getmaxyx(stdscr, maxY, maxX);
+
+	apps_dlg.title	= "apps";
+	apps_dlg.style	= RED_WIN;
+	apps_dlg.xpos	= maxX/2-2;
+	apps_dlg.ypos	= maxY/2;
+	// apps_dlg.border	= true;
+
+	for(it = apps_vect.begin(); it != apps_vect.end(); it++)
+		apps_names.push_back(it->name);
+
+	menu_win(apps_dlg, apps_names);
+
+	getch();
 }
 
 int app_start(int number_of_app, char** argv) {
@@ -62,6 +118,10 @@ int app_start(int number_of_app, char** argv) {
 
 		if (WIFSTOPPED(status)) {	/* Если процесс был остановлен во время выполнения */
 			apps_vect.back().running = false;
+		}
+
+		if(WIFEXITED(status)) {
+			apps_vect.pop_back();
 		}
 
 		init_display();

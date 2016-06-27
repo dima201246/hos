@@ -1,5 +1,7 @@
 #include "desktop.h"
 
+#define TAB		9
+
 using namespace std;
 
 void open_menu(vector <string>& app_list) {
@@ -121,6 +123,9 @@ int work_desktop(vector <string> app_list, string user_name) {
 								open_label	= false;
 							}
 							/*else shutdown_process();*/
+							break;
+
+			case TAB:		list_process();
 							break;
 		}
 	}
