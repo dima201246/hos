@@ -41,7 +41,7 @@ void fg_job(job &j)
 	}
 }
 
-void bg_jobs(job &j)
+void bg_job(job &j)
 {
 	j.running = true;
 	kill(-j.pid, SIGCONT);
@@ -76,28 +76,31 @@ void list_process() {
 	apps_dlg.ymax			= maxY / 2;
 	apps_dlg.border_menu	= true;
 
+	if(!apps_vect.empty()) {
+		for (unsigned int	i	= 0; i < apps_vect.size(); i++) {
+			apps_names.push_back(apps_vect[i].name);
+		}
 
-	for (unsigned int	i	= 0; i < apps_vect.size(); i++) {
-		apps_names.push_back(apps_vect[i].name);
-	}
+		key_pressed	= 0;
 
-	key_pressed	= 0;
+		while (key_pressed != 27) {
+			menu_win(apps_dlg, apps_names);
+			key_pressed	= getch();
 
-	while (key_pressed != 27) {
-		menu_win(apps_dlg, apps_names);
-		key_pressed	= getch();
+			switch (key_pressed) {
+				case KEY_UP:	if (apps_dlg.selected != 0)
+									apps_dlg.selected--;
+								break;
 
-		switch (key_pressed) {
-			case KEY_UP:	if (apps_dlg.selected != 0)
-								apps_dlg.selected--;
-							break;
+				case KEY_DOWN:	if (apps_dlg.selected != apps_names.size())
+									apps_dlg.selected++;
+								break;
 
-			case KEY_DOWN:	if (apps_dlg.selected != apps_names.size())
-								apps_dlg.selected++;
-							break;
-
-			case '\n':		bg_jobs(apps_vect[apps_dlg.selected - 1]);
-							return;
+				case '\n':		fg_job(apps_vect[apps_dlg.selected - 1]);
+								init_display();
+								init_color();
+								break;
+			}
 		}
 	}
 }
