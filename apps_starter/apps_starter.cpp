@@ -14,14 +14,17 @@ void sighandler(int signo)
 	}
 }
 
+// Expergiscimini, processus dormientis
 void fg_job(job &j)
 {
 	int status;
 	std::vector<job>::iterator it;
-	j.running = true;
 
+	// Set processu prioritate ad terminos
+	j.running = true;
 	tcsetpgrp(STDIN_FILENO, j.pid);
 
+	// Mittit et processus ad poenam exspectant signum operis initium
 	kill(-j.pid, SIGCONT);
 	waitpid(j.pid, &status, WUNTRACED);
 
@@ -32,6 +35,7 @@ void fg_job(job &j)
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &hos_tmode);
 	}
 
+	// Si processus perficitur - removent a processibus currens vector
 	if(WIFEXITED(status)) {
 		tcsetpgrp(STDIN_FILENO, getpid());
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &hos_tmode);
@@ -41,6 +45,7 @@ void fg_job(job &j)
 	}
 }
 
+// Peropportune ad processum in scaena
 void bg_job(job &j)
 {
 	j.running = true;
@@ -55,6 +60,7 @@ void init_signals()
 	signal(SIGTTOU, SIG_IGN);
 }
 
+// List of processus in in background indicium
 void list_process() {
 	timeout(-1);
 
@@ -76,6 +82,7 @@ void list_process() {
 	apps_dlg.ymax			= maxY / 2;
 	apps_dlg.border_menu	= true;
 
+	// nec quicquam rei si album sit amet
 	if(!apps_vect.empty()) {
 		for (unsigned int	i	= 0; i < apps_vect.size(); i++) {
 			apps_names.push_back(apps_vect[i].name);
@@ -96,7 +103,9 @@ void list_process() {
 									apps_dlg.selected++;
 								break;
 
-				case '\n':		fg_job(apps_vect[apps_dlg.selected - 1]);
+				case '\n':		// Expergiscimini, processus dormientis
+								endwin();
+								fg_job(apps_vect[apps_dlg.selected - 1]);
 								init_display();
 								init_color();
 								break;
