@@ -60,27 +60,46 @@ void list_process() {
 
 	std::vector <std::string>	apps_names;
 
-	std::vector <job>::iterator	it;
-
 	DLGSTR						apps_dlg	= {};
 
 	unsigned int				maxX,
 								maxY;
 
+	int							key_pressed;
+
 	getmaxyx(stdscr, maxY, maxX);
 
-	apps_dlg.title	= "apps";
-	apps_dlg.style	= RED_WIN;
-	apps_dlg.xpos	= maxX/2-2;
-	apps_dlg.ypos	= maxY/2;
-	// apps_dlg.border	= true;
+	apps_dlg.title			= "Background applications";
+	apps_dlg.style			= RED_WIN;
+	apps_dlg.xpos			= maxX / 2 - llength(apps_dlg.title) / 2;
+	apps_dlg.ypos			= maxY / 2;
+	apps_dlg.ymax			= maxY / 2;
+	apps_dlg.border_menu	= true;
 
-	for(it = apps_vect.begin(); it != apps_vect.end(); it++)
-		apps_names.push_back(it->name);
 
-	menu_win(apps_dlg, apps_names);
+	for (unsigned int	i	= 0; i < apps_vect.size(); i++) {
+		apps_names.push_back(apps_vect[i].name);
+	}
 
-	getch();
+	key_pressed	= 0;
+
+	while (key_pressed != 27) {
+		menu_win(apps_dlg, apps_names);
+		key_pressed	= getch();
+
+		switch (key_pressed) {
+			case KEY_UP:	if (apps_dlg.selected != 0)
+								apps_dlg.selected--;
+							break;
+
+			case KEY_DOWN:	if (apps_dlg.selected != apps_names.size())
+								apps_dlg.selected++;
+							break;
+
+			case '\n':		bg_jobs(apps_vect[apps_dlg.selected - 1]);
+							return;
+		}
+	}
 }
 
 int app_start(int number_of_app, char** argv) {
