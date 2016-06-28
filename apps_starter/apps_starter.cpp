@@ -108,6 +108,7 @@ void list_process() {
 								fg_job(apps_vect[apps_dlg.selected - 1]);
 								init_display();
 								init_color();
+								return;
 								break;
 			}
 		}
