@@ -39,7 +39,7 @@ void fg_job(job &j)
 	if(WIFEXITED(status)) {
 		tcsetpgrp(STDIN_FILENO, getpid());
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &hos_tmode);
-		for(it = apps_vect.begin() ; it != apps_vect.end(); it++)
+		for(it = apps_vect.begin() ; it < apps_vect.end(); ++it)
 			if (it->pid == j.pid)
 				apps_vect.erase(it);
 	}
