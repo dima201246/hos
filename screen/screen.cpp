@@ -68,3 +68,21 @@ void get_normal_inv_color(std::string color_str, int &color, int &sel_color) { /
 		sel_color	= TEXT_BLACK_WHITE;
 	}
 }
+
+int get_inv_color(int color) { // Получение кода инвертированного цвета
+	if (color == TEXT_CYAN_BLACK) {
+		return TEXT_BLACK_CYAN;
+	} else if (color == TEXT_BLUE_BLACK) {
+		return TEXT_BLACK_BLUE;
+	} else if (color == TEXT_RED_BLACK) {
+		return TEXT_BLACK_RED;
+	} else if (color == TEXT_YELLOW_BLACK) {
+		return TEXT_BLACK_YELLOW;
+	} else if (color == TEXT_MAGENTA_BLACK) {
+		return TEXT_BLACK_MAGENTA;
+	} else if (color == TEXT_GREEN_BLACK) {
+		return TEXT_BLACK_GREEN;
+	} else {
+		return TEXT_BLACK_WHITE;
+	}
+}

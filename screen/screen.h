@@ -10,6 +10,7 @@
 	void init_display();
 	void init_color();
 	void get_normal_inv_color(std::string /*Строка с названием цвета*/, int&/*Код цвета*/, int&/*Инвертированный цвет*/);
+	int get_inv_color(int);
 
 	/*Colors*/
 	#define TEXT_WHITE_BLACK	0
