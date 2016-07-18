@@ -125,15 +125,15 @@ color_t	get_inv_color(color_t	color) { // Получение кода инвер
 
 color_t	get_color_on_color(color_t	color_top, color_t	color_bot) {
 
-	if ((color_top == 0) && (color_bot == 0)) {
+	if ((color_top == 0) && (color_bot == 0)) {	// Если это белый цвет на белом фоне, то вывести чёрным на белом
 		return TEXT_BLACK_WHITE;
 	}
 
-	if ((color_top == color_bot) || (color_top == TEXT_WHITE_BLACK)) {
-		return ((color_bot + 1) * 7) + TEXT_WHITE_BLACK;
+	if ((color_top == color_bot) || (color_top == TEXT_WHITE_BLACK)) {	// Если одинаковые,  или цвет вывода белый
+		return ((color_bot + 1) * 7) + TEXT_WHITE_BLACK;				// то писать белым, по выбранному цвету
 	}
 
-	if (color_bot > color_top) {
+	if (color_bot > color_top) {	// А тут я беспонятия как это работает, главное не трогать дифайны цветов!
 		return ((color_bot + 1) * 7) + (color_top + 1);
 	} else {
 		return ((color_bot + 1) * 7) + color_top;
