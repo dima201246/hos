@@ -1,5 +1,6 @@
 #define MAIN_CONFIG "configs/system.conf"
 #define MAIN_SETFILE "configs/system.setfile"
+#define MAIN_LOGFILE "./hos.log"
 
 #define H_KEY_ESC 27
 #define H_KEY_BACKSPACE 127
