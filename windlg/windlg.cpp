@@ -1092,6 +1092,7 @@ void mvprintw_l(unsigned int	y, unsigned int	x, string line, color_t	win_color_l
 	// found_first_sign	= false;
 	color_ok			= false;
 	write_color			= TEXT_WHITE_BLACK;
+	continue_count		= 0;
 
 	for (unsigned int	i	= 0; i < llength(line); i++) {
 		if (continue_count) {
