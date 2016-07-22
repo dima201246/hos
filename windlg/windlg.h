@@ -5,18 +5,18 @@
 	#include <vector>
 	#include <unistd.h>
 	#include <stdio.h>
-	#include <curses.h>
 	#include "../lang/lang.h"
 	#include "../screen/screen.h"
+	#include "../system/system_defines.h"
 
 	/*Styles*/
-	#define WHITE_WIN 0
-	#define RED_WIN 1
-	#define GREEN_WIN 2
-	#define BLUE_WIN 3
-	#define YELLOW_WIN 4
-	#define MAGENTA_WIN 5
-	#define CYAN_WIN 6
+	#define WHITE_WIN	TEXT_WHITE_BLACK
+	#define RED_WIN		TEXT_RED_BLACK
+	#define GREEN_WIN	TEXT_GREEN_BLACK
+	#define BLUE_WIN	TEXT_BLUE_BLACK
+	#define YELLOW_WIN	TEXT_YELLOW_BLACK
+	#define MAGENTA_WIN	TEXT_MAGENTA_BLACK
+	#define CYAN_WIN	TEXT_CYAN_BLACK
 
 	struct DLGSTR {
 		std::string title, // Title
@@ -39,6 +39,28 @@
 	int dlg_win(DLGSTR, std::string&);
 	int msg_win(DLGSTR);
 	void menu_win(DLGSTR&, std::vector<std::string>&);
+
+	/*WINDLG 2.0*/
+	struct MENSTR {
+		bool					no_border,			// Если не нужны границы окна !!!НЕИСПОЛЬЗОВАТЬ!!!
+								redraw;				// Если нужно только перерисовать вывод
+
+		int						returned_key;		// Возврат нажатой кнопки
+
+		unsigned int			posX,				// Позиция окна
+								posY,
+								posXmax,			// Максимальные размеры окна
+								posYmax,
+								returned_x,			// Возвращаемая позиция выделения
+								returned_y,
+								animation_delay,	// Время анимации
+								std_selected;		// Позиция выделения
+	};
+
+	unsigned int menu_winV2(MENSTR*, std::string, std::vector <std::string>, color_t);
+
+	#define Init_MENSTR(var_name) MENSTR var_name = {};
+	/*WINDLG 2.0*/
 	
 	/* TYPE INPUT:
 	0 - any signs

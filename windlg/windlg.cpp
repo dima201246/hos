@@ -984,3 +984,659 @@ int dlg_win(DLGSTR dlgcfg, string& out_put) {
 	delete [] array;
 	return 0;
 }
+
+/*WINDLG 2.0*/
+void windlg_ver() {
+	erase();
+	printw("|WinDLG API----------------------|\n");
+	printw("|Version:                     2.0|\n");
+	printw("|                                |\n");
+	printw("|Autor:         Dmitriy Volchenko|\n");
+	printw("|E-mail:     dima201246@gmail.com|\n");
+	printw("|                                |\n");
+	printw("|                                |\n");
+	printw("|Build date: %s %s|\n", __DATE__, __TIME__);
+	printw("|--------------------------------|\n");
+	getch();
+}
+
+unsigned int	line_length(string	line) {	// Подсчёт колличества элементов в строке без учёта специальных символов
+	unsigned int	count,
+					continue_count;
+
+	count	= continue_count	= 0;
+
+	for (unsigned int	i	= 0; i < line.length(); i++) {
+
+		if (continue_count) {
+			continue_count--;
+			continue;
+		}
+
+		if ((line[i] == '%') && ((i == 0) || ((i > 0) && (line[i - 1] != '\\'))))
+			continue_count	= 2;
+
+		if ((line[i] == '/') && (line[i + 1] == '/'))
+			continue;
+
+		if ((line[i] == '/') && (line[i + 1] == '\''))
+			continue;
+
+		if ((line[i] == '\'') && ((i == 0) || ((i > 0) && (line[i - 1] != '/'))))
+			continue;
+
+		if (continue_count)
+			continue;
+
+		count++;
+	}
+
+	return count;
+}
+
+int	windlg_input(unsigned int	max_size, unsigned int	&firstItem,unsigned int	&lastItem, unsigned int	&selected, bool	progressBar) {
+
+	int	key_pressed	= getch();
+
+	switch (key_pressed) {
+		case KEY_UP:			if (selected != 0)
+									selected--;
+								if ((progressBar) && (selected + 1 == firstItem)) {
+									firstItem--;
+									lastItem--;
+								}
+								return KEY_UP;
+								break;
+
+		case KEY_DOWN:			if (selected != (max_size - 1))
+									selected++;
+								if ((progressBar) && (selected == lastItem)) {
+									firstItem++;
+									lastItem++;
+								}
+								return KEY_DOWN;
+								break;
+
+		case H_KEY_ENTER:		return H_KEY_ENTER;
+								break;
+
+		case H_KEY_BACKSPACE:	return H_KEY_BACKSPACE;
+								break;
+
+		case H_KEY_ESC:			return H_KEY_ESC;
+								break;
+
+		case H_KEY_CtrlF1:		windlg_ver();
+								break;
+	}
+
+	return 0;
+}
+
+void mvprintw_l(unsigned int	y, unsigned int	x, string line, color_t	win_color_local, color_t	win_color_selected, bool	selected) {
+	if (selected) {
+		attron(COLOR_PAIR(win_color_selected) | A_BOLD);
+	} else {
+		attron(COLOR_PAIR(win_color_local) | A_BOLD);
+	}
+
+	unsigned int	next_sign,			// Позиция следующего знака на экране
+					state;				// Состояние
+					// operation_count;
+
+	int				continue_count;		// Счётчик количества пропусков
+
+	bool			always_read,
+					// found_first_sign,
+					color_ok;			// Если было использовано залитие
+
+	color_t			write_color;		// Цвет залития
+
+	state				= 0;
+	next_sign			= 0;
+	always_read			= false;
+	// found_first_sign	= false;
+	color_ok			= false;
+	write_color			= TEXT_WHITE_BLACK;
+
+	for (unsigned int	i	= 0; i < llength(line); i++) {
+		if (continue_count) {
+			continue_count--;
+			continue;
+		}
+
+		if ((line[i] == '/') && (line[i + 1] == '/'))	// Пропуск экранировки знака экранирования
+			continue;
+
+		if ((line[i] == '/') && (line[i + 1] == '\''))	// Пропуск экранировки ковычки
+			continue;
+
+		if ((line[i] == '\'') && ((i == 0) || ((i > 0) && (line[i - 1] != '/')))) {
+			if (always_read) {
+				always_read	= false;
+				attroff(COLOR_PAIR(write_color) | A_BOLD);
+
+				if (selected) {
+					attron(COLOR_PAIR(win_color_selected) | A_BOLD);
+				} else {
+					attron(COLOR_PAIR(win_color_local) | A_BOLD);
+				}
+
+				color_ok	= false;
+				state		= 0;
+			} else {
+				always_read	= true;
+			}
+
+			continue;
+		}
+
+		if ((line[i] == '%') && ((i == 0) || ((i > 0) && (line[i - 1] != '\\'))))	// Если обнаружен неэкранированный специальный знак
+			state	= 0;
+
+		switch (state) {
+			case 0:		if ((line[i] == '%') && ((i == 0) || ((i > 0) && (line[i - 1] != '\\')))) {
+							switch (line[i + 1]) {
+								case 'c':							// Цвет
+											continue_count	= 2;	// Пропуск вывод 2-х знаков +1
+											state			= 1;
+
+											if (color_ok)
+												attroff(COLOR_PAIR(write_color) | A_BOLD);	// Сброс цвета, если до этого он был задан
+
+											switch (line[i + 2]) {	// Каким цветом заливать
+												case 'w':	if (selected) {
+																write_color	= get_color_on_color(TEXT_WHITE_BLACK, win_color_local);
+															} else {
+																write_color	= TEXT_WHITE_BLACK;
+															}
+															break;
+
+												case 'y':	if (selected) {
+																write_color	= get_color_on_color(TEXT_YELLOW_BLACK, win_color_local);
+															} else {
+																write_color	= TEXT_YELLOW_BLACK;
+															}
+															break;
+
+												case 'b':	if (selected) {
+																write_color	= get_color_on_color(TEXT_BLUE_BLACK, win_color_local);
+															} else {
+																write_color	= TEXT_BLUE_BLACK;
+															}
+															break;
+
+												case 'g':	if (selected) {
+																write_color	= get_color_on_color(TEXT_GREEN_BLACK, win_color_local);
+															} else {
+																write_color	= TEXT_GREEN_BLACK;
+															}
+															break;
+
+												case 'r':	if (selected) {
+																write_color	= get_color_on_color(TEXT_RED_BLACK, win_color_local);
+															} else {
+																write_color	= TEXT_RED_BLACK;
+															}
+															break;
+
+												case 'm':	if (selected) {
+																write_color	= get_color_on_color(TEXT_MAGENTA_BLACK, win_color_local);
+															} else {
+																write_color	= TEXT_MAGENTA_BLACK;
+															}
+															break;
+
+												case 'c':	if (selected) {
+																write_color	= get_color_on_color(TEXT_CYAN_BLACK, win_color_local);
+															} else {
+																write_color	= TEXT_CYAN_BLACK;
+															}
+															break;
+
+
+												default:	state			= 0;	// Сброс, если не обнаружен известный знак
+															continue_count	= 0;
+															break;
+
+											}
+
+											if (state == 1) {
+												if (!color_ok) {
+													if (selected) {
+														attroff(COLOR_PAIR(win_color_selected) | A_BOLD);
+													} else {
+														attroff(COLOR_PAIR(win_color_local) | A_BOLD);
+													}
+												}
+
+												attron(COLOR_PAIR(write_color) | A_BOLD);
+												color_ok	= true;
+											}
+											break;
+
+								case 'l':	// Позиция
+											break;
+
+							}
+						}
+						break;
+
+			case 1:		if ((line[i] == ' ') && (!always_read)) {	// Если обнаружен пробел, то остановить заливку
+							attroff(COLOR_PAIR(write_color) | A_BOLD);
+							if (selected) {
+								attron(COLOR_PAIR(win_color_selected) | A_BOLD);
+							} else {
+								attron(COLOR_PAIR(win_color_local) | A_BOLD);
+							}
+
+							color_ok	= false;
+							state		= 0;
+						}
+						break;
+		}
+
+		if (continue_count)
+			continue;
+
+		mvprintw(y, x + next_sign, "%c", line[i]);
+		next_sign++;
+	}
+
+	if (color_ok) {
+		attroff(COLOR_PAIR(write_color) | A_BOLD);
+	} else if (selected) {
+		attroff(COLOR_PAIR(win_color_selected) | A_BOLD);
+	} else {
+		attroff(COLOR_PAIR(win_color_local) | A_BOLD);
+	}
+
+}
+
+void draw_box(	int				mode,
+				string			title,
+				unsigned int	progressBarPos,
+				unsigned int	x,
+				unsigned int	y,
+				unsigned int	end_x,
+				unsigned int	end_y,
+				color_t			win_color_local,
+				color_t			win_color_selected) {
+
+	if (mode == 1) {	// Рисование рамки
+		unsigned int	x_i,
+						y_i;
+
+		string			emptySpace;
+
+		emptySpace.clear();
+
+		attron(COLOR_PAIR(win_color_local) | A_BOLD);
+
+		for (x_i	= 0; x_i < (end_x - 1); mvprintw(y, (x + x_i), "-"), mvprintw((y + end_y), (x + x_i), "-"), emptySpace	+= " ", x_i++);	// Верхняя и нижняя границы
+
+		for (y_i	= 0; y_i <= end_y; mvprintw((y + y_i), x, "|"), mvprintw((y + y_i), (x + x_i), "|"), y_i++) {	// Левая и правая граница
+			if ((y_i != 0) && (y_i != end_y))
+				mvprintw((y + y_i), x + 1, "%s", emptySpace.c_str());	// Зачистка области
+		}
+
+		if (progressBarPos)
+			mvprintw(progressBarPos, x, "]");	// Вывод прогресс-бара
+
+		attroff(COLOR_PAIR(win_color_local) | A_BOLD);
+
+		attron(COLOR_PAIR(win_color_selected) | A_BOLD);
+
+		if (!title.empty()) {					// Вывод заголовка
+			if (title.length() > (end_x - 4)) {
+				title.erase((end_x - 7), title.length());
+				title	+= "...";
+			}
+
+			mvprintw(y, x + 2, "%s", title.c_str());
+		}
+
+		attroff(COLOR_PAIR(win_color_selected) | A_BOLD);
+	}
+
+	if (mode == 2) {	// Обновление прогресс-бара
+		unsigned int	y_i;
+
+		attron(COLOR_PAIR(win_color_local) | A_BOLD);
+
+		for (y_i	= 0; y_i <= end_y; mvprintw((y + y_i), x, "|"), y_i++);	// Левая граница
+
+		if (progressBarPos)
+			mvprintw(progressBarPos, x, "]");
+
+		attroff(COLOR_PAIR(win_color_local) | A_BOLD);
+	}
+}
+
+void balance_vector(vector <string>	&items, unsigned int	max_l) {
+	string			temp_item;
+
+	for (unsigned int	i	= 0; i < items.size(); i++) {	// Добавление пробелов в конец для выравнивания
+		temp_item	= items[i];
+
+		if (line_length(temp_item) < max_l) {
+			while (max_l != line_length(temp_item))
+				temp_item += " ";
+		} else if (line_length(temp_item) > max_l) {
+			temp_item.erase(max_l - 3, line_length(temp_item));
+			temp_item	+= "...";
+		}
+
+		items[i]	= temp_item;
+	}
+}
+
+unsigned int find_max_length(vector <string>	&items) {	// Поиск самой длиной строки в векторе
+	unsigned int	max_l;
+
+	string			temp_item;
+
+	max_l			= 0;
+
+	for (unsigned int	i	= 0; i < items.size(); i++) {	// Поиск самой длинной строки
+		temp_item	= items[i];
+
+		if (max_l < line_length(temp_item))
+			max_l	= line_length(temp_item);
+	}
+
+	return max_l;
+}
+
+#ifdef _DEBUG
+void fill_field() {
+	unsigned int	maxX,
+					maxY,
+					es;
+
+	string			fill_str;
+
+	fill_str.clear();
+
+	getmaxyx(stdscr, maxY, maxX);	// Получение размеров экрана
+
+	for (es	= 0; es <= maxX; fill_str	+= " ", es++);
+
+	attron(COLOR_PAIR(TEXT_BLACK_GREEN) | A_BOLD);
+
+	for (es	= 0; es <= maxY; mvprintw(es, 0, "%s", fill_str.c_str()), es++);
+
+	attroff(COLOR_PAIR(TEXT_BLACK_GREEN) | A_BOLD);
+}
+#endif
+
+unsigned int menu_winV2(MENSTR*	menu_conf, string	title, vector <string>	items, color_t	win_color_local) {
+
+	unsigned int	posX,
+					posY,
+					posXmax,			// Ограничение размера окошка
+					posYmax,
+					maxX,				// Размеры экрана
+					maxY,
+					firstItem,			// Если не лезет в экран, то с какого элемента выводить
+					lastItem,			// Если не лезет в экран, то до какого элемента выводить
+					selected,			// Выбранный элемент
+					maxItemLenght,		// Максимальная длина строки
+					i,
+					j,
+					animation_delay;
+
+	bool			progressBar,		// Выводить ли прогресс-бар
+					cycle,
+					already_fix,
+					redraw_window;		// Если нужно только перерисовать окно
+
+	int				key_pressed,
+					border_fix,
+					border_fix_x;
+
+	color_t			win_color_selected;
+
+	string			tempItem,
+					emptySpace;			// Для очистки области окна
+
+	vector <string>	orig_items;
+
+	orig_items		= items;
+
+	getmaxyx(stdscr, maxY, maxX);	// Получение размеров экрана
+
+	if (menu_conf == NULL) {
+		posX 			= 0;
+		posY 			= 0;
+		posXmax			= 0;
+		posYmax			= 0;
+		border_fix		= 2;	// Если включены границы окна, то добавить ещё две строки
+		animation_delay	= 0;	// Отключение анимации
+		redraw_window	= false;
+		selected		= 0;
+	} else {
+		if (menu_conf->no_border) {
+			border_fix	= 0;
+		} else {
+			border_fix	= 2;
+		}
+
+		posX			= menu_conf->posX;
+		posY			= menu_conf->posY;
+		posXmax			= menu_conf->posXmax;
+		posYmax			= menu_conf->posYmax;
+		animation_delay	= menu_conf->animation_delay;
+		redraw_window	= menu_conf->redraw;
+
+		if (menu_conf->std_selected > items.size()) {
+			selected		= items.size() - 1;
+		} else {
+			if (menu_conf->std_selected != 0) {
+				selected	= menu_conf->std_selected - 1;
+			} else {
+				selected	= 0;
+			}
+		}
+	}
+
+	if ((border_fix == 0) && (!title.empty()))
+		border_fix	= 1;
+
+	already_fix			= false;
+	firstItem			= 0;
+	lastItem			= items.size();
+	win_color_selected	= get_inv_color(win_color_local);
+
+	if ((posYmax != 0) && (posYmax < items.size())) {	// Если элементов больше, чем фиксированный размер окна
+		lastItem	= posYmax;
+		progressBar	= true;
+	}
+
+	/*Влезание по Y начало*/
+	if (((posYmax != 0) && ((posY + posYmax + border_fix) >= maxY)) || ((posYmax == 0) && ((posY + items.size() + border_fix) >= maxY))) {
+		if (posYmax != 0) {
+			if (((posY + border_fix)  >= maxY) && ((posYmax + border_fix) < maxY)) {
+				posY			= maxY - (posYmax + border_fix);
+			}
+
+			if (((posY + border_fix)  >= maxY) && ((posYmax + border_fix) >= maxY)) {
+				posY			= 0;
+				posYmax			= maxY - border_fix;
+			}
+
+			if (((posY + border_fix)  < maxY) && ((posYmax + border_fix) >= maxY)) {
+				posYmax			= maxY - (posY - border_fix);
+			}
+
+			if ((posY + posYmax + border_fix) >= maxY) {
+				posY			= maxY - (posYmax + border_fix);
+			}
+
+		} else {
+			if (((posY + border_fix)  >= maxY) && ((items.size() + border_fix) < maxY)) {
+				posY			= maxY - (items.size() + border_fix);
+			}
+
+			if (((posY + border_fix)  >= maxY) && ((items.size() + border_fix) >= maxY)) {
+				posY			= 0;
+				posYmax			= maxY - border_fix;
+				lastItem		= posYmax;
+				progressBar		= true;
+			}
+
+			if (((posY + border_fix)  < maxY) && ((items.size() + border_fix) >= maxY)) {
+				posYmax			= maxY - (posY + border_fix);
+				lastItem		= posYmax;
+				progressBar		= true;
+				already_fix		= true;
+			}
+
+			if (((posY + items.size() + border_fix) >= maxY) && (!already_fix)) {
+				posY			= maxY - (items.size() + border_fix);
+			}
+		}
+	}
+	/*Влезание по Y конец*/
+
+	cycle			= true;
+	key_pressed		= KEY_UP;
+
+	if (posXmax == 0) {
+		maxItemLenght	= find_max_length(items);
+	} else {
+		maxItemLenght	= posXmax;
+	}
+
+	/*Влезание по X начало*/
+	if (border_fix == 2) {
+		border_fix_x	= 2;
+	} else {
+		border_fix_x	= 0;
+	}
+
+	if (((posX + posXmax + border_fix_x) >= maxX) || ((posX + maxItemLenght + border_fix_x) >= maxX)) {
+		if (posXmax != 0) {
+			if (((posX + border_fix_x)  >= maxX) && ((posXmax + border_fix_x) < maxX)) {
+				posX			= maxX - (posXmax + border_fix_x);
+			}
+
+			if (((posX + border_fix_x)  >= maxX) && ((posXmax + border_fix_x) >= maxX)) {
+				posX			= 0;
+				posXmax			= maxX - border_fix_x;
+			}
+
+			if (((posX + border_fix_x) < maxX) && ((posXmax + border_fix_x) >= maxX)) {
+				posXmax			= maxX - (posX + border_fix_x);
+			}
+
+			if ((posX + posXmax + border_fix_x) >= maxX) {
+				posX			= maxX - (posXmax + border_fix_x);
+			}
+
+		} else {
+			if (((posX + border_fix_x)  >= maxX) && ((maxItemLenght + border_fix_x) < maxX)) {
+				posX			= maxX - (maxItemLenght + border_fix_x);
+			}
+
+			if (((posX + border_fix_x)  >= maxX) && ((maxItemLenght + border_fix_x) >= maxX)) {
+				posX	= 0;
+				maxItemLenght	= maxX - border_fix_x;
+			}
+
+			if (((posX + border_fix_x) < maxX) && ((maxItemLenght + border_fix_x) >= maxX)) {
+				maxItemLenght	= maxX - (posX + border_fix_x);
+			}
+
+			if ((posX + maxItemLenght + border_fix_x) >= maxX) {
+				posX			= maxX - (maxItemLenght + border_fix_x);
+			}
+		}
+	}
+	/*Влезание по X конец*/
+
+	balance_vector(items, maxItemLenght);
+
+	emptySpace.clear();
+
+	timeout(-1);	// Задержка чтения кнопки с клавиатуры
+
+	#ifdef _DEBUG
+	fill_field();
+	#endif
+
+	if (border_fix == 2) {
+		draw_box(1, title, (progressBar == true ? (((selected * posYmax) / items.size()) + (posY + 1)) : 0), posX, posY, (maxItemLenght + border_fix), (posYmax == 0 ? (items.size() + 1) : (posYmax + 1)), win_color_local, win_color_selected);
+		posX++;
+		posY++;
+	}
+
+	if ((selected > lastItem) && (progressBar)) {	// Смещение вывода, если была задана позиция выделения заранее
+		lastItem	= selected + 1;
+		firstItem	= selected - posYmax + 1;
+	}
+
+	while (cycle) {
+
+		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN)) {		// Обновлять экран только при нажатии этих кнопок
+			j	= 0;
+
+			for (i	= firstItem; i < lastItem; i++, j++) {
+				tempItem	= items[i];
+
+				mvprintw_l(posY + j, posX, tempItem, win_color_local, win_color_selected, (i == selected ? true : false));	// Вывод строки на экран
+
+				if (animation_delay) {	// Анимация
+					usleep(animation_delay * 1000);
+					timeout(0);
+
+					if (getch() != -1)	// Если обнаружена любая нажатая кнопка, то остановить анимацию
+						animation_delay	= 0;
+				}
+
+				if (animation_delay)
+					refresh();
+			}
+
+			if (animation_delay) {
+				animation_delay	= 0;
+				timeout(-1);
+			}
+
+			// items.size()	=	posYmax - Формула, по которой находится позиция прогресс-бара
+			// selected		=	???
+			if (progressBar)
+				draw_box(2, title, (((selected * posYmax) / items.size()) + posY), (posX - 1), posY, 0, (posYmax == 0 ? items.size() : posYmax), win_color_local, win_color_selected);
+		}
+
+		if (!redraw_window)
+			key_pressed = windlg_input(items.size(), firstItem, lastItem, selected, progressBar);
+
+		if (menu_conf != NULL)
+			menu_conf->returned_key	= key_pressed;
+
+		switch (key_pressed) {
+			case H_KEY_ENTER:		cycle	= false;
+									break;
+
+			case H_KEY_BACKSPACE:	return 0;
+									break;
+
+			case H_KEY_ESC:			return 0;
+									break;
+		}
+
+		if (redraw_window)
+			cycle	= false;
+	}
+
+	if (menu_conf != NULL) {
+		menu_conf->returned_x	= posX + maxItemLenght;
+		menu_conf->returned_y	= posY + (selected - firstItem);
+	}
+
+	return selected + 1;
+
+	return 0;
+}
+/*WINDLG 2.0*/
