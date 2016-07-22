@@ -1057,16 +1057,10 @@ int	windlg_input(unsigned int	max_size, unsigned int	&firstItem,unsigned int	&la
 								return KEY_DOWN;
 								break;
 
-		case H_KEY_ENTER:		return H_KEY_ENTER;
-								break;
-
-		case H_KEY_BACKSPACE:	return H_KEY_BACKSPACE;
-								break;
-
-		case H_KEY_ESC:			return H_KEY_ESC;
-								break;
-
 		case H_KEY_CtrlF1:		windlg_ver();
+								break;
+
+		default:				return key_pressed;
 								break;
 	}
 
@@ -1616,15 +1610,10 @@ unsigned int menu_winV2(MENSTR*	menu_conf, string	title, vector <string>	items, 
 		if (menu_conf != NULL)
 			menu_conf->returned_key	= key_pressed;
 
-		switch (key_pressed) {
-			case H_KEY_ENTER:		cycle	= false;
-									break;
-
-			case H_KEY_BACKSPACE:	return 0;
-									break;
-
-			case H_KEY_ESC:			return 0;
-									break;
+		if (key_pressed == H_KEY_ENTER) {
+			cycle	= false;
+		} else if ((key_pressed != KEY_UP) && (key_pressed != KEY_DOWN)) {
+			return 0;
 		}
 
 		if (redraw_window)

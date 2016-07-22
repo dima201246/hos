@@ -640,6 +640,9 @@ int settings(string	path_to_settings_file) {
 			case KEY_BACKSPACE:	cycle = false;
 								break;
 
+			case H_KEY_BACKSPACE:	cycle = false;
+								break;
+
 			case 27:		cycle = false;
 							break;
 		}
