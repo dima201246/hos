@@ -5,7 +5,17 @@
 using namespace std;
 
 void open_menu(vector <string>& app_list) {
-	DLGSTR		menu_panel	= {};
+	Init_MENSTR(menu_panel);
+
+	menu_panel.posX	= 1;
+	menu_panel.posY	= 1;
+
+	unsigned int	selected_menu	= menu_winV2(&menu_panel, "", app_list, main_system_color);
+
+	if (selected_menu) {
+		app_start(selected_menu, NULL);
+	}
+	/*DLGSTR		menu_panel	= {};
 
 	bool	cycle			= true;
 
@@ -36,9 +46,7 @@ void open_menu(vector <string>& app_list) {
 							return;
 							break;
 		}
-	}
-
-	return;
+	}*/
 }
 
 int draw_desktop(int selected, bool open_label, unsigned int maxX, unsigned int maxY, int color, int sel_color) {
