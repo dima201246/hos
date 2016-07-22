@@ -374,10 +374,20 @@ int settings(string	path_to_settings_file) {
 		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN) || (key_pressed == '\n')) { // Вывод невыделенных пунктов
 			attron(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 			for (j	= 0; j < maxX - 2; j++, mvprintw(2 + (selected - first_write) * 3, j, " "), mvprintw(3 + (selected - first_write) * 3, j, " ")); // Заполнение цветом выделения
+			attroff(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 		
 			if (selected_type == "bool") {
+				if (selected_value == "1") {
+					attron(COLOR_PAIR(get_color_on_color(TEXT_GREEN_BLACK, main_system_color)) | A_BOLD);
+					mvprintw(2 + (selected - first_write) * 3, maxX - ((maxX - right_border) / 2), "ON");
+					attroff(COLOR_PAIR(get_color_on_color(TEXT_GREEN_BLACK, main_system_color)) | A_BOLD);
+				} else {
+					attron(COLOR_PAIR(get_color_on_color(TEXT_RED_BLACK, main_system_color)) | A_BOLD);
 					mvprintw(2 + (selected - first_write) * 3, maxX - ((maxX - right_border) / 2), "OFF");
+					attroff(COLOR_PAIR(get_color_on_color(TEXT_RED_BLACK, main_system_color)) | A_BOLD);
+				}
 			} else if (selected_type != "action") {
+				attron(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 				if (llength(selected_value) > (maxX - right_border - 3)) {
 					selected_value.erase((maxX - right_border - 6), llength(selected_value));
 					selected_value	+= "...";
@@ -386,6 +396,7 @@ int settings(string	path_to_settings_file) {
 			}
 
 			if (selected_type == "action") {
+				attron(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 				mvprintw(2 + (selected - first_write) * 3, maxX - 3, ">");
 			}
 			attroff(COLOR_PAIR(main_system_color_selection) | A_BOLD);
@@ -514,8 +525,8 @@ int settings(string	path_to_settings_file) {
 								draw_border(settings_lng, set_name, maxX, maxY);
 							}
 
-							if (item_temp.type_item == "list") {
-								DLGSTR			setwin		= {}; // Только так!!!
+							if (item_temp.type_item == "list") { // Оставил вызов и работу со старой менюшкой для наглядности
+								/*DLGSTR			setwin		= {}; // Только так!!!
 								vector <string>	menu_vec;
 
 								item_temp					= items_list[selected];
@@ -557,6 +568,21 @@ int settings(string	path_to_settings_file) {
 									}
 								}
 								
+								draw_border(settings_lng, set_name, maxX, maxY);
+								key_pressed			= KEY_UP;*/
+								Init_MENSTR(setwin);
+
+								setwin.posX			= maxX - ((maxX - right_border) / 2);
+								setwin.posY			= 2 + (selected - first_write) * 3;
+
+								unsigned int	selected_menu	= menu_winV2(&setwin, "", item_temp.list_values, CYAN_WIN);
+
+								if ((selected_menu != 0) && (item_temp.value_item != item_temp.list_values[selected_menu - 1])) {
+									item_temp.value_item	= item_temp.list_values[selected_menu - 1];
+									configurator(item_temp.path_to_conf, item_temp.parametr, item_temp.value_item, true);
+									items_list[selected]	= item_temp;
+								}
+
 								draw_border(settings_lng, set_name, maxX, maxY);
 								key_pressed			= KEY_UP;
 							}
