@@ -1443,6 +1443,7 @@ unsigned int menu_winV2(MENSTR*	menu_conf, string	title, vector <string>	items, 
 	if ((border_fix == 0) && (!title.empty()))
 		border_fix	= 1;
 
+	progressBar			= false;
 	already_fix			= false;
 	firstItem			= 0;
 	lastItem			= items.size();
@@ -1488,8 +1489,8 @@ unsigned int menu_winV2(MENSTR*	menu_conf, string	title, vector <string>	items, 
 			if (((posY + border_fix)  < maxY) && ((items.size() + border_fix) >= maxY)) {
 				posYmax			= maxY - (posY + border_fix);
 				lastItem		= posYmax;
-				progressBar		= true;
 				already_fix		= true;
+				progressBar		= true;
 			}
 
 			if (((posY + items.size() + border_fix) >= maxY) && (!already_fix)) {
