@@ -1596,8 +1596,10 @@ unsigned int menu_winV2(MENSTR*	menu_conf, string	title, vector <string>	items, 
 					usleep(animation_delay * 1000);
 					timeout(0);
 
-					if (getch() != -1)	// Если обнаружена любая нажатая кнопка, то остановить анимацию
+					if (getch() != -1) {	// Если обнаружена любая нажатая кнопка, то остановить анимацию
 						animation_delay	= 0;
+						timeout(-1);
+					}
 				}
 
 				if (animation_delay)
