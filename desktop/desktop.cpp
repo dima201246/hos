@@ -7,46 +7,15 @@ using namespace std;
 void open_menu(vector <string>& app_list) {
 	Init_MENSTR(menu_panel);
 
-	menu_panel.posX	= 1;
-	menu_panel.posY	= 1;
+	menu_panel.posX				= 1;
+	menu_panel.posY				= 1;
+	menu_panel.animation_delay	= 100;
 
 	unsigned int	selected_menu	= menu_winV2(&menu_panel, "", app_list, main_system_color);
 
 	if (selected_menu) {
 		app_start(selected_menu, NULL);
 	}
-	/*DLGSTR		menu_panel	= {};
-
-	bool	cycle			= true;
-
-	int		key;
-
-	menu_panel.xpos			= 1;
-	menu_panel.ypos			= 1;
-	menu_panel.style		= BLUE_WIN;
-	menu_panel.border_menu	= true;	
-
-	while (cycle) {
-		menu_win(menu_panel, app_list);
-		key	= getch();
-		
-		switch (key) {
-			case 27:		cycle = false;
-							break;
-
-			case KEY_UP:	if (menu_panel.selected != 1)
-								menu_panel.selected--;
-							break;
-
-			case KEY_DOWN:	if (menu_panel.selected != menu_panel.second_border)
-								menu_panel.selected++;
-							break;
-
-			case '\n':		app_start(menu_panel.selected, NULL);
-							return;
-							break;
-		}
-	}*/
 }
 
 int draw_desktop(int selected, bool open_label, unsigned int maxX, unsigned int maxY, int color, int sel_color) {
