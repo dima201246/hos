@@ -154,7 +154,7 @@ void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
 	getmaxyx(stdscr, maxY, maxX);
 
 	dlgcfg.second_border	= items.size();
-	
+
 	if (local_cfg.border_menu)
 		fix_border = 2;
 
@@ -1402,8 +1402,16 @@ unsigned int menu_winV2(MENSTR*	menu_conf, string	title, vector <string>	items, 
 	getmaxyx(stdscr, maxY, maxX);	// Получение размеров экрана
 
 	if (menu_conf == NULL) {
-		posX 			= 0;
-		posY 			= 0;
+		getmaxyx(stdscr, posY, posX);
+
+		if (items.size() < posY)	// Чтобы окошко было посередине
+			posY 			= (posY / 2) - (items.size() / 2);
+
+		unsigned int	temp_max	= find_max_length(items);
+		
+		if (temp_max < posX)
+			posX 			= (posX / 2) - (temp_max / 2);
+
 		posXmax			= 0;
 		posYmax			= 0;
 		border_fix		= 2;	// Если включены границы окна, то добавить ещё две строки
@@ -1573,6 +1581,8 @@ unsigned int menu_winV2(MENSTR*	menu_conf, string	title, vector <string>	items, 
 	}
 
 	while (cycle) {
+		if (animation_delay)
+			refresh();
 
 		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN)) {		// Обновлять экран только при нажатии этих кнопок
 			j	= 0;
