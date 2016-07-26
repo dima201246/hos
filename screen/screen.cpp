@@ -83,22 +83,22 @@ void	init_color() {
 void	get_normal_inv_color(std::string	color_str, color_t	&color, color_t	&sel_color) { // Получение кода цвета из имени и его инвертированной состовляющей
 	if (color_str == "cyan") {
 		color		= TEXT_CYAN_BLACK;
-		sel_color	= TEXT_BLACK_CYAN;
+		sel_color	= TEXT_WHITE_CYAN;
 	} else if (color_str == "blue"){
 		color		= TEXT_BLUE_BLACK;
-		sel_color	= TEXT_BLACK_BLUE;
+		sel_color	= TEXT_WHITE_BLUE;
 	} else if (color_str == "red"){
 		color		= TEXT_RED_BLACK;
-		sel_color	= TEXT_BLACK_RED;
+		sel_color	= TEXT_WHITE_RED;
 	} else if (color_str == "yellow"){
 		color		= TEXT_YELLOW_BLACK;
-		sel_color	= TEXT_BLACK_YELLOW;
+		sel_color	= TEXT_WHITE_YELLOW;
 	} else if (color_str == "magenta"){
 		color		= TEXT_MAGENTA_BLACK;
-		sel_color	= TEXT_BLACK_MAGENTA;
+		sel_color	= TEXT_WHITE_MAGENTA;
 	} else if (color_str == "green"){
 		color		= TEXT_GREEN_BLACK;
-		sel_color	= TEXT_BLACK_GREEN;
+		sel_color	= TEXT_WHITE_GREEN;
 	} else {
 		color		= TEXT_WHITE_BLACK;
 		sel_color	= TEXT_BLACK_WHITE;
@@ -107,17 +107,18 @@ void	get_normal_inv_color(std::string	color_str, color_t	&color, color_t	&sel_co
 
 color_t	get_inv_color(color_t	color) { // Получение кода инвертированного цвета
 	if (color == TEXT_CYAN_BLACK) {
-		return TEXT_BLACK_CYAN;
+		return TEXT_WHITE_CYAN;
 	} else if (color == TEXT_BLUE_BLACK) {
-		return TEXT_BLACK_BLUE;
+		return TEXT_WHITE_BLUE;
+		// return TEXT_BLACK_BLUE;
 	} else if (color == TEXT_RED_BLACK) {
-		return TEXT_BLACK_RED;
+		return TEXT_WHITE_RED;
 	} else if (color == TEXT_YELLOW_BLACK) {
-		return TEXT_BLACK_YELLOW;
+		return TEXT_WHITE_YELLOW;
 	} else if (color == TEXT_MAGENTA_BLACK) {
-		return TEXT_BLACK_MAGENTA;
+		return TEXT_WHITE_MAGENTA;
 	} else if (color == TEXT_GREEN_BLACK) {
-		return TEXT_BLACK_GREEN;
+		return TEXT_WHITE_GREEN;
 	} else {
 		return TEXT_BLACK_WHITE;
 	}
