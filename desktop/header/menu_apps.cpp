@@ -5,6 +5,7 @@
 #include "menu_apps.h"
 
 #include <stdlib.h>
+#include "../../screen/screen.h"
 
 using namespace std;
 
@@ -17,11 +18,12 @@ int get_apps_list(vector<string>& names) {
 		get_files(APPS_DIR, apps_vec); // Получение списка папок с (предполагается) приложениями 
 		files_sort_by('n', apps_vec); // Сортировка по имени
 		for (unsigned int i = 0; i < apps_vec.size(); i++) {
-			if ((FileExists(APPS_DIR + apps_vec[i].name + "/app.config")) && (configurator(APPS_DIR + apps_vec[i].name + "/app.config", "type", "", false) == "app")) {
+			if ((FileExists(APPS_DIR + apps_vec[i].name + "/app.config")) && ((configurator(APPS_DIR + apps_vec[i].name + "/app.config", "type", "", false) == "app") || (configurator(APPS_DIR + apps_vec[i].name + "/app.config", "type", "", false) == "link_app"))) {
 				count++;
 				
 				load_to_vector(APPS_DIR + apps_vec[i].name + "/app.config", apps_file_vec); // Загрузка файла с описанием приложения
 				
+				add_to_file(APPS_FILE, str(count) + "_app_type = \"" + conf("type", apps_file_vec) + "\"");
 				add_to_file(APPS_FILE, str(count) + "_app_package_name = \"" + conf("name_package", apps_file_vec) + "\"");
 				add_to_file(APPS_FILE, str(count) + "_app_path = \"" + APPS_DIR + apps_vec[i].name + "\"");
 				add_to_file(APPS_FILE, str(count) + "_app_launcher = \"" + conf("launcher", apps_file_vec) + "\"");
