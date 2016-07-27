@@ -53,13 +53,13 @@ void draw_border(string	settings_lng, string	set_name, unsigned int	maxX, unsign
 
 	attroff(COLOR_PAIR(main_system_color) | A_BOLD);
 
-	if (llength(settings_lng) + llength(set_name) > maxX - 3) {
-		set_name.erase(maxX - 6 - llength(settings_lng), llength(set_name));
+	if (llength(settings_lng) + llength(set_name) > maxX - 4) {
+		set_name.erase(maxX - 7 - llength(settings_lng), llength(set_name));
 		set_name	+= "...";
 	}
 
 	attron(COLOR_PAIR(main_system_color_selection) | A_BOLD);
-	mvprintw (0, 1, "%s %s", settings_lng.c_str(), set_name.c_str());
+	mvprintw (0, 2, "%s %s", set_name.c_str(), settings_lng.c_str());
 	attroff(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 }
 
@@ -173,35 +173,36 @@ int settings(string	path_to_settings_file) {
 
 	unsigned int	maxX,
 					maxY,
-					selected, // Номер выделенного пункта
-					all_items, //Сколько всего будет пунктов
+					selected,							// Номер выделенного пункта
+					all_items,							//Сколько всего будет пунктов
 					i,
 					j,
-					first_write, // С кокого элемента будет выводиться
-					last_write, // До какого, включительно будет выводиться
-					position_write, // С какой строки начинать писать
-					cut_selected_name, // Обрезка выделенного пункта
-					cut_selected_comment, // -//-
-					wait_selected_name, // Задержка при достижении начала или конца строки
-					wait_selected_comment, // -//-
-					right_border; // С какой позиции писать значение
+					first_write,						// С кокого элемента будет выводиться
+					last_write,							// До какого, включительно будет выводиться
+					position_write,						// С какой строки начинать писать
+					cut_selected_name,					// Обрезка выделенного пункта
+					cut_selected_comment,				// -//-
+					wait_selected_name,					// Задержка при достижении начала или конца строки
+					wait_selected_comment,				// -//-
+					right_border;						// С какой позиции писать значение
 
 	bool			cycle,
-					want_to_moving_selected_name, // Надо ли вообще проматывать выбранный пункт
-					want_to_moving_selected_comment; // Надо ли вообще проматывать выбранный пункт
+					want_to_moving_selected_name,		// Надо ли вообще проматывать выбранный пункт
+					want_to_moving_selected_comment,	// Надо ли вообще проматывать выбранный пункт
+					animation_move;						// Двигать ли длинные строки при выделении
 
 	string			temp,
-					name_item, // Имя пункта
-					comment_item, // Комментарий пункта
-					type_item, // Тип пункта
-					parametr_config_item, // Параметр для изменения
-					path_to_conf_item, // Путь к конфигурационному файлу для этого пункта
-					selected_name,	// Имя выделенного пункта
-					selected_comment, // Комментарий выделенного пункта
-					selected_type,	// Тип выбранного пункта
-					selected_value,	// Значение выбранного пункта
-					action_item, // Действие пункта
-					list_item; // Список значений пункта
+					name_item,							// Имя пункта
+					comment_item,						// Комментарий пункта
+					type_item,							// Тип пункта
+					parametr_config_item,				// Параметр для изменения
+					path_to_conf_item,					// Путь к конфигурационному файлу для этого пункта
+					selected_name,						// Имя выделенного пункта
+					selected_comment,					// Комментарий выделенного пункта
+					selected_type,						// Тип выбранного пункта
+					selected_value,						// Значение выбранного пункта
+					action_item,						// Действие пункта
+					list_item;							// Список значений пункта
 
 	conf_str		temp_conf_str;
 
@@ -210,7 +211,7 @@ int settings(string	path_to_settings_file) {
 	int				key_pressed;
 
 	/*LANG ZONE START*/
-	string	settings_lng	= "Settings",
+	string	settings_lng	= "settings",
 			set_name		= conf("name_app", setfile_vec);
 	/*LANG ZONE END*/
 
@@ -282,6 +283,12 @@ int settings(string	path_to_settings_file) {
 	want_to_moving_selected_name	= false;
 	want_to_moving_selected_comment	= false;
 
+	if (conf("scroll_long_lines_in_settings", main_config_base) == "1") {
+		animation_move				= true;
+	} else {
+		animation_move				= false;
+	}
+
 	if ((all_items * 3 + 2) > maxY) {
 		last_write					= (maxY - 2) / 3;
 	} else {
@@ -305,15 +312,25 @@ int settings(string	path_to_settings_file) {
 					cut_selected_comment	= 0;
 					wait_selected_comment	= 0;
 
-					if ((llength(selected_name) + 3) > right_border) {
+					if (((llength(selected_name) + 3) > right_border) && (animation_move)) {
 						want_to_moving_selected_name	= true;
 					} else {
+						if (((llength(selected_name) + 3) > right_border)) {
+							selected_name.erase(right_border - 6, llength(selected_name));
+							selected_name	+= "...";
+						}
+
 						want_to_moving_selected_name	= false;
 					}
 
-					if ((llength(selected_comment) + 4) > right_border) {
+					if (((llength(selected_comment) + 4) > right_border) && (animation_move)) {
 						want_to_moving_selected_comment	= true;
 					} else {
+						if ((llength(selected_comment) + 4) > right_border) {
+							selected_comment.erase(right_border - 7, llength(selected_comment));
+							selected_comment	+= "...";
+						}
+
 						want_to_moving_selected_comment	= false;
 					}
 
@@ -371,7 +388,7 @@ int settings(string	path_to_settings_file) {
 		}
 
 		/*DRAW SELECTED ELEMENT START*/
-		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN) || (key_pressed == '\n')) { // Вывод невыделенных пунктов
+		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN) || (key_pressed == '\n')) {
 			attron(COLOR_PAIR(main_system_color_selection) | A_BOLD);
 			for (j	= 0; j < maxX - 2; j++, mvprintw(2 + (selected - first_write) * 3, j, " "), mvprintw(3 + (selected - first_write) * 3, j, " ")); // Заполнение цветом выделения
 			attroff(COLOR_PAIR(main_system_color_selection) | A_BOLD);

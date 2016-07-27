@@ -92,6 +92,12 @@ int action_parcer(string line) {
 		return 0;
 	}
 
+	if (command == "settings") {
+		settings(action);
+		return 0;
+	}
+
+
 	DLGSTR	failwin	= {};
 	failwin.style	= RED_WIN;
 	failwin.line	= "Not found " + line;
