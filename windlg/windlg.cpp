@@ -1283,8 +1283,8 @@ void draw_box(	int				mode,
 		attron(COLOR_PAIR(win_color_selected) | A_BOLD);
 
 		if (!title.empty()) {					// Вывод заголовка
-			if (title.length() > (end_x - 4)) {
-				title.erase((end_x - 7), title.length());
+			if (title.length() > (end_x - 3)) {
+				title.erase((end_x - 6), title.length());
 				title	+= "...";
 			}
 
