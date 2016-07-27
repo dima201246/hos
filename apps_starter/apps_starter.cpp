@@ -56,25 +56,15 @@ void init_signals()
 
 // Фоновых процессов список отображаем мы
 void list_process() {
-	timeout(-1);
-
 	std::vector <std::string>	apps_names;
 
-	DLGSTR						apps_dlg	= {};
+	Init_MENSTR(apps_menu);
 
-	unsigned int				maxX,
-								maxY;
+	getmaxyx(stdscr, apps_menu.posY, apps_menu.posX);
 
-	int							key_pressed;
-
-	getmaxyx(stdscr, maxY, maxX);
-
-	apps_dlg.title			= "Background applications";
-	apps_dlg.style			= RED_WIN;
-	apps_dlg.xpos			= maxX / 2 - llength(apps_dlg.title) / 2;
-	apps_dlg.ypos			= maxY / 2;
-	apps_dlg.ymax			= maxY / 2;
-	apps_dlg.border_menu	= true;
+	apps_menu.posX		= apps_menu.posX / 2 - 12;
+	apps_menu.posY		= apps_menu.posY / 2;
+	apps_menu.posXmax	= 25;
 
 	// Не делаем ничего, вектор если пуст
 	if(!apps_vect.empty()) {
@@ -82,28 +72,13 @@ void list_process() {
 			apps_names.push_back(apps_vect[i].name);
 		}
 
-		key_pressed	= 0;
+		unsigned int	selected	= menu_winV2(&apps_menu, "Background applications", apps_names, main_system_color);
 
-		while (key_pressed != 27) {
-			menu_win(apps_dlg, apps_names);
-			key_pressed	= getch();					// пользователя ввод обрабатываем мы
-
-			switch (key_pressed) {
-				case KEY_UP:	if (apps_dlg.selected != 0)
-									apps_dlg.selected--;
-								break;
-
-				case KEY_DOWN:	if (apps_dlg.selected != apps_names.size())
-									apps_dlg.selected++;
-								break;
-
-				case '\n':		// процесс спящий мы будим
-								endwin();
-								fg_job(apps_vect[apps_dlg.selected - 1]);
-								init_display();
-								init_color();
-								return;
-			}
+		if (selected != 0) {	// процесс спящий мы будим
+			endwin();
+			fg_job(apps_vect[selected - 1]);
+			init_display();
+			init_color();
 		}
 	}
 }
@@ -118,7 +93,7 @@ int app_start(int number_of_app, char** argv) {
 	pid_t	chpid	= fork();
 
 	job j = {
-		.name = name_app,
+		.name = configurator(APPS_FILE, str(number_of_app) + "_app_package_name", "", false),
 		.pid = chpid
 	};
 
