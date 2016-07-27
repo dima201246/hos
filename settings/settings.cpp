@@ -592,7 +592,7 @@ int settings(string	path_to_settings_file) {
 								setwin.posX			= maxX - ((maxX - right_border) / 2);
 								setwin.posY			= 2 + (selected - first_write) * 3;
 
-								unsigned int	selected_menu	= menu_winV2(&setwin, "", item_temp.list_values, CYAN_WIN);
+								unsigned int	selected_menu	= menu_win(&setwin, "", item_temp.list_values, CYAN_WIN);
 
 								if ((selected_menu != 0) && (item_temp.value_item != item_temp.list_values[selected_menu - 1])) {
 									item_temp.value_item	= item_temp.list_values[selected_menu - 1];

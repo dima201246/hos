@@ -38,7 +38,7 @@
 	
 	int dlg_win(DLGSTR, std::string&);
 	int msg_win(DLGSTR);
-	void menu_win(DLGSTR&, std::vector<std::string>&);
+	void menu_win_old(DLGSTR&, std::vector<std::string>&);
 
 	/*WINDLG 2.0*/
 	struct MENSTR {
@@ -57,7 +57,7 @@
 								std_selected;		// Позиция выделения
 	};
 
-	unsigned int menu_winV2(MENSTR*, std::string, std::vector <std::string>, color_t);
+	unsigned int menu_win(MENSTR*, std::string, std::vector <std::string>, color_t);
 
 	#define Init_MENSTR(var_name) MENSTR var_name = {};
 	/*WINDLG 2.0*/

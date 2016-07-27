@@ -132,7 +132,7 @@ int search_max_vectro(vector<string> items, string title) {
 	return max;
 }
 
-void menu_win(DLGSTR& dlgcfg, vector<string>& items) {
+void menu_win_old(DLGSTR& dlgcfg, vector<string>& items) {
 	DLGSTR local_cfg		= dlgcfg;
 
 	if (dlgcfg.selected == 0)
@@ -1365,7 +1365,7 @@ void fill_field() {
 }
 #endif
 
-unsigned int menu_winV2(MENSTR*	menu_conf, string	title, vector <string>	items, color_t	win_color_local) {
+unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, color_t	win_color_local) {
 
 	unsigned int	posX,
 					posY,

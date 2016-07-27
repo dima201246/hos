@@ -11,7 +11,7 @@ void open_menu(vector <string>& app_list) {
 	menu_panel.posY				= 1;
 	menu_panel.animation_delay	= 100;
 
-	unsigned int	selected_menu	= menu_winV2(&menu_panel, "", app_list, main_system_color);
+	unsigned int	selected_menu	= menu_win(&menu_panel, "", app_list, main_system_color);
 
 	if (selected_menu) {
 		app_start(selected_menu, NULL);

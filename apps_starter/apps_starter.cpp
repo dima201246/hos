@@ -72,7 +72,7 @@ void list_process() {
 			apps_names.push_back(apps_vect[i].name);
 		}
 
-		unsigned int	selected	= menu_winV2(&apps_menu, "Background applications", apps_names, main_system_color);
+		unsigned int	selected	= menu_win(&apps_menu, "Background applications", apps_names, main_system_color);
 
 		if (selected != 0) {	// процесс спящий мы будим
 			endwin();
