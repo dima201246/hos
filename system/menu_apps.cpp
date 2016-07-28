@@ -1,11 +1,11 @@
-#include "../../configurator/configurator.h"
-#include "../../fswork/fswork.h"
-#include "../../lang/lang.h"
-#include "../../apps_starter/apps_starter.h"
-#include "menu_apps.h"
+#include "../include/configurator.h"
+#include "../include/fswork.h"
+#include "../include/lang.h"
+#include "../include/apps_starter.h"
+#include "../include/menu_apps.h"
 
 #include <stdlib.h>
-#include "../../screen/screen.h"
+#include "../include/screen.h"
 
 using namespace std;
 

@@ -1,4 +1,4 @@
-#include "screen.h"
+#include "../include/screen.h"
 
 int		main_system_color,
 		main_system_color_selection;

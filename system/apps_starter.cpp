@@ -1,4 +1,4 @@
-#include "apps_starter.h"
+#include "../include/apps_starter.h"
 
 std::vector<job> apps_vect;			// Определение вектора запущенных программ
 struct termios hos_tmode;			// настройки терминала для hos

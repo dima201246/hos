@@ -5,9 +5,9 @@
 	#include <vector>
 	#include <unistd.h>
 	#include <stdio.h>
-	#include "../lang/lang.h"
-	#include "../screen/screen.h"
-	#include "../system/system_defines.h"
+	#include "lang.h"
+	#include "screen.h"
+	#include "system_defines.h"
 
 	/*Styles*/
 	#define WHITE_WIN	TEXT_WHITE_BLACK

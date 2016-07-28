@@ -1,4 +1,4 @@
-#include "windlg.h"
+#include "../include/windlg.h"
 
 /*BUGS
 

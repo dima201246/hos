@@ -5,7 +5,7 @@
 	#include <vector>
 	#include <string>
 	#include <stdlib.h>
-	#include "../system/system_defines.h"
+	#include "system_defines.h"
 
 	extern	std::vector <std::string>	main_config_base;
 

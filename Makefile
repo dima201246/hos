@@ -9,7 +9,7 @@ Lib_Modules 	= time.o fswork.o windlg.o screen.o lang.o settings.o configurator.
 Modules		= desktop.o menu_apps.o apps_starter.o system.o 
 Main 		= bootloader.o
 
-VPATH = ./desktop:./desktop/header:./configurator:./bootloader:./windlg:./screen:./system:./apps_starter:./lang:./fswork:./time:./settings
+VPATH = ./isca_alpha:./system:./hos_lib
 
 all: $(Modules) $(Main) 
 		$(CC) $^ -o $(OutPut) -lcurses -Llib -lhos -Wl,-rpath=./lib

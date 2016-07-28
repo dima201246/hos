@@ -1,4 +1,4 @@
-#include "desktop.h"
+#include "../include/desktop.h"
 
 #define TAB		9
 

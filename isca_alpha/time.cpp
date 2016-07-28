@@ -1,4 +1,4 @@
-#include "time.h"
+#include "../include/time.h"
 
 local_time get_time_now() {
 	local_time	time_temp;
