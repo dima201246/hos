@@ -39,9 +39,9 @@ int main(int argc, char *argv[]) {
 		msg_win(teststr);
 	}
 
-	/*if ((conf("start_boot_indexing", main_config_base) == "1") && (FileExists())) {
-
-	}*/
+	if ((conf("start_boot_indexing", main_config_base) == "1") && (FileExists(MAIN_APPS_FILE))) {
+		
+	}
 
 	main_desktop("user_name");
 	endwin();

@@ -84,9 +84,9 @@ void list_process() {
 }
 
 int app_start(int number_of_app, char** argv) {
-	std::string name_app	= configurator(APPS_FILE, str(number_of_app) + "_app_launcher", "", false);
-	std::string path_to_dir	= configurator(APPS_FILE, str(number_of_app) + "_app_path", "", false);
-	std::string type_app	= configurator(APPS_FILE, str(number_of_app) + "_app_type", "", false);
+	std::string name_app	= configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_launcher", "", false);
+	std::string path_to_dir	= configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_path", "", false);
+	std::string type_app	= configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_type", "", false);
 	erase();
 	endwin();
 
@@ -94,7 +94,7 @@ int app_start(int number_of_app, char** argv) {
 	pid_t	chpid	= fork();
 
 	job j = {
-		.name = configurator(APPS_FILE, str(number_of_app) + "_app_package_name", "", false),
+		.name = configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_package_name", "", false),
 		.pid = chpid
 	};
 
