@@ -23,6 +23,10 @@ bool makedir(string path) {
 	return false;
 }
 
+bool rm_file(string path) {
+	return remove(path.c_str());
+}
+
 /*inline - не работает с ним нихрена!!!*/bool FileExists(const string& path) {	
 	return ifstream(path.c_str()).good();
 }

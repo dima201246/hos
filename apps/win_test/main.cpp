@@ -5,14 +5,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include "../../configurator/configurator.h"
-#include "../../windlg/windlg.h"
-// #include "../../windlgV2/windlgV2.h"
-#include "../../desktop/desktop.h"
-#include "../../fswork/fswork.h"
-#include "../../screen/screen.h"
-#include "../../system/system_defines.h"
-
+#include "../../include/isca_alpha.h"
 
 using namespace std;
 

@@ -40,7 +40,12 @@ int main(int argc, char *argv[]) {
 	}
 
 	if ((conf("start_boot_indexing", main_config_base) == "1") && (FileExists(MAIN_APPS_FILE))) {
-		
+		if (!rm_file(MAIN_APPS_FILE)) {
+			DLGSTR	failwin	= {}; // Только так!!!
+			failwin.line	= "Can't load main configuration file!!!";
+			failwin.style	= RED_WIN;
+			msg_win(failwin);
+		}
 	}
 
 	main_desktop("user_name");

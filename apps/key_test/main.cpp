@@ -1,4 +1,4 @@
-#include "../../screen/screen.h"
+#include "../../include/isca_alpha.h"
 
 int main() {
 	init_display();

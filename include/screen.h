@@ -1,7 +1,7 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-	#include <curses.h>
+	#include <ncurses.h>
 	#include <string>
 
 	/*Types*/
@@ -18,15 +18,6 @@
 
 
 	/*Colors*/
-/*	#define TEXT_WHITE_BLACK	0 = TEXT_WHITE_MAGENTA	42
-								  = TEXT_BLACK_MAGENTA	43
-	#define TEXT_YELLOW_BLACK	1 = TEXT_YELLOW_MAGENTA	44
-	#define TEXT_BLUE_BLACK		2 = TEXT_BLUE_MAGENTA	45
-	#define TEXT_GREEN_BLACK	3 = TEXT_GREEN_MAGENTA	46
-	#define TEXT_RED_BLACK		4 = TEXT_RED_MAGENTA	47
-	#define TEXT_MAGENTA_BLACK	5 = 
-	#define TEXT_CYAN_BLACK		6 = TEXT_CYAN_MAGENTA	48
-*/
 	#define TEXT_WHITE_BLACK	0
 	#define TEXT_YELLOW_BLACK	1
 	#define TEXT_BLUE_BLACK		2

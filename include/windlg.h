@@ -19,19 +19,19 @@
 	#define CYAN_WIN	TEXT_CYAN_BLACK
 
 	struct DLGSTR {
-		std::string title, // Title
-		line, // Text
-		f_button, // Text on first button (maybe empty)
-		s_button, // Text on second button (maybe empty)
-		t_button; // Text on third button (maybe empty)
-		int num_of_chars, // Maximum number of input characters (not work)
-		type_input, // TYPE INPUT (not work)
-		style, // STYLE
-		keys, // Number of keys (1 - 3)
-		fix_size; // Unknown
+		std::string title,			// Title
+		line,						// Text
+		f_button,					// Text on first button (maybe empty)
+		s_button,					// Text on second button (maybe empty)
+		t_button;					// Text on third button (maybe empty)
+		int num_of_chars,			// Maximum number of input characters (not work)
+		type_input,					// TYPE INPUT (not work)
+		style,						// STYLE
+		keys,						// Number of keys (1 - 3)
+		fix_size;					// Unknown
 		unsigned int xpos, ypos,
 		xmax, ymax,
-		selected; // Initial choice
+		selected;					// Initial choice
 		unsigned int xreturn, yreturn, second_border;
 		bool border_menu, active_menu, not_view_scrollbar;
 	};
