@@ -16,6 +16,7 @@
 	bool rm_file(std::string);
 	int get_files(std::string, std::vector<FILEINFO>&);
 	void files_sort_by(char/*SORT TYPE*/, std::vector<FILEINFO>&);
+	void fv_in_strv_out(std::vector <FILEINFO>, std::vector <std::string>&);	// Имена файлов из вектора с типом FILEINFO в вектор с типом STRING
 
 	/* SORT TYPE
 		n - name

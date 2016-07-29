@@ -31,6 +31,15 @@ bool rm_file(string path) {
 	return ifstream(path.c_str()).good();
 }
 
+void fv_in_strv_out(vector <FILEINFO> filevector, vector <string>& fileout) {
+	FILEINFO temp;
+	fileout.clear();
+	for (unsigned int vec = 0; vec < filevector.size();vec++) {
+		temp = filevector[vec];
+		fileout.insert(fileout.end(), temp.name.c_str());
+	}
+}
+
 void files_sort_by(char type_sort, vector<FILEINFO> &filevec) {
 	FILEINFO temp_1, temp_2, temp_3;
 	unsigned int k_cycle, itemp_1, itemp_2;

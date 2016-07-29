@@ -1467,10 +1467,20 @@ unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, co
 			if (((posY + border_fix)  >= maxY) && ((posYmax + border_fix) >= maxY)) {
 				posY			= 0;
 				posYmax			= maxY - border_fix;
+
+				if (posYmax < items.size()) {
+					lastItem	= posYmax;
+					progressBar	= true;
+				}
 			}
 
 			if (((posY + border_fix)  < maxY) && ((posYmax + border_fix) >= maxY)) {
-				posYmax			= maxY - (posY - border_fix);
+				posYmax			= maxY - (posY + border_fix);
+
+				if (posYmax < items.size()) {
+					lastItem	= posYmax;
+					progressBar	= true;
+				}
 			}
 
 			if ((posY + posYmax + border_fix) >= maxY) {
@@ -1626,6 +1636,9 @@ unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, co
 		if (key_pressed == H_KEY_ENTER) {
 			cycle	= false;
 		} else if ((key_pressed != KEY_UP) && (key_pressed != KEY_DOWN)) {
+			if (menu_conf != NULL)
+				menu_conf->returned_selected	= selected;
+
 			return 0;
 		}
 
@@ -1636,6 +1649,7 @@ unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, co
 	if (menu_conf != NULL) {
 		menu_conf->returned_x	= posX + maxItemLenght;
 		menu_conf->returned_y	= posY + (selected - firstItem);
+		menu_conf->returned_selected	= selected;
 	}
 
 	return selected + 1;

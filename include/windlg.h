@@ -54,7 +54,8 @@
 								returned_x,			// Возвращаемая позиция выделения
 								returned_y,
 								animation_delay,	// Время анимации
-								std_selected;		// Позиция выделения
+								std_selected,		// Позиция выделения
+								returned_selected;	// Номер выделенного элемента, даже если окно было закрыто без выбора
 	};
 
 	unsigned int menu_win(MENSTR*, std::string, std::vector <std::string>, color_t);

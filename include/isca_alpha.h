@@ -47,6 +47,7 @@
 	bool			rm_file(std::string);
 	int				get_files(std::string, std::vector<FILEINFO>&);
 	void			files_sort_by(char/*SORT TYPE*/, std::vector<FILEINFO>&);
+	void			fv_in_strv_out(std::vector <FILEINFO>, std::vector <std::string>&);	// Имена файлов из вектора с типом FILEINFO в вектор с типом STRING
 
 	/* SORT TYPE
 		n - name
@@ -182,7 +183,8 @@
 								returned_x,			// Возвращаемая позиция выделения
 								returned_y,
 								animation_delay,	// Время анимации
-								std_selected;		// Позиция выделения
+								std_selected,		// Позиция выделения
+								returned_selected;	// Номер выделенного элемента, даже если окно было закрыто без выбора
 	};
 
 	#define Init_MENSTR(var_name) MENSTR var_name = {};
@@ -199,5 +201,12 @@
 	int				settings(std::string/*путь к файлу настроек*/);
 
 	/*SETTINGS END*/
+
+	#define H_KEY_ESC		27
+	#define H_KEY_BACKSPACE	127
+	#define H_KEY_TAB		9
+	#define H_KEY_ENTER		'\n'
+	#define H_KEY_CtrlF1	289
+	#define H_KEY_DEL		330
 
 #endif
