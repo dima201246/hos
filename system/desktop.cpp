@@ -1,3 +1,13 @@
+/*#include "windlg.h"
+#include "fswork.h"
+#include "apps_starter.h"
+#include "time.h"
+#include "screen.h"
+#include "settings.h"
+*/
+#include "../include/system_defines.h"
+#include "../include/apps_starter.h"
+#include "../include/isca_alpha.h"
 #include "../include/desktop.h"
 
 #define TAB		9

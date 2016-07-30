@@ -1,8 +1,6 @@
 #ifndef TIME_H
 #define TIME_H
 
-	#include <time.h>
-
 	struct local_time {
 		int	hours,
 			min,
@@ -13,4 +11,5 @@
 	};
 
 	local_time get_time_now();
+
 #endif

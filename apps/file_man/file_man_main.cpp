@@ -140,9 +140,9 @@ void interface_fm() {
 			}
 		}
 
-		if ((left_panel_str.returned_key == H_KEY_ESC) || (right_panel_str.returned_key == H_KEY_ESC)) {
+		/*if ((left_panel_str.returned_key == H_KEY_ESC) || (right_panel_str.returned_key == H_KEY_ESC)) {
 			cycle	= false;
-		}
+		}*/
 	}
 }
 

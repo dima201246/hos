@@ -6,6 +6,11 @@
 
 // VERSION: 0.29.0
 // LAST UPDATE: 26.05.2016
+
+#include <fstream>
+#include <stdlib.h>
+
+#include "../include/system_defines.h"
 #include "../include/configurator.h"
 
 using namespace std;

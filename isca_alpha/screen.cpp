@@ -1,4 +1,4 @@
-#include "../include/screen.h"
+#include "../include/isca_alpha.h"
 
 int		main_system_color,
 		main_system_color_selection;

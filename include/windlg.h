@@ -3,11 +3,8 @@
 
 	#include <string>
 	#include <vector>
-	#include <unistd.h>
-	#include <stdio.h>
-	#include "lang.h"
+
 	#include "screen.h"
-	#include "system_defines.h"
 
 	/*Styles*/
 	#define WHITE_WIN	TEXT_WHITE_BLACK

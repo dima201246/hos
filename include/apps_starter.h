@@ -7,11 +7,8 @@
 	#include <unistd.h>
 	#include <signal.h>
 	#include <termios.h>
-	
-	#include "lang.h"
-	#include "configurator.h"
-	#include "windlg.h"
-	#include "screen.h"
+	#include <string>
+	#include <vector>
 
 	struct job {				// Структура запущенной программы
 		std::string	name;		// Имя программы

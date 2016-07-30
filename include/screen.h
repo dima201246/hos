@@ -1,7 +1,6 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-	#include <ncurses.h>
 	#include <string>
 
 	/*Types*/

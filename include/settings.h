@@ -1,12 +1,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-	#include "lang.h"
-	#include "screen.h"
-	#include "configurator.h"
-	#include "fswork.h"
-	#include "windlg.h"
-	#include "system_defines.h"
+	#include <string>
 
 	#define WAIT_START 10
 	#define WAIT_END 5

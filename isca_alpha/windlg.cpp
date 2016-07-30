@@ -1,4 +1,8 @@
-#include "../include/windlg.h"
+#include <unistd.h>
+#include <stdio.h>
+
+#include "../include/system_defines.h"
+#include "../include/isca_alpha.h"
 
 /*BUGS
 

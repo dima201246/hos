@@ -1,3 +1,5 @@
+#include <sstream> // Для str()
+
 #include "../include/lang.h"
 
 using namespace std;

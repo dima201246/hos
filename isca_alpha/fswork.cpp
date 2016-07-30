@@ -1,13 +1,9 @@
 
-#include "../include/lang.h"
-#include "../include/configurator.h"
-#include "../include/fswork.h"
+#include "../include/isca_alpha.h"
 #include "../include/stat_file.h"
 
 #include <fstream>
-#include <vector>
 #include <dirent.h>
-#include <curses.h>
 #include <sys/types.h>
 #include <time.h>
 #include <cstring>

@@ -3,11 +3,8 @@
 */
 
 #include "../include/apps_starter.h"
-#include "../include/configurator.h"
-#include "../include/windlg.h"
+#include "../include/isca_alpha.h"
 #include "../include/desktop.h"
-#include "../include/fswork.h"
-#include "../include/screen.h"
 #include "../include/system_defines.h"
 
 using namespace std;

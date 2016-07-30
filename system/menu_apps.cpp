@@ -1,3 +1,10 @@
+/*	#include "../include/configurator.h"
+	#include "../include/fswork.h"
+	#include "../include/lang.h"
+	#include "../include/apps_starter.h"
+*/
+#include "../include/isca_alpha.h"
+#include "../include/system_defines.h"
 #include "../include/menu_apps.h"
 
 using namespace std;

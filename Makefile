@@ -5,7 +5,7 @@ OutPut			= hos_alpha
 HOS_LIB			= libhos.so
 _HOS_VERSION	= \"0.0.12\"
 
-Lib_Modules 	= time.o fswork.o windlg.o screen.o lang.o settings.o configurator.o
+Lib_Modules 	= timework.o fswork.o windlg.o screen.o lang.o settings.o configurator.o
 Modules		= desktop.o menu_apps.o apps_starter.o system.o 
 Main 		= bootloader.o
 

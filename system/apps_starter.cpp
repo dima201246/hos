@@ -1,3 +1,5 @@
+#include "../include/isca_alpha.h"
+#include "../include/system_defines.h"
 #include "../include/apps_starter.h"
 
 std::vector<job> apps_vect;			// Определение вектора запущенных программ
