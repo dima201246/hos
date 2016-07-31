@@ -2,6 +2,9 @@
 
 using namespace std;
 
+unsigned int	maxX,
+				maxY;
+
 string title_path_fixer(unsigned int maxX, string title_path) {
 	if (llength(title_path) > maxX / 2 - 2) {	// ??TEMP?? Разъясни что здесь творится
 		while (llength(title_path) + 3 > (maxX / 2 - 2)) // Отвечаю - это обрезка полного пути, он выводится в шапке,
@@ -10,6 +13,70 @@ string title_path_fixer(unsigned int maxX, string title_path) {
 	}
 
 	return title_path;
+}
+
+int menu() {
+	int		selected	= 0,
+			key_presed;
+
+	bool	cycle	= true;
+
+	attron(COLOR_PAIR(TEXT_WHITE_GREEN) | A_BOLD);
+	for (unsigned int	x = 0; x < maxX; mvprintw(0, x, " "), x++);
+	attroff(COLOR_PAIR(TEXT_WHITE_GREEN) | A_BOLD);
+
+	while (cycle) {
+		attron(COLOR_PAIR(TEXT_WHITE_GREEN) | A_BOLD);
+		mvprintw(0, 0, "Menu");
+		mvprintw(0, 5, "Settings");
+		mvprintw(0, 14, "About");
+		attroff(COLOR_PAIR(TEXT_WHITE_GREEN) | A_BOLD);
+
+		attron(COLOR_PAIR(TEXT_GREEN_WHITE) | A_BOLD);
+		switch (selected) {
+			case 0:	mvprintw(0, 0, "Menu");
+					break;
+
+			case 1:	mvprintw(0, 5, "Settings");
+					break;
+
+			case 2: mvprintw(0, 14, "About");
+					break;
+		}
+		attroff(COLOR_PAIR(TEXT_GREEN_WHITE) | A_BOLD);
+
+		key_presed	= getch();
+
+		switch (key_presed) {
+			case KEY_RIGHT:		if (selected != 2) {
+									selected++;
+								}
+								break;
+
+			case KEY_LEFT:		if (selected != 0) {
+									selected--;
+								}
+								break;
+
+			case H_KEY_ENTER:	switch (selected) {
+									case 0:	Init_MENSTR(menu_str);
+											vector <string>	menu_list;
+											menu_list.push_back("About");
+											menu_list.push_back("Exit");
+											menu_str.posY	= 1;
+											switch (menu_win(&menu_str, "", menu_list, GREEN_WIN)) {
+												default:	endwin();
+															exit(0);
+															break;
+											}
+											break;
+								}
+
+			default:			return key_presed;
+		}
+	}
+
+	return 0;
 }
 
 bool menu_prop(MENSTR	panel_str, vector <string>	file_list, vector <FILEINFO>	list_of_files, string	&panel_path) {
@@ -32,6 +99,8 @@ bool menu_prop(MENSTR	panel_str, vector <string>	file_list, vector <FILEINFO>	li
 				return true;
 				break;
 	}
+
+	return false;
 }
 
 void interface_fm() {
@@ -51,8 +120,8 @@ void interface_fm() {
 	fv_right_panel.push_back("TEST11");
 	fv_right_panel.push_back("TEST12");
 
-	unsigned int	maxX,
-					maxY;
+	/*unsigned int	maxX,
+					maxY;*/
 					/*left_selected,
 					right_selected;*/
 
@@ -90,7 +159,7 @@ void interface_fm() {
 
 	while (cycle) {
 
-		if (update_fs) {
+		if ((update_fs) && (state < 3)) {
 			get_files(left_panel_path, list_of_files_left); // Загрузка списка файлов
 			get_files(right_panel_path, list_of_files_right); // Загрузка списка файлов
 
@@ -111,12 +180,15 @@ void interface_fm() {
 			case 2:	left_panel_str.redraw	= true;
 					right_panel_str.redraw	= false;
 					break;
+
+			case 3:	menu();
+					break;
 		}
 
 		if (state == 1) {
 			menu_win(&right_panel_str, title_path_fixer(maxX, right_panel_path), fv_right_panel, WHITE_WIN);
 			menu_win(&left_panel_str, title_path_fixer(maxX, left_panel_path), fv_left_panel, BLUE_WIN);
-		} else {
+		} else if (state == 2) {
 			menu_win(&left_panel_str, title_path_fixer(maxX, left_panel_path), fv_left_panel, WHITE_WIN);
 			menu_win(&right_panel_str, title_path_fixer(maxX, right_panel_path), fv_right_panel, BLUE_WIN);
 		}
@@ -125,7 +197,7 @@ void interface_fm() {
 		right_panel_str.std_selected	= right_panel_str.returned_selected + 1;
 
 		if ((left_panel_str.returned_key == H_KEY_TAB) || (right_panel_str.returned_key == H_KEY_TAB)) {	// Смена панели
-			if (state != 2) {
+			if (state != 3) {
 				state++;
 			} else {
 				state	= 1;
