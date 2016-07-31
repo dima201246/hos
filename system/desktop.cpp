@@ -24,7 +24,7 @@ void open_menu(vector <string>& app_list) {
 	unsigned int	selected_menu	= menu_win(&menu_panel, "", app_list, main_system_color);
 
 	if (selected_menu) {
-		app_start(selected_menu, NULL);
+		app_start(selected_menu, "user=unknown hos_version=unknown");
 	}
 }
 

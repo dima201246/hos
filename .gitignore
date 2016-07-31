@@ -3,3 +3,4 @@ lib
 apps/apps.list
 hos_alpha
 apps/file_man/file_man
+apps/key_test/app.config

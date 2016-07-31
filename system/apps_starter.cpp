@@ -2,8 +2,60 @@
 #include "../include/system_defines.h"
 #include "../include/apps_starter.h"
 
+      #include <errno.h>
+      #include <stdio.h>
+#include <cstring>
+
 std::vector<job> apps_vect;			// Определение вектора запущенных программ
 struct termios hos_tmode;			// настройки терминала для hos
+
+char	**init_out_parametr(std::string	parametrs, unsigned int	&count) {
+	unsigned int	space_counter;
+
+	bool			always_read;
+
+	std::string		temp;
+
+	parametrs		+= " ";
+	space_counter	= 0;
+	always_read		= false;
+	temp.clear();
+
+	for (unsigned int	i	= 0; i < parametrs.length(); i++) {
+		if ((parametrs[i] == '"') && ((i == 0) || (parametrs[i - 1] != '\\'))) {
+			(always_read ? always_read	= false : always_read	= true);
+		}
+
+		if ((!always_read) && (parametrs[i] == ' ')) {
+			space_counter++;
+		}
+	}
+
+	char **out_parametrs_temp = new char* [space_counter + 1];
+	out_parametrs_temp[space_counter]	= NULL;
+
+	always_read		= false;
+	space_counter	= 0;
+
+	for (unsigned int	i	= 0; i < parametrs.length(); i++) {
+		if ((parametrs[i] == '"') && ((i == 0) || (parametrs[i - 1] != '\\'))) {
+			(always_read ? always_read	= false : always_read	= true);
+		}
+
+		if ((!always_read) && (parametrs[i] == ' ')) {
+			out_parametrs_temp[space_counter]	= new char [temp.length()];
+			strcpy(out_parametrs_temp[space_counter], temp.c_str());
+			temp.clear();
+			space_counter++;
+			continue;
+		}
+
+		temp	+= parametrs[i];
+	}
+
+	count	= space_counter + 1;
+	return	out_parametrs_temp;
+}
 
 void sighandler(int signo)
 {
@@ -85,15 +137,18 @@ void list_process() {
 	}
 }
 
-int app_start(int number_of_app, char** argv) {
+int app_start(int number_of_app, std::string	parametrs) {
 	std::string name_app	= configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_launcher", "", false);
 	std::string path_to_dir	= configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_path", "", false);
 	std::string type_app	= configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_type", "", false);
+	unsigned int	parametrs_count	= 0;
+
 	erase();
 	endwin();
 
 	int		status;
 	pid_t	chpid	= fork();
+	char **out_parametrs	= NULL;
 
 	job j = {
 		.name = configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_package_name", "", false),
@@ -106,13 +161,35 @@ int app_start(int number_of_app, char** argv) {
 	apps_vect.insert(apps_vect.end(), j);
 
 	if (chpid == 0) {
+		for (unsigned int	i	= 0; i < name_app.length(); i++) {	// Из имени приложения параметры выхватывать пытаемя мы
+			if (name_app[i] == ' ') {
+				std::string app_parametrs;
+				app_parametrs	= name_app;
+				name_app.erase(i, name_app.length());
+				app_parametrs.erase(0, i + 1);
+
+				(parametrs.empty() ? parametrs	= app_parametrs : parametrs.insert(0, app_parametrs + " "));	// В конец параметры добовляем
+				break;
+			}
+		}
+
+		if (!parametrs.empty())	// Параметры если есть какие, массив сделать из них
+			out_parametrs	= init_out_parametr(parametrs, parametrs_count);
+
 		signal(SIGTTIN, SIG_IGN);
 		signal(SIGTTOU, SIG_IGN);
 		tcsetpgrp(STDIN_FILENO, getpid());
 		chdir(path_to_dir.c_str());
 		setpgid(getpid(), getpid());			 	// Создаём группу процессов
-		if (execl(name_app.c_str(), "", NULL) == -1) 	// parent process
+
+		if (execv(name_app.c_str(), out_parametrs) == -1) {	// parent process
+			perror("Erorr EXEC");
+			for (unsigned int	i	= 0; i < parametrs_count; i++)
+				delete [] out_parametrs[i];
+
+			delete [] out_parametrs;
 			exit(0);
+		}
 	} else {
 		waitpid(chpid, &status,WUNTRACED);
 		tcsetpgrp(STDIN_FILENO, getpid());
