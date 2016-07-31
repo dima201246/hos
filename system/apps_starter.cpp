@@ -184,7 +184,7 @@ int app_start(int number_of_app, std::string	parametrs) {
 
 		if (execv(name_app.c_str(), out_parametrs) == -1) {	// parent process
 			perror("Erorr EXEC");
-			for (unsigned int	i	= 0; i < parametrs_count; i++)
+			for (unsigned int	i	= 0; i <= parametrs_count; i++)
 				delete [] out_parametrs[i];
 
 			delete [] out_parametrs;
