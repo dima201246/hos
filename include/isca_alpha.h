@@ -8,6 +8,7 @@
 	#include <unistd.h>
 	#include <string>
 	#include <vector>
+	#include <stdlib.h>
 
 	#include "timework.h"
 	#include "configurator.h"
