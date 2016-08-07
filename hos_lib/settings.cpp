@@ -281,6 +281,7 @@ int settings(string	path_to_settings_file) {
 	unsigned int	maxX,
 					maxY,
 					selected,							// Номер выделенного пункта
+					last_selected,						// Позиция предыдущего выбора для затирания прогресс-бара
 					all_items,							//Сколько всего будет пунктов
 					i,
 					j,
@@ -296,7 +297,8 @@ int settings(string	path_to_settings_file) {
 	bool			cycle,
 					want_to_moving_selected_name,		// Надо ли вообще проматывать выбранный пункт
 					want_to_moving_selected_comment,	// Надо ли вообще проматывать выбранный пункт
-					animation_move;						// Двигать ли длинные строки при выделении
+					animation_move,						// Двигать ли длинные строки при выделении
+					progress_bar;						// Вывод или не вывод прогресс-бара
 
 	string			temp,
 					name_item,							// Имя пункта
@@ -381,6 +383,7 @@ int settings(string	path_to_settings_file) {
 	first_write						= 0;
 	position_write					= 0;
 	selected						= 0;
+	last_selected					= 0;
 	key_pressed						= KEY_UP;
 	right_border					= (maxX - 2) - maxX / 4;
 	cut_selected_name				= 0;
@@ -398,8 +401,10 @@ int settings(string	path_to_settings_file) {
 
 	if ((all_items * 3 + 2) > maxY) {
 		last_write					= (maxY - 2) / 3;
+		progress_bar				= true;
 	} else {
 		last_write					= all_items;
+		progress_bar				= false;
 	}
 
 	while (cycle) {
@@ -453,6 +458,12 @@ int settings(string	path_to_settings_file) {
 				}
 
 				attron(COLOR_PAIR(main_system_color) | A_BOLD);
+
+				if (progress_bar) {
+					mvprintw((((last_selected + 1) * (maxY- 2)) / all_items), 0, "|");	// Затирание прогресс-бара
+					mvprintw((((selected + 1) * (maxY- 2)) / all_items), 0, "]");	// Позиция прогресс-бара
+				}
+
 				mvprintw(position_write, 2, "%s", item_temp.name_item.c_str());
 
 				if (!item_temp.comment_item.empty()) {
@@ -593,6 +604,7 @@ int settings(string	path_to_settings_file) {
 									last_write--; 
 								}
 
+								last_selected	= selected;
 								selected--;
 							}
 							break;
@@ -604,6 +616,7 @@ int settings(string	path_to_settings_file) {
 									last_write++; 
 								}
 
+								last_selected	= selected;
 								selected++;
 							}
 							break;
@@ -649,51 +662,7 @@ int settings(string	path_to_settings_file) {
 								draw_border(settings_lng, set_name, maxX, maxY);
 							}
 
-							if (item_temp.type_item == "list") { // Оставил вызов и работу со старой менюшкой для наглядности
-								/*DLGSTR			setwin		= {}; // Только так!!!
-								vector <string>	menu_vec;
-
-								item_temp					= items_list[selected];
-
-								setwin.style				= CYAN_WIN;
-								setwin.border_menu			= true;
-								setwin.xpos					= maxX - ((maxX - right_border) / 2);
-								setwin.ypos					= 2 + (selected - first_write) * 3;
-								if (item_temp.list_values.size() + 2 > maxY) {
-									setwin.ymax					= maxY - (4 + (selected - first_write) * 3);
-								} else {
-									setwin.ymax					= 0;
-								}
-								key_pressed					= 0;
-								menu_vec					= item_temp.list_values;
-
-								timeout(-1);
-
-								while ((key_pressed != '\n') && (key_pressed != 27)) {
-									menu_win(setwin, menu_vec);
-									
-									key_pressed		= getch();
-
-									switch (key_pressed) {
-										case KEY_UP:	if (setwin.selected != 0)
-															setwin.selected--;
-														break;
-
-										case KEY_DOWN:	if (setwin.selected != item_temp.list_values.size())
-															setwin.selected++;
-														break;
-
-										case '\n':		if (item_temp.value_item != item_temp.list_values[setwin.selected - 1]) {
-															item_temp.value_item	= item_temp.list_values[setwin.selected - 1];
-															configurator(item_temp.path_to_conf, item_temp.parametr, item_temp.value_item, true);
-															items_list[selected]	= item_temp;
-														}
-														break;
-									}
-								}
-								
-								draw_border(settings_lng, set_name, maxX, maxY);
-								key_pressed			= KEY_UP;*/
+							if (item_temp.type_item == "list") { // Список
 								Init_MENSTR(setwin);
 
 								setwin.posX			= maxX - ((maxX - right_border) / 2);
