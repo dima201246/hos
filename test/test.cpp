@@ -4,8 +4,9 @@ using namespace std;
 
 void button_obj(/*BUTSTR*/ void *button_conf_point, string text, color_t color_button) {
 	BUTSTR	*button_conf	= (BUTSTR *)button_conf_point;
-	/*printw("posX: %d", button_conf->posX);
-	printw("posY: %d", button_conf->posY);*/
+	printw("Point in button: %p", button_conf);
+	// printw("posX: %d", button_conf->posX);
+	// printw("posY: %d", button_conf->posY);
 	getch();
 	return;
 }
