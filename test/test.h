@@ -13,9 +13,11 @@
 	typedef	int	color_t;
 
 	struct list_of_objects {
-		void (*point_to_function)(void *, std::string, color_t);
+		win_object	type_obj;
 
-		void						*point_to_struct;
+		void		(*point_to_function)(void *, std::string, color_t);
+
+		void		*point_to_struct;
 
 		std::string	text;
 
@@ -42,6 +44,8 @@
 	struct BUTSTR {
 		unsigned int	posX,
 						posY;
+
+		bool			redraw;
 	};
 
 	struct WINSTR {

@@ -8,8 +8,9 @@ void button_obj(/*BUTSTR*/ void *button_conf_point, string text, color_t color_b
 	printw("\nIn button_obj: %p\nPoint in button: %p\n", &button_obj, button_conf);
 
 	if (button_conf != NULL) {
-		printw("posX: %d\n", button_conf->posX);
-		printw("posY: %d\n\n", button_conf->posY);
+		printw("posX:   %d\n", button_conf->posX);
+		printw("posY:   %d\n\n", button_conf->posY);
+		printw("Redraw: %d\n", (button_conf->redraw ? 1 : 0));
 	}
 
 	return;
@@ -20,10 +21,21 @@ void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::
 
 	switch (object_type) {
 		case WIN_BUTTON:	temp_value.point_to_function	= &button_obj;
+							temp_value.type_obj				= WIN_BUTTON;
+
+							if (point_to_conf == NULL) {
+								BUTSTR	temp_button	= {};
+								temp_button.redraw	= true;
+								temp_value.point_to_struct		= &temp_button;
+							} else {
+								BUTSTR	*temp_button	= (BUTSTR *)point_to_conf;
+								temp_button->redraw	= true;
+								temp_value.point_to_struct		= temp_button;
+							}
+
 							break;
 	}
 
-	temp_value.point_to_struct		= point_to_conf;
 	temp_value.text					= text_on_object;
 	temp_value.color_object			= color_obj;
 	obj_list.push_back(temp_value);
