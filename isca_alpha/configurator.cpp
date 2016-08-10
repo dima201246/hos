@@ -286,13 +286,19 @@ string conf(string parametr, vector<string> conf_base) {
 	else return returned_value;
 }
 
-
 void add_to_file(string link_to_file, string parametr) { // Запись в файл
-	FILE		*file;
-	file		= fopen(link_to_file.c_str(), "a");
-	fprintf(file, "%s\n", parametr.c_str());
-	fclose(file);
-	return;
+	ofstream out_file;
+	out_file.open(link_to_file.c_str(), ios::out | ios::app);
+	out_file << parametr << endl;
+	out_file.close();
+}
+
+template <typename InputT>
+void add_to_file(string link_to_file, InputT parametr) { // Запись в файл
+	ofstream out_file;
+	out_file.open(link_to_file.c_str(), ios::out | ios::app);
+	out_file << parametr << endl;
+	out_file.close();
 }
 
 bool load_to_vector(string link_to_file, vector <string>& list) {
