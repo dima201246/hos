@@ -7,8 +7,8 @@
 // VERSION: 0.29.0
 // LAST UPDATE: 26.05.2016
 
-#include <fstream>
 #include <stdlib.h>
+#include <cstdarg>
 
 #include "../include/system_defines.h"
 #include "../include/configurator.h"
@@ -293,11 +293,18 @@ void add_to_file(string link_to_file, string parametr) { // Запись в фа
 	out_file.close();
 }
 
-template <typename InputT>
-void add_to_file(string link_to_file, InputT parametr) { // Запись в файл
+void add_to_filef(string link_to_file, std::string fmt, ...) {	// ISCA_Log by Viktor Ohotnikov  (viktorokh96@mail.ru)
 	ofstream out_file;
 	out_file.open(link_to_file.c_str(), ios::out | ios::app);
-	out_file << parametr << endl;
+
+	char sbf[256];
+
+	va_list ap;
+	va_start(ap, fmt);
+	vsprintf(sbf, fmt.c_str(), ap);
+	va_end(ap);
+
+	out_file << sbf;
 	out_file.close();
 }
 
