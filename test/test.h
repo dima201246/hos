@@ -34,6 +34,8 @@
 		std::string	text;
 
 		color_t		color_object;
+
+		bool		memory_leak;
 	};
 
 /*	struct MENSTR {

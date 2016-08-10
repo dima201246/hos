@@ -4,14 +4,16 @@ using namespace std;
 
 void button_obj(WINOBJ *button_conf, string text, color_t color_button) {
 
-	printw("\nIn button_obj: %p\nPoint in button: %p\n", &button_obj, button_conf);
+	printw("In button_obj: %p\nPoint in button: %p\n", &button_obj, button_conf);
 
 	if (button_conf != NULL) {
 		printw("posX:   %d\n", button_conf->posX);
-		printw("posY:   %d\n\n", button_conf->posY);
-		printw("Redraw: %d\n", (button_conf->redraw ? 1 : 0));
+		printw("posY:   %d\n", button_conf->posY);
+		printw("posXmax:   %d\n", button_conf->posXmax);
+		printw("posYmax:   %d\n", button_conf->posYmax);
+		printw("Redraw: %d\n\n", (button_conf->redraw ? 1 : 0));
 	}
-
+	getch();
 	return;
 }
 
@@ -21,17 +23,17 @@ void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::
 	switch (object_type) {
 		case WIN_BUTTON:	temp_value.point_to_function	= &button_obj;
 							temp_value.type_obj				= WIN_BUTTON;
-
-
 							break;
 	}
 
 	if (point_to_conf == NULL) {
-		WINOBJ	temp_button	= {};
-		temp_button.redraw	= true;
-		temp_value.point_to_struct	= &temp_button;
+		WINOBJ *temp_objstr	= new WINOBJ;
+		temp_objstr->redraw			= true;
+		temp_value.point_to_struct	= temp_objstr;
+		temp_value.memory_leak		= true;
 	} else {
 		point_to_conf->redraw		= true;
+		temp_value.point_to_struct	= point_to_conf;
 	}
 
 	temp_value.text					= text_on_object;
@@ -65,17 +67,24 @@ returned_str win(WINOBJ* win_conf, std::vector<list_of_objects> obj_list) {
 
 			temp_item.point_to_function(temp_item.point_to_struct, temp_item.text, temp_item.color_object);	// Вызов нужного объекта
 
-/*			if (first_write) {
-				InitWINOBJ(temp_winobj);
-				win_object	= temp_item.point_to_struct;
-				win_object.redraw	= false;
+			if (first_write) {
+				temp_item.point_to_struct->redraw	= false;
 				obj_list[i]	= temp_item;
-			}*/
+			}
 
 		}
+		if (!first_write)
+			cycle		= false;
 
 		first_write	= false;
-		cycle		= false;
+	}
+
+	
+	for (unsigned int	i	= 0; i < obj_list.size(); i++) {	// От утечки памяти
+		temp_item	= obj_list[i];
+
+		if (temp_item.memory_leak)
+			delete temp_item.point_to_struct;
 	}
 }
 
