@@ -1,0 +1,14 @@
+name_app			= Desktop
+
+1_item				= Show clock on desktop
+1_conf_file			= configs/system.conf
+1_parametr_config	= clock_on_desktop
+1_type_input		= bool
+
+2_item				= 24h/12h standart desctop clock
+2_conf_file			= configs/system.conf
+2_parametr_config	= time_style
+2_type_input		= list
+2_list				= 24,12
+
+all_items			= 2
