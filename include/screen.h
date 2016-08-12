@@ -81,4 +81,7 @@
 	#define TEXT_RED_CYAN		54
 	#define TEXT_MAGENTA_CYAN	55
 
+	#define	coloron(color_id) attron(COLOR_PAIR(color_id) | A_BOLD)
+	#define	coloroff(color_id) attroff(COLOR_PAIR(color_id) | A_BOLD)
+
 #endif
