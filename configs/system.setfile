@@ -6,10 +6,9 @@ name_app			= system
 1_parametr_config	= alpha_warning_on_start
 1_type_input		= bool
 
-2_item				= Show clock on desktop
-2_conf_file			= configs/system.conf
-2_parametr_config	= clock_on_desktop
-2_type_input		= bool
+2_item				= Desktop settings
+2_type_input		= action
+2_action			= settings configs/desctop.setfile
 
 3_item				= Indexing apps on start
 3_item_comment		= While not work
