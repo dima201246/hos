@@ -14,4 +14,6 @@
 					color_t			win_color_local,
 					color_t			win_color_selected);
 
+	int	windlg_input(unsigned int	max_size, unsigned int	&firstItem,unsigned int	&lastItem, unsigned int	&selected, bool	progressBar);
+
 #endif 

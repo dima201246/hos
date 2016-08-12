@@ -66,7 +66,7 @@ void get_obj_size(list_of_objects	item, unsigned int &x, unsigned int &y) {	// �
 	}
 }
 
-returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list) {
+returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, string title, color_t color) {
 	vector<list_of_objects>	obj_list;
 
 	returned_str		returned_value;	// Возвращаемая структура
@@ -105,8 +105,10 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list) {
 	if (win_conf == NULL) {
 		win_posX		= 0;
 		win_posY		= 0;
-		getmaxyx(stdscr, win_posXmax, win_posYmax);
+		getmaxyx(stdscr, win_posYmax, win_posXmax);
 	}
+
+	draw_box(1, title, 0, win_posX, win_posY, win_posXmax, win_posYmax - 1, color, get_inv_color(color));
 
 	if ((win_conf == NULL) || (win_conf->manual_locator)) {
 		for (unsigned int	i	= 0; i < obj_list.size(); i++) {
@@ -114,6 +116,9 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list) {
 			temp_item	= obj_list[i];
 
 			now_obj_conf	= temp_item.point_to_struct;
+
+			now_obj_conf->posX++;
+			now_obj_conf->posY++;
 
 			if (i) {
  				ahead_obj_conf	= obj_list[i - 1].point_to_struct;
@@ -185,11 +190,11 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list) {
 	}
 }
 
-returned_str InitWIN(WINOBJ* win_conf, std::vector<list_of_objects> obj_list) {
+returned_str InitWIN(WINOBJ* win_conf, std::vector<list_of_objects> obj_list, string title, color_t color) {
 	if (win_conf != NULL)
 		win_conf->system_point	= NULL;
 
-	win(win_conf, obj_list);
+	win(win_conf, obj_list, title, color);
 }
 
 /*int main() {

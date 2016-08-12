@@ -4,7 +4,7 @@
 	#include <string>
 	#include <ncurses.h>
 	#include <vector>
-	#include "screen"
+	#include "screen.h"
 	
 	#define WIN_BUTTON		1
 	#define WIN_TEXT_FIELD	2
@@ -65,6 +65,6 @@
 	#define InitWINOBJ(name_var)	WINOBJ	name_var	= {}
 
 	void add_to_win(std::vector<list_of_objects>&, win_object, std::string, color_t, WINOBJ*);
-	returned_str InitWIN(WINOBJ*, std::vector<list_of_objects>);
+	returned_str InitWIN(WINOBJ*, std::vector<list_of_objects>, std::string, color_t);
 
 #endif

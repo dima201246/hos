@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 	add_to_win(obj_list, WIN_BUTTON, "TEST", 13, NULL);
 	add_to_win(obj_list, WIN_BUTTON, "TEST", 13, NULL);
 	add_to_win(obj_list, WIN_BUTTON, "TEST2", 14, &test_button);
-	InitWIN(NULL, obj_list);
+	InitWIN(NULL, obj_list, "TEST WIN", RED_WIN);
 	endwin();
 	return 0;
 	/*TEST WINDOWS*/
