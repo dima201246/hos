@@ -183,7 +183,14 @@ int app_start(int number_of_app, std::string	parametrs) {
 		setpgid(getpid(), getpid());			 	// Создаём группу процессов
 
 		if (execv(name_app.c_str(), out_parametrs) == -1) {	// parent process
-			perror("Erorr EXEC");
+			init_display();
+			init_color();
+			DLGSTR	failwin	= {}; // Только так!!!
+			failwin.line	= "Can't start app!!!";
+			failwin.style	= RED_WIN;
+			msg_win(failwin);
+			endwin();
+
 			for (unsigned int	i	= 0; i <= parametrs_count; i++)
 				delete [] out_parametrs[i];
 
