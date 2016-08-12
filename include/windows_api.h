@@ -30,7 +30,7 @@
 	struct list_of_objects {
 		win_object	type_obj;
 
-		void		(*point_to_function)(WINOBJ *, std::string, color_t);
+		int		(*point_to_function)(WINOBJ *, std::string, color_t);
 
 		WINOBJ		*point_to_struct;
 

@@ -1,4 +1,4 @@
-CC			= g++
+CC				= g++
 FLAGS_LIB		= -c -fPIC -Wall -g
 FLAGS 			= -c -Wall -g
 OutPut			= hos_alpha
@@ -26,10 +26,10 @@ $(Modules) $(Main) : %.o : %.cpp
 		$(CC) $(FLAGS) $< -o $@
 
 $(Lib_Modules) : %.o : %.cpp
-		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) -DDEBUG $(FLAGS_LIB) $< -o $@
+		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) $(FLAGS_LIB) $< -o $@
 		
 stat_file.o : stat_file.c
-		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) -DDEBUG $(FLAGS_LIB) $< -o $@
+		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) $(FLAGS_LIB) $< -o $@
 
 .PHONY: clean 
 clean:

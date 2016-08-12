@@ -21,9 +21,9 @@ int main(int argc, char *argv[]) {
 	test_button.posX	= 12;
 	test_button.posY	= 13;
 
-	add_to_win(obj_list, WIN_BUTTON, "TEST", 13, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST", 13, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST2", 14, &test_button);
+	add_to_win(obj_list, WIN_BUTTON, "TEST", TEXT_BLUE_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST2", TEXT_RED_BLACK, &test_button);
 	InitWIN(NULL, obj_list, "TEST WIN", RED_WIN);
 	endwin();
 	return 0;

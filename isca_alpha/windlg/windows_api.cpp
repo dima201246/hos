@@ -13,7 +13,7 @@ struct internal_str {
 #define	BUTTON_MIN_X	3
 #define	BUTTON_MIN_Y	1
 
-void button_obj(WINOBJ *button_conf, string text, color_t color_button) {
+int button_obj(WINOBJ *button_conf, string text, color_t color_button) {
 
 	#ifdef DEBUG
 	add_to_filef(MAIN_LOGFILE, "\nIn button_obj: %p\nPoint in button: %p\n", &button_obj, button_conf);
@@ -25,13 +25,17 @@ void button_obj(WINOBJ *button_conf, string text, color_t color_button) {
 	#endif
 
 	if (button_conf->redraw) {
-		mvprintw(button_conf->posY, button_conf->posX, "-%s-", text.c_str());
+		coloron(color_button);
+		mvprintw(button_conf->posY, button_conf->posX, " %s ", text.c_str());
+		coloroff(color_button);
 	} else {
+		coloron(get_inv_color(color_button));
 		mvprintw(button_conf->posY, button_conf->posX, ">%s<", text.c_str());
-		getch();
+		coloroff(get_inv_color(color_button));
+		return getch();
 	}
 
-	return;
+	return 0;
 }
 
 void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::string text_on_object, color_t color_obj, WINOBJ* point_to_conf) {	// Добавление объекта в окно
@@ -76,6 +80,8 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, stri
 	WINOBJ				*now_obj_conf,
 						*ahead_obj_conf;
 
+	int					key_pressed;
+
 	unsigned int		size_ahead_obj_x,	// Размеры предыдущего объекта, если таковой имелся
 						size_ahead_obj_y,
 						size_obj_x,			// Для получения размеров текущего объекта
@@ -84,7 +90,8 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, stri
 						win_posY,
 						win_posXmax,
 						win_posYmax,
-						selected_obj;
+						selected_obj,
+						num_elem_in_win;	// Всего элементов в окне
 
 	bool 				cycle,
 						first_write,
@@ -96,6 +103,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, stri
 	size_obj_x			= 0;
 	size_obj_y			= 0;
 	selected_obj		= 0;
+	num_elem_in_win		= 2;
 	cycle				= true;
 	first_write			= true;
 	found_button		= false;
@@ -168,7 +176,11 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, stri
 			add_to_file(MAIN_LOGFILE, "Text: " + temp_item.text);
 			#endif
 
-			temp_item.point_to_function(temp_item.point_to_struct, temp_item.text, temp_item.color_object);	// Вызов нужного объекта
+			if (selected_obj == i) {
+				key_pressed	= temp_item.point_to_function(temp_item.point_to_struct, temp_item.text, temp_item.color_object);	// Вызов нужного объекта
+			} else {
+				temp_item.point_to_function(temp_item.point_to_struct, temp_item.text, temp_item.color_object);	// Вызов нужного объекта
+			}
 
 			if (selected_obj == i) {
 				temp_item.point_to_struct->redraw	= false;
@@ -176,9 +188,25 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, stri
 			}
 
 		}
-		
-		if (getch() == 27)
-			cycle		= false;
+
+		if (first_write) {
+			first_write	= false;
+			continue;
+		}
+
+		switch (key_pressed) {
+			case H_KEY_ESC:	cycle		= false;
+							break;
+
+			case H_KEY_TAB:	obj_list[selected_obj].point_to_struct->redraw	= true;
+							obj_list[selected_obj].point_to_function(obj_list[selected_obj].point_to_struct, obj_list[selected_obj].text, obj_list[selected_obj].color_object);	// Обновление элемента
+
+							if (selected_obj != num_elem_in_win) {
+								selected_obj++;
+							} else {
+								selected_obj	= 0;
+							}
+		}
 	}
 
 	
