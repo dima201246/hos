@@ -16,6 +16,7 @@
 	#include "lang.h"
 	#include "screen.h"
 	#include "windlg.h"
+	#include "windows_api.h"
 	#include "settings.h"
 
 	#define H_KEY_ESC		27

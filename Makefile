@@ -5,11 +5,11 @@ OutPut			= hos_alpha
 HOS_LIB			= libhos.so
 _HOS_VERSION	= \"0.0.12\"
 
-Lib_Modules 	= timework.o fswork.o windlg.o screen.o lang.o settings.o configurator.o
+Lib_Modules 	= timework.o fswork.o windlg.o screen.o lang.o settings.o configurator.o windows_api.o
 Modules		= desktop.o menu_apps.o apps_starter.o system.o 
 Main 		= bootloader.o
 
-VPATH = ./isca_alpha:./system:./hos_lib
+VPATH = ./isca_alpha:./isca_alpha/windlg:./system:./hos_lib
 
 all: $(Modules) $(Main) 
 		$(CC) $^ -o $(OutPut) -lcurses -Llib -lhos -Wl,-rpath=./lib
@@ -26,10 +26,10 @@ $(Modules) $(Main) : %.o : %.cpp
 		$(CC) $(FLAGS) $< -o $@
 
 $(Lib_Modules) : %.o : %.cpp
-		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) $(FLAGS_LIB) $< -o $@
+		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) -DDEBUG $(FLAGS_LIB) $< -o $@
 		
 stat_file.o : stat_file.c
-		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) $(FLAGS_LIB) $< -o $@
+		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) -DDEBUG $(FLAGS_LIB) $< -o $@
 
 .PHONY: clean 
 clean:

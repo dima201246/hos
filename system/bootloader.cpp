@@ -14,6 +14,21 @@ int main(int argc, char *argv[]) {
 	init_display();
 	init_color();
 
+	/*TEST WINDOWS*/
+	vector<list_of_objects> obj_list;
+
+	InitWINOBJ(test_button);
+	test_button.posX	= 12;
+	test_button.posY	= 13;
+
+	add_to_win(obj_list, WIN_BUTTON, "TEST", 13, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST", 13, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST2", 14, &test_button);
+	InitWIN(NULL, obj_list);
+	endwin();
+	return 0;
+	/*TEST WINDOWS*/
+
 	init_signals();
 	apps_vect.clear();
 
