@@ -22,8 +22,21 @@ int main(int argc, char *argv[]) {
 	test_button.posY	= 13;
 
 	add_to_win(obj_list, WIN_BUTTON, "TEST", TEXT_BLUE_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST2", TEXT_RED_BLACK, &test_button);
+	add_to_win(obj_list, WIN_BUTTON, "TEST1", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST2", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST3", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST4", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST5", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST6", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST7", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST8", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST9", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST0", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST11", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST12", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST13", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST14", TEXT_GREEN_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST215", TEXT_RED_BLACK, &test_button);
 	InitWIN(NULL, obj_list, "TEST WIN", RED_WIN);
 	endwin();
 	return 0;

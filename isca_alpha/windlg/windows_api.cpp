@@ -26,10 +26,12 @@ int button_obj(WINOBJ *button_conf, string text, color_t color_button) {
 
 	if (button_conf->redraw) {
 		coloron(color_button);
+		// mvprintw(button_conf->posY, button_conf->posX, " %s %d|%d", text.c_str(), button_conf->posX, button_conf->posY);
 		mvprintw(button_conf->posY, button_conf->posX, " %s ", text.c_str());
 		coloroff(color_button);
 	} else {
 		coloron(get_inv_color(color_button));
+		// mvprintw(button_conf->posY, button_conf->posX, ">%s< %d|%d", text.c_str(), button_conf->posX, button_conf->posY);
 		mvprintw(button_conf->posY, button_conf->posX, ">%s<", text.c_str());
 		coloroff(get_inv_color(color_button));
 		return getch();
@@ -49,6 +51,11 @@ void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::
 
 	if (point_to_conf == NULL) {	// Проверка, была ли передана структура вместе с объектом
 		WINOBJ *temp_objstr	= new WINOBJ;	// Если нет, то выделение под неё памяти
+		temp_objstr->posX			= 0;
+		temp_objstr->posXmax		= 0;
+		temp_objstr->posY			= 0;
+		temp_objstr->posYmax		= 0;
+		temp_objstr->manual_locator	= false;
 		temp_objstr->redraw			= true;	// Чотбы сразу, при первом вызове, объект перерисовался
 		temp_value.point_to_struct	= temp_objstr;
 		temp_value.memory_leak		= true;
@@ -91,23 +98,29 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, stri
 						win_posXmax,
 						win_posYmax,
 						selected_obj,
-						num_elem_in_win;	// Всего элементов в окне
+						num_elem_in_win,	// Всего элементов в окне
+						medium_number,		// Число для расположения объектов на окне (пропуск между объектами)
+						next_line;			// Позиция новой строки
 
 	bool 				cycle,
 						first_write,
 						found_button,		// Для отслеживания, была ли в окне хоть одна кнопка
-						ahead_button;
+						ahead_button,
+						new_line;
 
 	size_ahead_obj_x	= 0;
 	size_ahead_obj_y	= 0;
 	size_obj_x			= 0;
 	size_obj_y			= 0;
 	selected_obj		= 0;
-	num_elem_in_win		= 2;
+	medium_number		= 0;
+	num_elem_in_win		= 0;
+	next_line			= 1;
 	cycle				= true;
 	first_write			= true;
 	found_button		= false;
 	ahead_button		= false;
+	new_line			= false;
 	obj_list			= origin_obj_list;
 
 	if (win_conf == NULL) {
@@ -116,8 +129,30 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, stri
 		getmaxyx(stdscr, win_posYmax, win_posXmax);
 	}
 
+	for (unsigned int	i	= 0; i < obj_list.size(); i++) {
+		temp_item	= obj_list[i];
+		now_obj_conf	= temp_item.point_to_struct;
+		mvprintw(i + 3, 0, "i: %d x: %d y: %d point: %p", i, now_obj_conf->posX, now_obj_conf->posY, now_obj_conf);
+	}
+	getch();
+
 	draw_box(1, title, 0, win_posX, win_posY, win_posXmax, win_posYmax - 1, color, get_inv_color(color));
 
+	/*Подсчёт объектов для окна НАЧАЛО*/
+
+	/*Подсчёт объектов для окна КОНЕЦ*/
+
+	ahead_button	= false;
+	// medium_number	= win_posYmax/(num_elem_in_win + 1);
+	medium_number	= 0;
+	num_elem_in_win	= 3;
+
+/*	erase();
+	printw("num_elem_in_win: %d\n", num_elem_in_win);
+	printw("medium_number: %d\n", medium_number);
+	getch();
+*/
+	/*Автоматическое расположение объектов в окне НАЧАЛО*/
 	if ((win_conf == NULL) || (win_conf->manual_locator)) {
 		for (unsigned int	i	= 0; i < obj_list.size(); i++) {
 
@@ -125,13 +160,34 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, stri
 
 			now_obj_conf	= temp_item.point_to_struct;
 
+			/**/
 			now_obj_conf->posX++;
-			now_obj_conf->posY++;
+			/**/
+
+			now_obj_conf->posY	+= next_line;
 
 			if (i) {
- 				ahead_obj_conf	= obj_list[i - 1].point_to_struct;
+					ahead_obj_conf	= obj_list[i - 1].point_to_struct;	// Ссылка на предыдущий объект, если он есть
 			} else {
- 				ahead_obj_conf	= NULL;
+					ahead_obj_conf	= NULL;
+			}
+
+			if (!i) {	// Если это первый объект
+				get_obj_size(temp_item, size_ahead_obj_x, size_ahead_obj_y);	// Получение размеров объекта
+			}
+
+			if ((now_obj_conf->posX == 1)/* && (now_obj_conf->posY == new_line)*/) {	// Если объект был без координат
+				if (ahead_button) {	 // Если до этого была кнопка
+					get_obj_size(temp_item, size_obj_x, size_obj_y);	// Получение размеров объекта
+					if ((ahead_obj_conf->posX + size_ahead_obj_x + size_obj_x + 1) >= win_posXmax) {	// Если кнопка после кнопки вылазит за пределы окна
+						next_line			+= medium_number + 1;
+						now_obj_conf->posY	= next_line;
+					} else {
+						now_obj_conf->posX	= ahead_obj_conf->posX + size_ahead_obj_x + 1;
+					}
+				} else {
+					// Другие объекты
+				}
 			}
 
 			if (temp_item.type_obj == WIN_BUTTON) {
@@ -141,29 +197,11 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, stri
 				ahead_button	= false;
 			}
 
-			if (!i) {	// Если это первый объект
-				get_obj_size(temp_item, size_ahead_obj_x, size_ahead_obj_y);	// Получение размеров объекта
-			}
-
-			if ((i) && ((ahead_obj_conf->posX >= now_obj_conf->posX) && (now_obj_conf->posX <= size_ahead_obj_x) && (ahead_obj_conf->posY >= now_obj_conf->posY) && (now_obj_conf->posY <= size_ahead_obj_y))) {	// Если объект влез в предыдущий
-				if (ahead_button) {
-					get_obj_size(temp_item, size_obj_x, size_obj_y);	// Получение размеров объекта
-
-					if ((ahead_obj_conf->posX + size_ahead_obj_x + size_obj_x + 1) >= win_posXmax) {
-						now_obj_conf->posY	= 0;
-					} else {
-						now_obj_conf->posX	= ahead_obj_conf->posX + size_ahead_obj_x + 1;
-					}
-
-				} else {
-
-				}
-			}
-
 			temp_item.point_to_struct	= now_obj_conf;
 			obj_list[i]	= temp_item;
 		}
 	}
+	/*Автоматическое расположение объектов в окне КОНЕЦ*/
 
 	while (cycle) {
 		for (unsigned int	i	= 0; i < obj_list.size(); i++) {
@@ -201,7 +239,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> origin_obj_list, stri
 			case H_KEY_TAB:	obj_list[selected_obj].point_to_struct->redraw	= true;
 							obj_list[selected_obj].point_to_function(obj_list[selected_obj].point_to_struct, obj_list[selected_obj].text, obj_list[selected_obj].color_object);	// Обновление элемента
 
-							if (selected_obj != num_elem_in_win) {
+							if (selected_obj != (obj_list.size() - 1)) {
 								selected_obj++;
 							} else {
 								selected_obj	= 0;

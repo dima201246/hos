@@ -24,7 +24,7 @@
 		bool			redraw,
 						manual_locator;
 
-		void		*system_point;
+		void			*system_point;
 	};
 
 	struct list_of_objects {
