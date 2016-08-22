@@ -18,10 +18,10 @@ int main(int argc, char *argv[]) {
 	vector<list_of_objects> obj_list;
 
 	InitWINOBJ(test_button);
-	test_button.posX	= 12;
-	test_button.posY	= 13;
+	test_button.posXmax	= 10;
+	test_button.posYmax	= 10;
 
-	add_to_win(obj_list, WIN_BUTTON, "TEST", TEXT_BLUE_BLACK, NULL);
+	add_to_win(obj_list, WIN_BUTTON, "TEST", TEXT_BLUE_BLACK, &test_button);
 	add_to_win(obj_list, WIN_BUTTON, "TEST1", TEXT_GREEN_BLACK, NULL);
 	add_to_win(obj_list, WIN_BUTTON, "TEST2", TEXT_GREEN_BLACK, NULL);
 	add_to_win(obj_list, WIN_BUTTON, "TEST3", TEXT_GREEN_BLACK, NULL);
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 	window.posX		= 1;
 	window.posY		= 1;
 	window.posXmax	= 20;
-	win(&window, obj_list, "TEST WIN", RED_WIN);
+	win(/*&window*/NULL, obj_list, "TEST WIN", RED_WIN);
 	endwin();
 	return 0;
 	/*TEST WINDOWS*/
