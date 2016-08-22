@@ -18,6 +18,7 @@
 	#include "windlg.h"
 	#include "windows_api.h"
 	#include "settings.h"
+	#include "hos_api.h"
 
 	#define H_KEY_ESC		27
 	#define H_KEY_BACKSPACE	127

@@ -2,6 +2,7 @@
 #define SCREEN_H
 
 	#include <string>
+	#include <ncurses.h>
 
 	/*Types*/
 	typedef int color_t;
