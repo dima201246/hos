@@ -3,7 +3,9 @@
 
 	#include <unistd.h>
 
-	pid_t loading_title_start();
-	void kill_loading_title(pid_t);
+	extern	pid_t	loading_title_pid;
+
+	void loading_title_start();
+	void kill_loading_title();
 
 #endif

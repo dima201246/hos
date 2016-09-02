@@ -4,9 +4,11 @@
 #include "../include/screen.h"
 #include "../include/hos_api.h"
 
+pid_t	loading_title_pid;
+
 using namespace std;
 
-pid_t loading_title_start() {
+void loading_title_start() {
 	pid_t loading_pid	= fork();
 
 	if (loading_pid == 0) {
@@ -77,14 +79,14 @@ pid_t loading_title_start() {
 		endwin();
 		exit(0);
 	} else {
-		return loading_pid;
+		loading_title_pid	= loading_pid;
 	}
 
 }
 
-void kill_loading_title(pid_t loading_pid) {
+void kill_loading_title() {
 	endwin();
-	kill(loading_pid, SIGTERM);
+	kill(loading_title_pid, SIGTERM);
 	init_display();
 	init_color();
 }
