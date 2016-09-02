@@ -23,7 +23,7 @@ hos_lib: $(Lib_Modules) stat_file.o
 		$(CC) -shared -o lib/$(HOS_LIB) $^
 
 $(Modules) $(Main) : %.o : %.cpp
-		$(CC) $(FLAGS) $< -o $@
+		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) $(FLAGS) $< -o $@
 
 $(Lib_Modules) : %.o : %.cpp
 		$(CC) -D_HOS_VERSION=$(_HOS_VERSION) $(FLAGS_LIB) $< -o $@

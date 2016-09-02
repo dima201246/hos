@@ -8,7 +8,17 @@ pid_t	loading_title_pid;
 
 using namespace std;
 
-void loading_title_start() {
+void add_to_load_screen(vector<load_t> &text_on_title, unsigned int posX, unsigned int posY, string sometext) {
+	load_t	temp_str = {};
+
+	temp_str.posX	= posX;
+	temp_str.posY	= posY;
+	temp_str.text	= sometext;
+
+	text_on_title.push_back(temp_str);
+}
+
+void loading_title_start(vector<load_t> *text_on_title) {
 	pid_t loading_pid	= fork();
 
 	if (loading_pid == 0) {
@@ -21,6 +31,12 @@ void loading_title_start() {
 
 		init_display();
 		init_color();
+
+		if (text_on_title != NULL) {
+			vector<load_t> text_on_title_temp	= *text_on_title;
+
+			for (unsigned int	i = 0; i < text_on_title->size(); mvprintw(text_on_title_temp[i].posY, text_on_title_temp[i].posX, "%s", text_on_title_temp[i].text.c_str()), i++);
+		}
 
 		getmaxyx(stdscr, maxY, maxX);
 		while (true) {
