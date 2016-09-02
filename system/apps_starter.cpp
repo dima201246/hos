@@ -147,21 +147,12 @@ int app_start(int number_of_app, std::string	parametrs) {
 	endwin();
 
 	int		status;
-	pid_t	chpid	= fork();
 	char **out_parametrs	= NULL;
 
-	job j = {
-		.name = configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_package_name", "", false),
-		.pid = chpid
-	};
-
-	j.running = true;
-
-	// В запущенных процессов список процесс помещаем мы
-	apps_vect.insert(apps_vect.end(), j);
-
+	
+	pid_t	chpid	= fork();
 	if (chpid == 0) {
-		for (unsigned int	i	= 0; i < name_app.length(); i++) {	// Из имени приложения параметры выхватывать пытаемя мы
+	/*	for (unsigned int	i	= 0; i < name_app.length(); i++) {	// Из имени приложения параметры выхватывать пытаемя мы
 			if (name_app[i] == ' ') {
 				std::string app_parametrs;
 				app_parametrs	= name_app;
@@ -175,14 +166,14 @@ int app_start(int number_of_app, std::string	parametrs) {
 
 		if (!parametrs.empty())	// Параметры если есть какие, массив сделать из них
 			out_parametrs	= init_out_parametr(parametrs, parametrs_count);
-
+	*/
 		signal(SIGTTIN, SIG_IGN);
 		signal(SIGTTOU, SIG_IGN);
 		tcsetpgrp(STDIN_FILENO, getpid());
 		chdir(path_to_dir.c_str());
 		setpgid(getpid(), getpid());			 	// Создаём группу процессов
 
-		if (execv(name_app.c_str(), out_parametrs) == -1) {	// parent process
+		if (execv(name_app.c_str(), out_parametrs) < 0) {	// parent process
 			init_display();
 			init_color();
 			DLGSTR	failwin	= {}; // Только так!!!
@@ -190,14 +181,20 @@ int app_start(int number_of_app, std::string	parametrs) {
 			failwin.style	= RED_WIN;
 			msg_win(failwin);
 			endwin();
-
-			for (unsigned int	i	= 0; i <= parametrs_count; i++)
-				delete [] out_parametrs[i];
-
-			delete [] out_parametrs;
+		
 			exit(0);
 		}
 	} else {
+		job j = {
+			.name = configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_package_name", "", false),
+			.pid = chpid
+		};
+
+		j.running = true;
+
+		// В запущенных процессов список процесс помещаем мы
+		apps_vect.insert(apps_vect.end(), j);
+
 		waitpid(chpid, &status,WUNTRACED);
 		tcsetpgrp(STDIN_FILENO, getpid());
 		tcgetattr(STDIN_FILENO, &j.tmode);
