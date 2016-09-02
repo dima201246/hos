@@ -14,49 +14,14 @@ int main(int argc, char *argv[]) {
 	init_display();
 	init_color();
 
-	/*TEST WINDOWS*/
-	vector<list_of_objects> obj_list;
-
-	InitWINOBJ(test_button);
-	test_button.posXmax	= 10;
-	test_button.posYmax	= 10;
-
-	add_to_win(obj_list, WIN_BUTTON, "TEST", TEXT_BLUE_BLACK, &test_button);
-	add_to_win(obj_list, WIN_BUTTON, "TEST1", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST2", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST3", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST4", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST5", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST6", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST7", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST8", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST9", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST10", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST11", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST12", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST13", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST14", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST15", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST16", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST17", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST18", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST19", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST20", TEXT_GREEN_BLACK, NULL);
-	add_to_win(obj_list, WIN_BUTTON, "TEST21", TEXT_GREEN_BLACK, NULL);
-	// add_to_win(obj_list, WIN_BUTTON, "TEST215", TEXT_RED_BLACK, &test_button);
-
-	
-	InitWINOBJ(window);
-	window.posX		= 1;
-	window.posY		= 1;
-	window.posXmax	= 20;
-	win(/*&window*/NULL, obj_list, "TEST WIN", RED_WIN);
-	endwin();
-	return 0;
-	/*TEST WINDOWS*/
+	loading_title_start();
 
 	init_signals();
 	apps_vect.clear();
+
+	usleep(2500000);
+
+	kill_loading_title();
 
 	if (!load_to_vector(MAIN_CONFIG, main_config_base)) {
 		DLGSTR	failwin	= {}; // Только так!!!
