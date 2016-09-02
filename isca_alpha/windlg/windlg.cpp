@@ -113,6 +113,10 @@ string out_line(string line, unsigned pos/*Позиция указателя*/, 
 	return line;
 }
 
+string get_ver_windlg() {
+	return win_ver;
+}
+
 void info_win() {
 	erase();
 	printw(":DV company 2016 (c)\n\n");

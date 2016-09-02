@@ -32,7 +32,8 @@
 		unsigned int xreturn, yreturn, second_border;
 		bool border_menu, active_menu, not_view_scrollbar;
 	};
-	
+
+	std::string get_ver_windlg();
 	int dlg_win(DLGSTR, std::string&);
 	int msg_win(DLGSTR);
 	void menu_win_old(DLGSTR&, std::vector<std::string>&);
