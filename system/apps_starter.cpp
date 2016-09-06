@@ -43,7 +43,7 @@ char	**init_out_parametr(std::string	parametrs, unsigned int	&count) {
 		}
 
 		if ((!always_read) && (parametrs[i] == ' ')) {
-			out_parametrs_temp[space_counter]	= new char [temp.length()];
+			out_parametrs_temp[space_counter]	= new char [temp.length() + 1];
 			strcpy(out_parametrs_temp[space_counter], temp.c_str());
 			temp.clear();
 			space_counter++;
@@ -152,7 +152,7 @@ int app_start(int number_of_app, std::string	parametrs) {
 	
 	pid_t	chpid	= fork();
 	if (chpid == 0) {
-	/*	for (unsigned int	i	= 0; i < name_app.length(); i++) {	// Из имени приложения параметры выхватывать пытаемя мы
+		for (unsigned int	i	= 0; i < name_app.length(); i++) {	// Из имени приложения параметры выхватывать пытаемя мы
 			if (name_app[i] == ' ') {
 				std::string app_parametrs;
 				app_parametrs	= name_app;
@@ -166,7 +166,7 @@ int app_start(int number_of_app, std::string	parametrs) {
 
 		if (!parametrs.empty())	// Параметры если есть какие, массив сделать из них
 			out_parametrs	= init_out_parametr(parametrs, parametrs_count);
-	*/
+	
 		signal(SIGTTIN, SIG_IGN);
 		signal(SIGTTOU, SIG_IGN);
 		tcsetpgrp(STDIN_FILENO, getpid());
