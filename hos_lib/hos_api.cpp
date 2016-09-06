@@ -1,5 +1,5 @@
-// #include <sys/types>
 #include <signal.h>
+#include <stdlib.h>
 
 #include "../include/screen.h"
 #include "../include/hos_api.h"
