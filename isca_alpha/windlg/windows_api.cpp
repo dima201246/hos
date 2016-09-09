@@ -97,6 +97,43 @@ void get_obj_size(list_of_objects	item, unsigned int &x, unsigned int &y) {	// �
 	}
 }
 
+void display_next_obj(vector<list_of_objects> obj_list, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posXmax) {
+	bool				button_ahead;
+
+	unsigned int		size_obj_x,
+						size_obj_y,
+						size_ahead_obj_x,
+						size_ahead_obj_y;
+
+	button_ahead		= false;
+	size_obj_x			= 0;
+	size_obj_x			= 0;
+	size_ahead_obj_x	= 0;
+	size_ahead_obj_y	= 0;
+
+	for (unsigned int i	= last_display_obj; i < obj_list.size(); i++) {
+
+		if (!obj_list[i].point_to_struct->user_init) {	// Если объект не был инициализирован пользователем
+			get_obj_size(obj_list[i], size_obj_x, size_obj_y);	// Получение размеров объекта
+
+
+			if ((obj_list[i].type_obj == WIN_BUTTON) && ((obj_list[i - 1].point_to_struct->posX + size_ahead_obj_x + size_obj_x + 1) >= win_posXmax)) {
+				last_display_obj++;
+				button_ahead	= true;
+			} else {
+				if (button_ahead)
+					break;
+
+				last_display_obj++;
+				break;
+			}
+
+			size_ahead_obj_x	= size_obj_x;
+			size_ahead_obj_y	= size_obj_y;
+		}
+	}
+}
+
 returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string title, color_t color) {
 
 	returned_str		returned_value;	// Возвращаемая структура
@@ -215,7 +252,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 
 			size_ahead_obj_x	= size_obj_x;	// Получение размеров объекта для позиционирования следующего
 			size_ahead_obj_y	= size_obj_y;
-`
+
 			if (max_posYmax < size_ahead_obj_y)
 				max_posYmax	= size_ahead_obj_y;
 
