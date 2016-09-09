@@ -5,14 +5,6 @@
 
 using namespace std;
 
-struct internal_str {
-	unsigned int	number_win;
-};
-
-/*Minimal sizes*/
-#define	BUTTON_MIN_X	3
-#define	BUTTON_MIN_Y	1
-
 void clear_space(unsigned int	start_x, unsigned int	start_y, unsigned int	end_x, unsigned int	end_y) {	// Заливка области пустотой
 	unsigned i = 0;
 	for (unsigned int	x = 0; x < end_x; x++, i++) {
@@ -69,7 +61,7 @@ void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::
 	}
 
 	if (point_to_conf == NULL) {	// Проверка, была ли передана структура вместе с объектом
-		WINOBJ *temp_objstr	= new WINOBJ;	// Если нет, то выделение под неё памяти
+		WINOBJ *temp_objstr			= new WINOBJ;	// Если нет, то выделение под неё памяти
 		temp_objstr->posX			= 0;
 		temp_objstr->posXmax		= 0;
 		temp_objstr->posY			= 0;
@@ -143,8 +135,8 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 	selected_obj		= 0;
 	first_display_obj	= 0;
 	max_posYmax			= 0;
+	last_display_obj	= 0;
 	next_line			= 2;
-	last_display_obj	= obj_list.size();
 	cycle				= true;
 	refresh_obj			= true;
 	found_button		= false;
@@ -186,7 +178,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 
 			now_obj_conf	= temp_item.point_to_struct;
 
-			now_obj_conf->posX	+= 1 + win_posX;
+			now_obj_conf->posX	+= 2 + win_posX;
 			now_obj_conf->posY	+= next_line + win_posY;
 
 			if (i != 0) {
@@ -195,30 +187,35 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 				ahead_obj_conf	= NULL;
 			}
 
-			if (!now_obj_conf->user_init) {	// Если объект не был инициализирован пользователем
-				if (ahead_button) {	 // Если до этого была кнопка
-					get_obj_size(temp_item, size_obj_x, size_obj_y);	// Получение размеров объекта
+			get_obj_size(temp_item, size_obj_x, size_obj_y);	// Получение размеров объекта
 
-					if ((ahead_obj_conf->posX + size_ahead_obj_x + size_obj_x + 1) >= win_posXmax) {	// Если кнопка после кнопки вылазит за пределы окна
-						if ((now_obj_conf->posY + 2 + size_obj_y) >= win_posYmax) {	// Проверка, чтобы влезало по Y
+			if (!now_obj_conf->user_init) {	// Если объект не был инициализирован пользователем
+				if ((ahead_button) && (temp_item.type_obj == WIN_BUTTON)) {	 // Если до этого была кнопка
+
+					if (((ahead_obj_conf->posX + size_ahead_obj_x + size_obj_x + 1) >= win_posXmax) && (temp_item.type_obj == WIN_BUTTON)) {	// Если кнопка после кнопки вылазит за пределы окна
+						if ((last_display_obj == 0) && ((now_obj_conf->posY + 2 + size_obj_y) >= win_posYmax)) {	// Проверка, чтобы влезало по Y
 							last_display_obj	= i;
-						} else {
-							now_obj_conf->posY	+= max_posYmax + 1;
-							next_line			+= max_posYmax + 1;
-							max_posYmax			= 0;
 						}
+
+						now_obj_conf->posY	+= max_posYmax + 1;
+						next_line			+= max_posYmax + 1;
+						max_posYmax			= 0;
 					} else {
-						now_obj_conf->posX	= ahead_obj_conf->posX + size_ahead_obj_x + 1;
+						now_obj_conf->posX	= ahead_obj_conf->posX + size_ahead_obj_x + 1;	// Сдвиг кнопки вправо от предыдущей кнопки
 					}
-				} else {
-					// Другие объекты
+				} else if (temp_item.type_obj != WIN_BUTTON) {	// Другие объекты будут каждый с новой строки, вытянуты во всю ширину окна
+					if (i != 0)
+						now_obj_conf->posY	+= max_posYmax + 1;
+
+					//now_obj_conf->posXmax	= ...;
 				}
 			} else {
-				//
+				// if ()
 			}
 
-			get_obj_size(temp_item, size_ahead_obj_x, size_ahead_obj_y);	// Получение размеров объекта для позиционирования следующего
-
+			size_ahead_obj_x	= size_obj_x;	// Получение размеров объекта для позиционирования следующего
+			size_ahead_obj_y	= size_obj_y;
+`
 			if (max_posYmax < size_ahead_obj_y)
 				max_posYmax	= size_ahead_obj_y;
 
@@ -238,6 +235,10 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 			temp_item.point_to_struct	= now_obj_conf;
 			obj_list[i]	= temp_item;
 		}
+	}
+
+	if (last_display_obj == 0) {
+		last_display_obj = obj_list.size();
 	}
 	/*Автоматическое расположение объектов в окне КОНЕЦ*/
 
@@ -269,7 +270,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 			case H_KEY_ESC:	cycle		= false;
 							break;
 
-			case H_KEY_TAB:	obj_list[selected_obj].point_to_struct->redraw	= true;
+			case H_KEY_TAB:	obj_list[selected_obj].point_to_struct->redraw	= true;	// Перерисовать объект невыделенным
 							obj_list[selected_obj].point_to_function(obj_list[selected_obj].point_to_struct, obj_list[selected_obj].text, obj_list[selected_obj].color_object);	// Обновление элемента
 							refresh_obj	= true;
 
@@ -278,6 +279,11 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 							} else {
 								selected_obj	= 0;
 							}
+
+							/*if (selected_obj > last_display_obj) {
+
+							}*/
+
 							break;
 		}
 	}

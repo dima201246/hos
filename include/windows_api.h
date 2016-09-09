@@ -14,16 +14,21 @@
 	#define WIN_MENU		6
 
 	typedef	int	win_object;
+	typedef	int	hotkey_t;
 
 	struct WINOBJ {
 		unsigned int	posX,
 						posY,
 						posXmax,
-						posYmax;
+						posYmax,
+						std_selected,
+						animation_delay;
 
 		bool			redraw,
 						manual_locator,
 						user_init;
+
+		hotkey_t		obj_hotkey;	// Горячая кнопка
 
 		void			*system_point;
 	};
@@ -42,28 +47,13 @@
 		bool		memory_leak;
 	};
 
-/*	struct MENSTR {
-		bool					no_border,			// Если не нужны границы окна !!!НЕИСПОЛЬЗОВАТЬ!!!
-								redraw;				// Если нужно только перерисовать вывод
-
-		int						returned_key;		// Возврат нажатой кнопки
-
-		unsigned int			posX,				// Позиция окна
-								posY,
-								posXmax,			// Максимальные размеры окна
-								posYmax,
-								returned_x,			// Возвращаемая позиция выделения
-								returned_y,
-								animation_delay,	// Время анимации
-								std_selected,		// Позиция выделения
-								returned_selected;	// Номер выделенного элемента, даже если окно было закрыто без выбора
-	};*/
-
 	struct returned_str {
-		int				key;
+		std::vector<std::string>	*returned_text;	// Текст с текстовых полей
+		int							key;
 	};
 
 	#define InitWINOBJ(name_var)	WINOBJ	name_var	= {}
+	#define InitObjVec(name_var)	std::vector<list_of_objects>	name_var
 
 	void add_to_win(std::vector<list_of_objects>&, win_object, std::string, color_t, WINOBJ*);
 	returned_str win(WINOBJ*, std::vector<list_of_objects>, std::string, color_t);
