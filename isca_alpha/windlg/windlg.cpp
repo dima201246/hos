@@ -5,18 +5,7 @@
 #include "../../include/isca_alpha.h"
 #include "internal_windlg.h"
 
-/*BUGS
-
-- Длинные строки роняют систему (26.01.16) {!!!} - Исправленно
-	Добавлено 26.01.16 01:48 - Ошибка где-то в ф-ции count_lines, скорее всего не правильно сносит строку
-	Добавлено 26.01.16 02:03 - Вылет при длинной строке удалён, проблема была, в том, что ф-ция count_lines не знала maxX,
-								осталось только понять почему окно не редактирует размер. Статус ошибки понижен {!}
-	Добавлено 26.01.16 10:18 - Ошибка полностью исправлена (max_line = maxX; >> max_line = maxX - 4; #66)
-*/
-
-/*Tips
-- Вынести все вычисления из цикла - Выполненно
-*/
+// МОЖНО УДАЛИТЬ ДРЕВНИЙ ЛОГ?
 
 #define DEBUG 0
 #define WINDOWS_XP_SIMULATION 0
@@ -31,6 +20,7 @@ using namespace std;
 const string win_ver = "0.2";
 
 unsigned int count_lines(string line, unsigned int maxX) { // Счётчик кол-ва строк через знак новой строки
+	// ДИСТИЛЯТОР ИОНИЗИРОВАННОЙ ПЛАЗМАТИЧЕСКОЙ РЕГЕНИРАТИВНОЙ СУБСТАНЦИИ
 	unsigned int count = 0, count_chars = 0;
 	if (line.length() != 0) count++;
 	bool continue_stat = false;
@@ -43,6 +33,7 @@ unsigned int count_lines(string line, unsigned int maxX) { // Счётчик к�
 	return count;
 }
 
+// ПРОСТО LOAD_ARRAY И ИСПОЛЬЗУЙ КАК ХОШ
 void load_array(string *array, unsigned int all_lines, string line, unsigned int& max_line, unsigned int maxX) {
 	unsigned int	count			= 0,
 					count_chars		= 0;
@@ -92,6 +83,7 @@ void load_array(string *array, unsigned int all_lines, string line, unsigned int
 		max_line	= array[count].length();
 }
 
+// ПРОЧИТАЛ КАК OUTLAST!!! ОШИБСЯ, немного
 string out_line(string line, unsigned pos/*Позиция указателя*/, unsigned right_pos/*На сколько сдвинута строка вправо*/, unsigned int maxX) {
 
 	if (right_pos != 0) { // Обрезка строки с конца
@@ -113,11 +105,11 @@ string out_line(string line, unsigned pos/*Позиция указателя*/, 
 	return line;
 }
 
-string get_ver_windlg() {
+string get_ver_windlg() {	// ТОЛЬКО ИЗБРАННЫЕ МОГУТ НАЗЫВАТЬ ТАК СТРУКТУРЫ И БОЛЬШЕ НИКТО!!!!
 	return win_ver;
 }
 
-void info_win() {
+void info_win() { 		// ВИНОВНИКИ ТОРЖЕСТВА
 	erase();
 	printw(":DV company 2016 (c)\n\n");
 	printw("Standart windows library HOS\n\n");
@@ -126,7 +118,7 @@ void info_win() {
 	getch();
 }
 
-int search_max_vectro(vector<string> items, string title) {
+int search_max_vectro(vector<string> items, string title) { // ЭТА ФУНКЦИЯ ОЧЕНЬ НЕОБХОДИМА!!!! ПРАВДА!!!
 	unsigned int	max	= llength(title);
 
 	string			temp;
@@ -141,13 +133,14 @@ int search_max_vectro(vector<string> items, string title) {
 	return max;
 }
 
-void menu_win_old(DLGSTR& dlgcfg, vector<string>& items) {
+void menu_win_old(DLGSTR& dlgcfg, vector<string>& items) {  // ВСЁ НОВОЕ - ЭТО ХОРОШО ПРОПИТОЕ СТАРОЕ!!!
 	DLGSTR local_cfg		= dlgcfg;
 
 	if (dlgcfg.selected == 0)
 		dlgcfg.selected = 1;
 
 	unsigned int	max_x	= search_max_vectro(items, local_cfg.title), // Получение длины самого длинного элемента
+			// ПОЛУЧЕНИЕ ВЫСОТЫ САМОГО ВЫСОГО ЗДАНИЯ!!!!
 					max_y	= items.size(), // Получение длины списка
 					min_y	= 0,
 					maxX,
@@ -159,6 +152,7 @@ void menu_win_old(DLGSTR& dlgcfg, vector<string>& items) {
 			color_selected; // Цвет выделения
 
 	bool	vert_scrollbar	= false; // Выводить ли с боку прогрессбар прокрутки
+	// АЛИ НЕ ВВОДИТЬ...
 
 	getmaxyx(stdscr, maxY, maxX);
 
@@ -171,11 +165,13 @@ void menu_win_old(DLGSTR& dlgcfg, vector<string>& items) {
 		fix_title = 1;
 
 	dlgcfg.yreturn	= 0; // Онуление возврата по Y
+	// ОНУЛЕНИЕ НАШЕ ВСЁ!!!!!!!
 
 	if (local_cfg.ymax != 0)
 		max_y = local_cfg.ymax; // Присвоение размера менюшки
 
 	if ((local_cfg.ypos + max_y + fix_border + fix_title) >= maxY) { // Проверка на "влезание" в экран
+		// ПРОВЕРКА УРОВНЯ АЛГОГОЛЯ В КРОВИ ПРОГРАММИСТА.................LOADING...............
 		if (((local_cfg.ypos + max_y + fix_border + fix_title) - maxY) <= local_cfg.ypos) {
 			local_cfg.ypos -= ((local_cfg.ypos + max_y + fix_border + fix_title) - maxY); // Сдвиг окошка вверх, если не хватает места
 		} else {
@@ -183,6 +179,7 @@ void menu_win_old(DLGSTR& dlgcfg, vector<string>& items) {
 			local_cfg.style = 1;
 			local_cfg.title.clear();
 			local_cfg.line = "Ooops... I can't find free space for menu!";
+//............................L...O....A...D...I...N....G...... УРОВЕНЬ АЛКОГОЛЯ ЗАШКАЛИВАЕТ!!!!!!!
 			msg_win(local_cfg);
 			return;
 		}
@@ -194,6 +191,7 @@ void menu_win_old(DLGSTR& dlgcfg, vector<string>& items) {
 	if ((local_cfg.xpos + max_x + fix_border) >= maxX) {
 		if (((local_cfg.xpos + max_x + fix_border) - maxX) <= local_cfg.xpos) {
 			local_cfg.xpos -= ((local_cfg.xpos + max_x + fix_border) - maxX); // Сдвиг окошка влево, если не хватает места
+			// А СЛЕВА ГРАЖДАНЕ ПРОТИВ НЕ БУДУТ????
 		} else {
 			local_cfg.keys = 1;
 			local_cfg.style = 1;
@@ -214,9 +212,12 @@ void menu_win_old(DLGSTR& dlgcfg, vector<string>& items) {
 		local_cfg.selected = items.size(); 
 
 	if (max_y < local_cfg.selected) { // Если нужно сжать окошко
+		// СЖАТЬ, РАЗЖАТЬ.... ХМ... ZIP ПРОТОКОЛ АГА!
 		dlgcfg.yreturn = max_y; // Чтобы новое окно, если что, не уехало вниз
+		// ЕСЛИ ЧТО!!!!!!!!!!!!!!!!! КАРЛ!!!!!!!!!
 		min_y = local_cfg.selected - max_y; // Чтобы элементы, которые выше видимой области не выводились
 		local_cfg.selected = max_y + min_y; // Исправление выбора
+		// ТУТ БЫЛ БАГ!! НО БОЛЬШЕ ЕГО НЕТ!!!! ЭТО НАДО ОТМЕТИТЬ!!! ЧТО БЫ ВСЕ ЗНАЛИ!!!
 	}
 
 	switch (local_cfg.style) { // Цветовая схема окна
@@ -253,6 +254,7 @@ void menu_win_old(DLGSTR& dlgcfg, vector<string>& items) {
 	attron(COLOR_PAIR(local_cfg.style) | A_BOLD);
 
 	if (local_cfg.border_menu) { // Вывод границ, если они нужны
+		// МНЕ НЕ НУЖНЫ ГРАНИЦЫ!!! Я АНАРХИСТ!!!!
 
 		for (unsigned int i = 0; i < (max_x + 2); i++) { // Вывод верхней и нижней границы
 			mvprintw(local_cfg.ypos, local_cfg.xpos + i, "-");
@@ -269,6 +271,7 @@ void menu_win_old(DLGSTR& dlgcfg, vector<string>& items) {
 
 		pointer_position = (((local_cfg.selected - 1) * max_y) / items.size()) + local_cfg.ypos + fix_title;
 		mvprintw(pointer_position, local_cfg.xpos - 1, "]"); // Вывод Указателя
+		// ВВОД АЛКОГОЛЯЯЯ!!!
 	}
 
 	if ((vert_scrollbar) && (!local_cfg.border_menu)) { // Вывод границы слева, если нужна прокрутка
@@ -396,6 +399,7 @@ int msg_win(DLGSTR dlgcfg) {
 			dlgcfg.f_button = "OK";
 
 		max_line	+= dlgcfg.f_button.length() + 4; // Размер кнопок, расстояние до границ и пропуск между кнопками
+		// РАССТОЯНИЕ ДО ГРАНИЦ МОЖНО НАЙТИ НА GOOGLE MAPS!!!!!
 	}
 
 	if (dlgcfg.keys == 2) {
@@ -455,6 +459,7 @@ int msg_win(DLGSTR dlgcfg) {
 	load_array(array, all_lines, dlgcfg.line, max_line, maxX);
 	
 	unsigned int	i, // Основная позиционная переменная!
+	// И САМАЯ ГЛАВНАЯ ПОЗИЦИОННАЯ ПЕРЕМЕННАЯ!!! НИКТО НЕ СМЕЕТ ОБИЖАТЬ САМУЮ ГЛАВНУЮ ПОЗИЦИОННУЮ ПЕРЕМЕННУЮ!!!! НИКТО!!
 					cn,
 					s_key_pos,
 					left_border_x,
@@ -577,6 +582,8 @@ int msg_win(DLGSTR dlgcfg) {
 			if (active_input == 2)
 				attron(COLOR_PAIR(color_selected) | A_BOLD);
 
+			// ГДЕ ЧЁРТОВ ОАЗИС?!?!?!?! ТУТ ОДНИ if-Ы !!!!!!!!! 
+
 			if (active_input != 2)
 				attron(COLOR_PAIR(dlgcfg.style) | A_BOLD);
 
@@ -644,7 +651,7 @@ int dlg_win(DLGSTR dlgcfg, string& out_put) {
 	if (dlgcfg.line.length() == 0)
 		return 0;
 
-	timeout(-1);
+	timeout(-1);				// У ТЕБЯ ВЫШЛО ВРЕМЯ!!! ХАКЕР!!!
 
 	unsigned int	maxX,
 					maxY;
@@ -727,10 +734,13 @@ int dlg_win(DLGSTR dlgcfg, string& out_put) {
 							break;
 	}
 
-	string *array	= new string[all_lines];
+	string *array	= new string[all_lines];		// ДА ТЫ ИГРАЕШЬ В ОПАСНЫЕ ИГРЫ!!!!
+	// ПРОСТО ARRAY - ЭТО ТАК ИНФОРМАТИВНО!!!! 
 	load_array(array, all_lines, dlgcfg.line, max_line, maxX);
 
 	unsigned int	i, // Основная позиционная переменная!
+	// ДАК КАК ТЫ ПОСМЕЛ ПОСМОТРЕТЬ НА НЕЁ?!?!?!? ОНА БОГИНЯ!!! ТЫ НЕ ДОСТОЕН ДАЖЕ ПРОСТОГО ВЗГЛЯДА НА
+	// ПОЗИЦИОННУЮ ПЕРЕМЕННУЮ! НИКТО НЕ ДОСТОЕН!!! НИКТО!!!!
 					cn,
 					pos				= 0,
 					right_pos		= 0,
@@ -784,6 +794,7 @@ int dlg_win(DLGSTR dlgcfg, string& out_put) {
 				attron(COLOR_PAIR(color_selected) | A_BOLD);
 				mvprintw(1, left_border_x + 1 + i, " ");
 				attroff(COLOR_PAIR(color_selected) | A_BOLD);
+				// ATTROFFИРУЙ МНЕ МОЗГ ПАРЕНЬ! 
 			}
 		}
 
@@ -870,6 +881,8 @@ int dlg_win(DLGSTR dlgcfg, string& out_put) {
 
 			mvprintw(i + 5 + title_fix, maxX / 2 + (max_line / 2) - dlgcfg.t_button.length() - 3 - fix, " %s ", dlgcfg.t_button.c_str()); // Вторая кнопка
 
+			// У ТЕБЯ 2 ВТОРЫХ КНОПКИ!!!!!! АААААААААААА! ТЫ ПРОСТО ЛЮТЫЙ!!!! 
+			// IF-Ы ЗАХВАТЯТ МИР!!!!! ИИ БУДЕТ СОЗДАН НА IF-АХ!!!!!!!!!1!11!!1!!!!!
 			if (active_input != 3)
 				attroff(COLOR_PAIR(dlgcfg.style) | A_BOLD);
 
@@ -922,6 +935,7 @@ int dlg_win(DLGSTR dlgcfg, string& out_put) {
 									line_out.insert(pos + 1, "|");
 									pos++;
 									if ((pos - right_pos) >= (max_line - 4)) right_pos++;
+									// ААААААААААААДДДДДДДД!!!!
 								}
 							} else {
 								if (active_input != dlgcfg.keys) {
@@ -1200,7 +1214,9 @@ void mvprintw_l(unsigned int	y, unsigned int	x, string line, color_t	win_color_l
 
 
 												default:	state			= 0;	// Сброс, если не обнаружен известный знак
+														// САМОУБИЙСТВО ЕСЛИ НЕ ОБНАРУЖЕ МОЗГ!!!!!!!!!!!!!!!!!!! ГДЕ КНОПКА САМОУНИЧТОЖЕНИЯ?!?!?!?! 
 															continue_count	= 0;
+						
 															break;
 
 											}
@@ -1227,6 +1243,7 @@ void mvprintw_l(unsigned int	y, unsigned int	x, string line, color_t	win_color_l
 						break;
 
 			case 1:		if ((line[i] == ' ') && (!always_read)) {	// Если обнаружен пробел, то остановить заливку
+					// ЕСЛИ ОБНАРУЖЕН ТО ПОБЕЖДЁН!!!
 							attroff(COLOR_PAIR(write_color) | A_BOLD);
 							if (selected) {
 								attron(COLOR_PAIR(win_color_selected) | A_BOLD);
@@ -1258,6 +1275,8 @@ void mvprintw_l(unsigned int	y, unsigned int	x, string line, color_t	win_color_l
 }
 
 void draw_box(	int				mode,
+		// ТОЛЬКО СВОИ ВЕЛОСИепДЫ ТОЛЬКО ХАРДКОР!!!! АААА!!! 
+		// ПОФИГ ЧТО ЕСТЬ ФУНКЙИЯ box()!!!!!!!
 				string			title,
 				unsigned int	progressBarPos,
 				unsigned int	x,
@@ -1336,6 +1355,7 @@ void balance_vector(vector <string>	&items, unsigned int	max_l) {
 }
 
 unsigned int find_max_length(vector <string>	&items) {	// Поиск самой длиной строки в векторе
+	// О ДААААААААААААААААААААААААААААААААААААААААААААААААААААА!!!!!!!!!!!!!!!!!!!!1
 	unsigned int	max_l;
 
 	string			temp_item;
@@ -1384,6 +1404,7 @@ unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, co
 					maxY,
 					firstItem,			// Если не лезет в экран, то с какого элемента выводить
 					lastItem,			// Если не лезет в экран, то до какого элемента выводить
+					// ЕСЛИ НЕ ЛЕЗЕТ - НЕ ЕШЬ!
 					selected,			// Выбранный элемент
 					maxItemLenght,		// Максимальная длина строки
 					i,
@@ -1424,7 +1445,9 @@ unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, co
 		posXmax			= 0;
 		posYmax			= 0;
 		border_fix		= 2;	// Если включены границы окна, то добавить ещё две строки
+		// ААААА?!?!?! ПОЧЕМУ ДВЕ?! ГДЕ ВЕЛИКИЙ ЗАМЫСЕЛ?!!?! ПОЧЕМУ нЕ  42 ???!?!?!
 		animation_delay	= 0;	// Отключение анимации
+		// ДОЛОЙ АНИМАЦИЮ!!!!
 		redraw_window	= false;
 		selected		= 0;
 	} else {
@@ -1462,11 +1485,13 @@ unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, co
 	win_color_selected	= get_inv_color(win_color_local);
 
 	if ((posYmax != 0) && (posYmax < items.size())) {	// Если элементов больше, чем фиксированный размер окна
+		// ЕЛСИ КИТАЙЦЕВ БОЛЬШЕ - ТО ДОСТАТЬ МИНИГАН!!!
 		lastItem	= posYmax;
 		progressBar	= true;
 	}
 
 	/*Влезание по Y начало*/
+	// РОЖДЕНИЕ ЛЕГЕНДЫ!!!! НАЧАЛО!!!!!!
 	if (((posYmax != 0) && ((posY + posYmax + border_fix) >= maxY)) || ((posYmax == 0) && ((posY + items.size() + border_fix) >= maxY))) {
 		if (posYmax != 0) {
 			if (((posY + border_fix)  >= maxY) && ((posYmax + border_fix) < maxY)) {
@@ -1521,6 +1546,7 @@ unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, co
 		}
 	}
 	/*Влезание по Y конец*/
+	// КОНЕЦ ЛЕГЕНДЫ!!!!!!!!!!
 
 	cycle			= true;
 	key_pressed		= KEY_UP;
@@ -1583,6 +1609,7 @@ unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, co
 	emptySpace.clear();
 
 	timeout(-1);	// Задержка чтения кнопки с клавиатуры
+	// ДЕЛАЕМ ИЗ КОМПА - ДАУНА!!!!
 
 	#ifdef _DEBUG
 	fill_field();
@@ -1604,6 +1631,7 @@ unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, co
 			refresh();
 
 		if ((key_pressed == KEY_UP) || (key_pressed == KEY_DOWN)) {		// Обновлять экран только при нажатии этих кнопок
+			// А ПРИ НАЖАТИИ ДРУГИХ КНОПОК - ВЫКЛЮЧАЕМ КОМП!!!!!!!!!!!!!!!!!!!!!!
 			j	= 0;
 
 			for (i	= firstItem; i < lastItem; i++, j++) {
@@ -1632,6 +1660,7 @@ unsigned int menu_win(MENSTR*	menu_conf, string	title, vector <string>	items, co
 
 			// items.size()	=	posYmax - Формула, по которой находится позиция прогресс-бара
 			// selected		=	???
+			// ААА?!?!?!?! ВАТ?!
 			if (progressBar)
 				draw_box(2, title, (((selected * posYmax) / items.size()) + posY), (posX - 1), posY, 0, (posYmax == 0 ? items.size() : posYmax), win_color_local, win_color_selected);
 		}
