@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 	init_display();
 	init_color();
 
-	InitLOAD_T(loading_info);
+	InitLOAD_T(loading_info);		// ЧТО ЗДЕСЬ ТОБОЙ ДВИГАЛО???
 
 	string	hos_ver	= _HOS_VERSION; 
 
@@ -26,12 +26,12 @@ int main(int argc, char *argv[]) {
 	init_signals();
 	apps_vect.clear();
 
-	usleep(2500000);
+	usleep(2500000);	// ВАЖНО!
 
 	kill_loading_title();	// Закрытие загрузочного экрана
 
-	if (!load_to_vector(MAIN_CONFIG, main_config_base)) {
-		DLGSTR	failwin	= {}; // Только так!!!
+	if (!load_to_vector(MAIN_CONFIG, main_config_base)) {	// АБСТРАКЦИИ, ПОЛИМОРФИЗМ, КОСВЕННЫЙ ДОСТУП... ЗААААЧЧЧЕЕЕЕМ?
+		DLGSTR	failwin	= {}; // Только так!!! ЭТО ФИЧА!
 		failwin.line	= "Can't load main configuration file!!!";
 		failwin.style	= RED_WIN;
 		msg_win(failwin);
@@ -43,8 +43,8 @@ int main(int argc, char *argv[]) {
 
 	if (conf("alpha_warning_on_start", main_config_base) != "0") {
 		DLGSTR teststr = {}; // Только так!!!
-		teststr.title = "Pre pre pre ... Alpha";
-		teststr.style = RED_WIN;
+		teststr.title = "Pre pre pre ... Alpha";	// Aaa??
+		teststr.style = RED_WIN;			// КРАСНЫЙ КАК КРОВЬ!!!
 		teststr.line = "Dear user, it's not full version of OS!/nThis is just an example of how might look this OS.";
 		msg_win(teststr);
 	}
@@ -54,11 +54,11 @@ int main(int argc, char *argv[]) {
 			DLGSTR	failwin	= {}; // Только так!!!
 			failwin.line	= "Can't load main configuration file!!!";
 			failwin.style	= RED_WIN;
-			msg_win(failwin);
+			msg_win(failwin);			// ТЫ ЗАФЕЙЛИЛ, МУДИЛА
 		}
 	}
 
-	main_desktop("user_name");
-	endwin();
+	main_desktop("user_name");				// ВИНОВНИК ТОРЖЕСТВА
+	endwin();						// КОНЕЦ СТРАДАНИЯМ
 	return 0;
 }
