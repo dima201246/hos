@@ -234,9 +234,12 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 							last_display_obj	= i;
 						}
 
-						now_obj_conf->posY	+= max_posYmax + 1;
-						next_line			+= max_posYmax + 1;
-						max_posYmax			= 0;
+						if (last_display_obj == 0) {	// Если достигнут конец окна, то не сдвигать остальные объекты, а оставить на нижней границе
+							now_obj_conf->posY	+= max_posYmax + 1;
+							next_line			+= max_posYmax + 1;
+						}
+
+						max_posYmax	= 0;
 					} else {
 						now_obj_conf->posX	= ahead_obj_conf->posX + size_ahead_obj_x + 1;	// Сдвиг кнопки вправо от предыдущей кнопки
 					}
@@ -317,9 +320,9 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 								selected_obj	= 0;
 							}
 
-							/*if (selected_obj > last_display_obj) {
-
-							}*/
+							if (selected_obj > last_display_obj) {
+								display_next_obj(obj_list, first_display_obj, last_display_obj, win_posXmax);
+							}
 
 							break;
 		}
