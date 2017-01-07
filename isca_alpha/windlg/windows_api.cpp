@@ -123,7 +123,7 @@ void display_next_obj(vector<list_of_objects> obj_list, unsigned int &first_disp
 			} else {
 				if (button_ahead)
 					break;
-
+				// first_display_obj--;
 				last_display_obj++;
 				break;
 			}
@@ -231,7 +231,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 
 					if (((ahead_obj_conf->posX + size_ahead_obj_x + size_obj_x + 1) >= win_posXmax) && (temp_item.type_obj == WIN_BUTTON)) {	// Если кнопка после кнопки вылазит за пределы окна
 						if ((last_display_obj == 0) && ((now_obj_conf->posY + 2 + size_obj_y) >= win_posYmax)) {	// Проверка, чтобы влезало по Y
-							last_display_obj	= i;
+							last_display_obj	= i - 1;
 						}
 
 						if (last_display_obj == 0) {	// Если достигнут конец окна, то не сдвигать остальные объекты, а оставить на нижней границе
@@ -284,7 +284,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 
 	while (cycle) {
 		if (refresh_obj) {
-			for (unsigned int	i	= first_display_obj; i < last_display_obj; i++) {
+			for (unsigned int	i	= first_display_obj; i <= last_display_obj; i++) {
 				temp_item	= obj_list[i];
 
 				if (selected_obj == i) {
@@ -327,7 +327,6 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 							break;
 		}
 	}
-
 	
 	for (unsigned int	i	= 0; i < obj_list.size(); i++) {	// От утечки памяти
 		temp_item	= obj_list[i];
