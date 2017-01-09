@@ -16,7 +16,8 @@
 	typedef	int	win_object;
 	typedef	int	hotkey_t;
 
-	struct WINOBJ {
+	struct WINOBJ
+	{
 		unsigned int	posX,
 						posY,
 						posXmax,
@@ -33,7 +34,8 @@
 		void			*system_point;
 	};
 
-	struct list_of_objects {
+	struct list_of_objects
+	{
 		win_object	type_obj;
 
 		int		(*point_to_function)(WINOBJ *, std::string, color_t);
@@ -47,7 +49,8 @@
 		bool		memory_leak;
 	};
 
-	struct returned_str {
+	struct returned_str
+	{
 		std::vector<std::string>	*returned_text;	// Текст с текстовых полей
 		int							key;
 	};

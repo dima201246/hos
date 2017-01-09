@@ -11,7 +11,8 @@
 	void add_to_file(std::string /*Путь к файлу*/, std::string /*Строка, которая будет добавлена*/); // Запись в конец файла
 
 	template <typename InputT>
-	void add_to_file(std::string link_to_file, InputT parametr) { // Запись в файл
+	void add_to_file(std::string link_to_file, InputT parametr) // Запись в файл
+	{
 		std::ofstream out_file;
 		out_file.open(link_to_file.c_str(), std::ios::out | std::ios::app);
 		out_file << parametr << std::endl;

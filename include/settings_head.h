@@ -2,13 +2,13 @@
 
 #include "settings.h"
 
-using namespace std;
-
-string hos_version() {
+std::string hos_version()
+{
 	return _HOS_VERSION;
 }
 
-void about_hos() {
+void about_hos()
+{
 	timeout(-1);
 	erase();
 	printw(":DV company 2016\n\n");
@@ -32,15 +32,18 @@ void about_hos() {
 	getch();
 }
 
-void system_info() { // Пока не работает
-	erase();
-	timeout(-1);
+void system_info() // Пока не работает
+{
 	FILE	*logf;
 	char	log_out[256];
 
-	logf		= fopen("/proc/cpuinfo", "r");
+	erase();
+	timeout(-1);
 
-	while (fgets(log_out,sizeof(log_out),logf)) {
+	logf	= fopen("/proc/cpuinfo", "r");
+
+	while (fgets(log_out,sizeof(log_out),logf))
+	{
 		printw("%s", log_out);
 	}
 
@@ -48,32 +51,37 @@ void system_info() { // Пока не работает
 	getch();
 }
 
-int action_parcer(string line) {
-	string				command, // Переменная для содержания команды
-						action, // Переменная для содержания названия вызываемого объекта
-						temp;
+int action_parcer(std::string line)
+{
+	std::string		command,	// Переменная для содержания команды
+					action,		// Переменная для содержания названия вызываемого объекта
+					temp;
 
-	unsigned int		lenth_line,
-						i;
+	unsigned int	lenth_line,
+					i;
 
-	bool				get_action;
+	bool			get_action;
 
-	line				+= ' '; // Для остановки и корретного чтения
-	lenth_line			= llength(line);
-	get_action			= false;
+	line			+= ' ';		// Для остановки и корретного чтения
+	lenth_line		= llength(line);
+	get_action		= false;
+
 	temp.clear();
 	action.clear();
 	command.clear();
 
-	for (i	= 0; i < lenth_line; i++) {
-		if ((line[i] == ' ') && (!get_action)) {
+	for (i	= 0; i < lenth_line; i++)
+	{
+		if ((line[i] == ' ') && (!get_action))
+		{
 			command		= temp;
 			get_action	= true;
 			temp.clear();
 			continue;
 		}
 
-		if ((line[i] == ' ') && (get_action)) {
+		if ((line[i] == ' ') && (get_action))
+		{
 			action		= temp;
 			temp.clear();
 			continue;
@@ -82,17 +90,20 @@ int action_parcer(string line) {
 		temp	+= line[i];
 	}
 
-	if (command == "about_hos") {
+	if (command == "about_hos")
+	{
 		about_hos();
 		return 0;
 	}
 
-	if (command == "system_info") {
+	if (command == "system_info")
+	{
 		system_info();
 		return 0;
 	}
 
-	if (command == "settings") {
+	if (command == "settings")
+	{
 		settings(action);
 		return 0;
 	}

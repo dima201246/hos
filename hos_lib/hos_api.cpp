@@ -6,9 +6,8 @@
 
 pid_t	loading_title_pid;
 
-using namespace std;
-
-void add_to_load_screen(vector<load_t> &text_on_title, unsigned int posX, unsigned int posY, string sometext) {
+void add_to_load_screen(std::vector<load_t> &text_on_title, unsigned int posX, unsigned int posY, std::string sometext)
+{
 	load_t	temp_str = {};
 
 	temp_str.posX	= posX;
@@ -18,10 +17,12 @@ void add_to_load_screen(vector<load_t> &text_on_title, unsigned int posX, unsign
 	text_on_title.push_back(temp_str);
 }
 
-void loading_title_start(vector<load_t> *text_on_title) {
+void loading_title_start(std::vector<load_t> *text_on_title)
+{
 	pid_t loading_pid	= fork();
 
-	if (loading_pid == 0) {
+	if (loading_pid == 0)
+	{
 		unsigned int	maxX,
 						maxY;
 
@@ -32,15 +33,19 @@ void loading_title_start(vector<load_t> *text_on_title) {
 		init_display();
 		init_color();
 
-		if (text_on_title != NULL) {
-			vector<load_t> text_on_title_temp	= *text_on_title;
+		if (text_on_title != NULL)
+		{
+			std::vector <load_t> text_on_title_temp	= *text_on_title;
 
 			for (unsigned int	i = 0; i < text_on_title->size(); mvprintw(text_on_title_temp[i].posY, text_on_title_temp[i].posX, "%s", text_on_title_temp[i].text.c_str()), i++);
 		}
 
 		getmaxyx(stdscr, maxY, maxX);
-		while (true) {
-			switch (state) {
+
+		while (true)
+		{
+			switch (state)
+			{
 				case 0:		mvprintw(maxY / 2 - 1, maxX / 2 - 5, "Loading...");
 							break;
 
@@ -87,6 +92,7 @@ void loading_title_start(vector<load_t> *text_on_title) {
 							state	= 0;
 							break;
 			}
+
 			refresh();
 			usleep(250000);
 			state++;
@@ -94,13 +100,15 @@ void loading_title_start(vector<load_t> *text_on_title) {
 
 		endwin();
 		exit(0);
-	} else {
+	}
+	else
+	{
 		loading_title_pid	= loading_pid;
 	}
-
 }
 
-void kill_loading_title() {
+void kill_loading_title()
+{
 	endwin();
 	kill(loading_title_pid, SIGTERM);
 	init_display();

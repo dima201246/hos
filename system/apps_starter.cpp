@@ -2,14 +2,15 @@
 #include "../include/system_defines.h"
 #include "../include/apps_starter.h"
 
-      #include <errno.h>
-      #include <stdio.h>
+#include <errno.h>
+#include <stdio.h>
 #include <cstring>
 
 std::vector<job> apps_vect;			// Определение вектора запущенных программ
 struct termios hos_tmode;			// настройки терминала для hos
 
-char	**init_out_parametr(std::string	parametrs, unsigned int	&count) {
+char	**init_out_parametr(std::string	parametrs, unsigned int	&count)
+{
 	unsigned int	space_counter;
 
 	bool			always_read;
@@ -17,32 +18,41 @@ char	**init_out_parametr(std::string	parametrs, unsigned int	&count) {
 	std::string		temp;
 
 	parametrs		+= " ";
+
 	space_counter	= 0;
 	always_read		= false;
+
 	temp.clear();
 
-	for (unsigned int	i	= 0; i < parametrs.length(); i++) {
-		if ((parametrs[i] == '"') && ((i == 0) || (parametrs[i - 1] != '\\'))) {
+	for (unsigned int	i	= 0; i < parametrs.length(); i++)
+	{
+		if ((parametrs[i] == '"') && ((i == 0) || (parametrs[i - 1] != '\\')))
+		{
 			(always_read ? always_read	= false : always_read	= true);
 		}
 
-		if ((!always_read) && (parametrs[i] == ' ')) {
+		if ((!always_read) && (parametrs[i] == ' '))
+		{
 			space_counter++;
 		}
 	}
 
 	char **out_parametrs_temp = new char* [space_counter + 1];
+
 	out_parametrs_temp[space_counter]	= NULL;
 
 	always_read		= false;
 	space_counter	= 0;
 
-	for (unsigned int	i	= 0; i < parametrs.length(); i++) {
-		if ((parametrs[i] == '"') && ((i == 0) || (parametrs[i - 1] != '\\'))) {
+	for (unsigned int	i	= 0; i < parametrs.length(); i++)
+	{
+		if ((parametrs[i] == '"') && ((i == 0) || (parametrs[i - 1] != '\\')))
+		{
 			(always_read ? always_read	= false : always_read	= true);
 		}
 
-		if ((!always_read) && (parametrs[i] == ' ')) {
+		if ((!always_read) && (parametrs[i] == ' '))
+		{
 			out_parametrs_temp[space_counter]	= new char [temp.length() + 1];
 			strcpy(out_parametrs_temp[space_counter], temp.c_str());
 			temp.clear();
@@ -54,17 +64,20 @@ char	**init_out_parametr(std::string	parametrs, unsigned int	&count) {
 	}
 
 	count	= space_counter + 1;
+
 	return	out_parametrs_temp;
 }
 
 void sighandler(int signo)
 {
-	if (signo == SIGTSTP) {
+	if (signo == SIGTSTP)
+	{
 
 	}
 
-	if (signo == SIGINT) {
-		
+	if (signo == SIGINT)
+	{
+
 	}
 }
 
@@ -82,7 +95,8 @@ void fg_job(job &j)
 	kill(-j.pid, SIGCONT);
 	waitpid(j.pid, &status, WUNTRACED);
 
-	if(WIFSTOPPED(status)) {
+	if(WIFSTOPPED(status))
+	{
 		j.running = false;
 		tcsetpgrp(STDIN_FILENO, getpid());
 		tcgetattr(STDIN_FILENO, &j.tmode);
@@ -90,9 +104,11 @@ void fg_job(job &j)
 	}
 
 	// Если завершился процесс - удаляем из вектора процессов его
-	if(WIFEXITED(status)) {
+	if(WIFEXITED(status))
+	{
 		tcsetpgrp(STDIN_FILENO, getpid());
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &hos_tmode);
+
 		for(it = apps_vect.begin() ; it < apps_vect.end(); ++it)
 			if (it->pid == j.pid)
 				apps_vect.erase(it);
@@ -109,7 +125,8 @@ void init_signals()
 }
 
 // Фоновых процессов список отображаем мы
-void list_process() {
+void list_process()
+{
 	std::vector <std::string>	apps_names;
 
 	Init_MENSTR(apps_menu);
@@ -121,14 +138,17 @@ void list_process() {
 	apps_menu.posXmax	= 25;
 
 	// Не делаем ничего, вектор если пуст
-	if(!apps_vect.empty()) {
-		for (unsigned int	i	= 0; i < apps_vect.size(); i++) {
+	if(!apps_vect.empty())
+	{
+		for (unsigned int	i	= 0; i < apps_vect.size(); i++)
+		{
 			apps_names.push_back(apps_vect[i].name);
 		}
 
 		unsigned int	selected	= menu_win(&apps_menu, "Background applications", apps_names, main_system_color);
 
-		if (selected != 0) {	// процесс спящий мы будим
+		if (selected != 0)	// процесс спящий мы будим
+		{
 			endwin();
 			fg_job(apps_vect[selected - 1]);
 			init_display();
@@ -137,7 +157,8 @@ void list_process() {
 	}
 }
 
-int app_start(int number_of_app, std::string	parametrs) {
+int app_start(int number_of_app, std::string	parametrs)
+{
 	std::string name_app	= configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_launcher", "", false);
 	std::string path_to_dir	= configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_path", "", false);
 	std::string type_app	= configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_type", "", false);
@@ -147,13 +168,16 @@ int app_start(int number_of_app, std::string	parametrs) {
 	endwin();
 
 	int		status;
-	char **out_parametrs	= NULL;
+	char	**out_parametrs	= NULL;
 
-	
 	pid_t	chpid	= fork();
-	if (chpid == 0) {
-		for (unsigned int	i	= 0; i < name_app.length(); i++) {	// Из имени приложения параметры выхватывать пытаемя мы
-			if (name_app[i] == ' ') {
+
+	if (chpid == 0)
+	{
+		for (unsigned int	i	= 0; i < name_app.length(); i++)	// Из имени приложения параметры выхватывать пытаемя мы
+		{
+			if (name_app[i] == ' ')
+			{
 				std::string app_parametrs;
 				app_parametrs	= name_app;
 				name_app.erase(i, name_app.length());
@@ -166,25 +190,28 @@ int app_start(int number_of_app, std::string	parametrs) {
 
 		if (!parametrs.empty())	// Параметры если есть какие, массив сделать из них
 			out_parametrs	= init_out_parametr(parametrs, parametrs_count);
-	
+
 		signal(SIGTTIN, SIG_IGN);
 		signal(SIGTTOU, SIG_IGN);
 		tcsetpgrp(STDIN_FILENO, getpid());
 		chdir(path_to_dir.c_str());
 		setpgid(getpid(), getpid());			 	// Создаём группу процессов
 
-		if (execv(name_app.c_str(), out_parametrs) < 0) {	// parent process
+		if (execv(name_app.c_str(), out_parametrs) < 0)	// parent process
+		{
 			init_display();
 			init_color();
-			DLGSTR	failwin	= {}; // Только так!!!
+			DLGSTR	failwin	= {};	// Только так!!!
 			failwin.line	= "Can't start app!!!";
 			failwin.style	= RED_WIN;
 			msg_win(failwin);
 			endwin();
-		
+
 			exit(0);
 		}
-	} else {
+	}
+	else
+	{
 		job j = {
 			.name = configurator(MAIN_APPS_FILE, str(number_of_app) + "_app_package_name", "", false),
 			.pid = chpid
@@ -200,16 +227,19 @@ int app_start(int number_of_app, std::string	parametrs) {
 		tcgetattr(STDIN_FILENO, &j.tmode);
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &hos_tmode);
 
-		if (WIFSTOPPED(status)) {	/* Если пользователем процесс был остановлен */
+		if (WIFSTOPPED(status))	// Если пользователем процесс был остановлен
+		{
 			apps_vect.back().running = false;
 		}
 
-		if(WIFEXITED(status)) {
+		if(WIFEXITED(status))
+		{
 			apps_vect.pop_back();
 		}
 
 		init_display();
 		init_color();
 	}
+
 	return 0;
 }

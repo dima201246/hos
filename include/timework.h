@@ -1,7 +1,8 @@
 #ifndef TIME_H
 #define TIME_H
 
-	struct local_time {
+	struct local_time
+	{
 		int	hours,
 			min,
 			sec,

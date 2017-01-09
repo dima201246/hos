@@ -4,7 +4,8 @@
 	#include <unistd.h>
 	#include <vector>
 
-	struct load_t {
+	struct load_t
+	{
 		std::string		text;
 		unsigned int	posX,
 						posY;

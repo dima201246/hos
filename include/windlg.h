@@ -15,22 +15,32 @@
 	#define MAGENTA_WIN	TEXT_MAGENTA_BLACK
 	#define CYAN_WIN	TEXT_CYAN_BLACK
 
-	struct DLGSTR {
-		std::string title,			// Title
-		line,						// Text
-		f_button,					// Text on first button (maybe empty)
-		s_button,					// Text on second button (maybe empty)
-		t_button;					// Text on third button (maybe empty)
-		int num_of_chars,			// Maximum number of input characters (not work)
-		type_input,					// TYPE INPUT (not work)
-		style,						// STYLE
-		keys,						// Number of keys (1 - 3)
-		fix_size;					// Unknown
-		unsigned int xpos, ypos,
-		xmax, ymax,
-		selected;					// Initial choice
-		unsigned int xreturn, yreturn, second_border;
-		bool border_menu, active_menu, not_view_scrollbar;
+	struct DLGSTR
+	{
+		std::string		title,				// Title
+						line,				// Text
+						f_button,			// Text on first button (maybe empty)
+						s_button,			// Text on second button (maybe empty)
+						t_button;			// Text on third button (maybe empty)
+
+		int				num_of_chars,		// Maximum number of input characters (not work)
+						type_input,			// TYPE INPUT (not work)
+						style,				// STYLE
+						keys,				// Number of keys (1 - 3)
+						fix_size;			// Unknown
+
+		bool			border_menu,
+						active_menu,
+						not_view_scrollbar;
+
+		unsigned int	xpos,
+						ypos,
+						xmax,
+						ymax,
+						selected,			// Initial choice
+						xreturn,
+						yreturn,
+						second_border;
 	};
 
 	std::string get_ver_windlg();
@@ -39,26 +49,28 @@
 	void menu_win_old(DLGSTR&, std::vector<std::string>&);
 
 	/*WINDLG 2.0*/
-	struct MENSTR {
-		bool					no_border,			// Если не нужны границы окна !!!НЕИСПОЛЬЗОВАТЬ!!!
-								redraw;				// Если нужно только перерисовать вывод
+	struct MENSTR
+	{
+		int				returned_key;		// Возврат нажатой кнопки
 
-		int						returned_key;		// Возврат нажатой кнопки
+		bool			no_border,			// Если не нужны границы окна !!!НЕИСПОЛЬЗОВАТЬ!!!
+						redraw;				// Если нужно только перерисовать вывод
 
-		unsigned int			posX,				// Позиция окна
-								posY,
-								posXmax,			// Максимальные размеры окна
-								posYmax,
-								returned_x,			// Возвращаемая позиция выделения
-								returned_y,
-								animation_delay,	// Время анимации
-								std_selected,		// Позиция выделения
-								returned_selected;	// Номер выделенного элемента, даже если окно было закрыто без выбора
+		unsigned int	posX,				// Позиция окна
+						posY,
+						posXmax,			// Максимальные размеры окна
+						posYmax,
+						returned_x,			// Возвращаемая позиция выделения
+						returned_y,
+						animation_delay,	// Время анимации
+						std_selected,		// Позиция выделения
+						returned_selected;	// Номер выделенного элемента, даже если окно было закрыто без выбора
 	};
 
 	unsigned int menu_win(MENSTR*, std::string, std::vector <std::string>, color_t);
 
 	#define Init_MENSTR(var_name) MENSTR var_name = {};
+
 	/*WINDLG 2.0*/
 	
 	/* TYPE INPUT:
