@@ -2,5 +2,6 @@
 lib
 apps/apps.list
 hos_alpha
+hos_starter
 apps/file_man/file_man
 apps/key_test/app.config

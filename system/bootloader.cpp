@@ -9,7 +9,7 @@
 
 using namespace std;
 
-int start(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
 	init_display();
 	init_color();
@@ -58,28 +58,7 @@ int start(int argc, char *argv[]) {
 		}
 	}
 
-	add_to_filef("fail.log", "Start [ OK ]\n");
-
 	main_desktop("user_name");				// ВИНОВНИК ТОРЖЕСТВА
 	endwin();						// КОНЕЦ СТРАДАНИЯМ
-	return 0;
-}
-
-int main(int argc, char *argv[]) {
-	pid_t	chpid	= fork();
-
-	if (chpid == 0) {
-		signal(SIGTTIN, SIG_IGN);
-		signal(SIGTTOU, SIG_IGN);
-		tcsetpgrp(STDIN_FILENO, getpid());
-		// chdir(path_to_dir.c_str());
-		setpgid(getpid(), getpid());		// Создаём группу процессов
-		start(argc, argv);							// Запуск оболочки
-
-		return 0;
-	} else {
-		waitpid(chpid, NULL, WUNTRACED);
-	}
-
 	return 0;
 }
