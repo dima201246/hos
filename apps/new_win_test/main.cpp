@@ -81,6 +81,8 @@ int main(int argc, char *argv[]) {
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_28", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_29", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_30", TEXT_WHITE_BLACK, NULL);
+	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_31", TEXT_WHITE_BLACK, NULL);
+	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_32", TEXT_WHITE_BLACK, NULL);
 	win(NULL, test_obj_vec, "TEST WIN", TEXT_WHITE_BLACK);
 
 	endwin();

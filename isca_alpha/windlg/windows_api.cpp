@@ -103,27 +103,50 @@ void display_next_obj(vector<list_of_objects> obj_list, unsigned int &first_disp
 	unsigned int		size_obj_x,
 						size_obj_y,
 						size_ahead_obj_x,
-						size_ahead_obj_y;
+						size_ahead_obj_y,
+						line_y;
 
 	button_ahead		= false;
+	line_y				= 0;
 	size_obj_x			= 0;
 	size_obj_x			= 0;
 	size_ahead_obj_x	= 0;
 	size_ahead_obj_y	= 0;
 
-	for (unsigned int i	= last_display_obj; i < obj_list.size(); i++) {
+	// Стирание самой высокой строки с экрана Начало
+	line_y	= obj_list[first_display_obj].point_to_struct->posY;
+
+	for (unsigned int	i	= first_display_obj; i < obj_list.size(); i++)
+	{
+		if (obj_list[first_display_obj].point_to_struct->posY == line_y)
+			first_display_obj++;
+		else
+			break;
+	}
+	// Стирание самой высокой строки с экрана Конец
+
+	// Сдвиг всех объектов вверх Начало
+	for (unsigned int	i	= first_display_obj; i <= last_display_obj; i++)
+	{
+		obj_list[i].point_to_struct->posY	-= 2;
+		obj_list[i].point_to_struct->redraw = true;
+	}
+	// Сдвиг всех объектов вверх Конец
+
+	for (unsigned int i	= last_display_obj + 1; i < obj_list.size(); i++) {
 
 		if (!obj_list[i].point_to_struct->user_init) {	// Если объект не был инициализирован пользователем
 			get_obj_size(obj_list[i], size_obj_x, size_obj_y);	// Получение размеров объекта
 
-
-			if ((obj_list[i].type_obj == WIN_BUTTON) && ((obj_list[i - 1].point_to_struct->posX + size_ahead_obj_x + size_obj_x + 1) >= win_posXmax)) {
+			if ((obj_list[i].type_obj == WIN_BUTTON) && ((obj_list[i - 1].point_to_struct->posX + size_ahead_obj_x + size_obj_x + 1) <= win_posXmax)) {
 				last_display_obj++;
 				button_ahead	= true;
 			} else {
 				if (button_ahead)
+				{
 					break;
-				// first_display_obj--;
+				}
+
 				last_display_obj++;
 				break;
 			}
@@ -228,7 +251,6 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 
 			if (!now_obj_conf->user_init) {	// Если объект не был инициализирован пользователем
 				if ((ahead_button) && (temp_item.type_obj == WIN_BUTTON)) {	 // Если до этого была кнопка
-
 					if (((ahead_obj_conf->posX + size_ahead_obj_x + size_obj_x + 1) >= win_posXmax) && (temp_item.type_obj == WIN_BUTTON)) {	// Если кнопка после кнопки вылазит за пределы окна
 						if ((last_display_obj == 0) && ((now_obj_conf->posY + 2 + size_obj_y) >= win_posYmax)) {	// Проверка, чтобы влезало по Y
 							last_display_obj	= i - 1;
@@ -317,11 +339,13 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 							if (selected_obj != (obj_list.size() - 1)) {
 								selected_obj++;
 							} else {
-								selected_obj	= 0;
+								// selected_obj	= 0;
+								selected_obj	= first_display_obj;	// ПОКА ТАК, ПОТОМ ИСПРАВИТЬ!!!!
 							}
 
 							if (selected_obj > last_display_obj) {
 								display_next_obj(obj_list, first_display_obj, last_display_obj, win_posXmax);
+								clear_space(win_posX + 1, win_posY + 1, win_posXmax - win_posX - 2, win_posYmax - win_posY - 2);
 							}
 
 							break;
