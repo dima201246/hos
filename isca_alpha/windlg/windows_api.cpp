@@ -24,12 +24,7 @@ void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::
 
 	if (point_to_conf == NULL) {	// Проверка, была ли передана структура вместе с объектом
 		WINOBJ *temp_objstr			= new WINOBJ;	// Если нет, то выделение под неё памяти
-		temp_objstr->posX			= 0;
-		temp_objstr->posXmax		= 0;
-		temp_objstr->posY			= 0;
-		temp_objstr->posYmax		= 0;
-		temp_objstr->manual_locator	= false;
-		temp_objstr->user_init		= false;
+		*temp_objstr				= {};
 		temp_objstr->redraw			= true;	// Чотбы сразу, при первом вызове, объект перерисовался
 		temp_value.point_to_struct	= temp_objstr;
 		temp_value.memory_leak		= true;
