@@ -1,5 +1,7 @@
 #include <signal.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <wait.h>
 
 #include "../include/screen.h"
 #include "../include/hos_api.h"
@@ -111,6 +113,7 @@ void kill_loading_title()
 {
 	endwin();
 	kill(loading_title_pid, SIGTERM);
+	waitpid(loading_title_pid, NULL, WUNTRACED);
 	init_display();
 	init_color();
 }
