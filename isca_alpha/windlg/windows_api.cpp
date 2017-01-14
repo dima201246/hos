@@ -59,7 +59,7 @@ void get_obj_size(list_of_objects	item, unsigned int &x, unsigned int &y) {	// �
 	}
 }
 
-void display_next_obj(vector<list_of_objects> obj_list, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posXmax) {
+void display_next_obj(vector<list_of_objects> obj_list, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posXmax, unsigned int win_posY) {	// Спуск в окне (поднятие всех объектов выше)
 	bool				button_ahead;
 
 	unsigned int		size_obj_x,
@@ -90,8 +90,15 @@ void display_next_obj(vector<list_of_objects> obj_list, unsigned int &first_disp
 	// Сдвиг всех объектов вверх Начало
 	for (unsigned int	i	= first_display_obj; i <= last_display_obj; i++)
 	{
-		obj_list[i].point_to_struct->posY	-= 2;
-		obj_list[i].point_to_struct->redraw = true;
+		if ((obj_list[i].point_to_struct->posY - 2) > win_posY)	// Чтобы объект не налазил на заголовок окна
+		{
+			obj_list[i].point_to_struct->posY	-= 2;
+			obj_list[i].point_to_struct->redraw = true;
+		}
+		else
+		{
+			first_display_obj++;
+		}
 	}
 	// Сдвиг всех объектов вверх Конец
 
@@ -306,7 +313,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 							}
 
 							if (selected_obj > last_display_obj) {
-								display_next_obj(obj_list, first_display_obj, last_display_obj, win_posXmax);
+								display_next_obj(obj_list, first_display_obj, last_display_obj, win_posXmax, win_posY);
 								clear_space(win_posX + 1, win_posY + 1, win_posXmax - win_posX - 2, win_posYmax - win_posY - 2);
 							}
 
