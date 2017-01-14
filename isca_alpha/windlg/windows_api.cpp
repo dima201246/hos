@@ -1,5 +1,4 @@
 #include "internal_windlg.h"
-#include "../../include/windows_api.h"
 #include "../../include/system_defines.h"
 #include "../../include/isca_alpha.h"
 
@@ -12,43 +11,6 @@ void clear_space(unsigned int	start_x, unsigned int	start_y, unsigned int	end_x,
 			mvprintw(y + start_y, x + start_x, " ");
 		}
 	}
-}
-
-int button_obj(WINOBJ *button_conf, string text, color_t color_button) {
-	if (button_conf->redraw) {
-		coloron(color_button);
-		if ((button_conf->posXmax != 0) || (button_conf->posYmax != 0)) {
-			if (button_conf->posXmax == 0)
-				button_conf->posXmax = 1;
-
-			if (button_conf->posYmax == 0)
-				button_conf->posYmax = 1;
-
-			clear_space(button_conf->posX, button_conf->posY, button_conf->posXmax, button_conf->posYmax);			
-			mvprintw(button_conf->posY, button_conf->posX, "[%s]", text.c_str());
-		} else {
-			mvprintw(button_conf->posY, button_conf->posX, "[%s]", text.c_str());
-		}
-		coloroff(color_button);
-	} else {
-		coloron(get_inv_color(color_button));
-		if ((button_conf->posXmax != 0) || (button_conf->posYmax != 0)) {
-			if (button_conf->posXmax == 0)
-				button_conf->posXmax = 1;
-
-			if (button_conf->posYmax == 0)
-				button_conf->posYmax = 1;
-
-			clear_space(button_conf->posX, button_conf->posY, button_conf->posXmax, button_conf->posYmax);			
-			mvprintw(button_conf->posY, button_conf->posX, ">%s<", text.c_str());
-		} else {
-			mvprintw(button_conf->posY, button_conf->posX, ">%s<", text.c_str());
-		}
-		coloroff(get_inv_color(color_button));
-		return getch();
-	}
-
-	return 0;
 }
 
 void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::string text_on_object, color_t color_obj, WINOBJ* point_to_conf) {	// Добавление объекта в окно
