@@ -205,34 +205,16 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 					y_size_selected,
 					x_size_temp,
 					y_size_temp,
-					nearest_obj_num	= 0;
-
-	bool			found_obj	= false;
-
-	for (unsigned int i = selected_obj; i > 0; --i)
-	{
-		if (obj_list[i].point_to_struct->posY < y_selected)
-		{
-			found_obj	= true;
-			break;
-		}
-	}
-
-	if (!found_obj)	// Если не найдено объектов выше
-	{
-		return false;
-	}
+					nearest_obj_num	= selected_obj;
 
 	// Поиск кнопки выше Начало
-	found_obj	= false;  
-
 	obj_list[selected_obj].point_to_struct->redraw = true;			// Перерисовка текущего выделенного объекта невыделенным
 
 	get_obj_size(obj_list[selected_obj], x_size_selected, y_size_selected);	// Узнаём размеры выделенного объекта
 
 	for (unsigned int i = 0; i < obj_list.size(); ++i)				// Проверяем все объекты
 	{
-		if (obj_list[i].point_to_struct->posY < obj_list[selected_obj].point_to_struct->posX)	// Небольшая оптимизация, чтобы проверялись только объекты выше выделенного
+		if (obj_list[i].point_to_struct->posY < obj_list[selected_obj].point_to_struct->posY)	// Небольшая оптимизация, чтобы проверялись только объекты выше выделенного
 		{
 			for (unsigned int j = obj_list[selected_obj].point_to_struct->posX; j <= (obj_list[selected_obj].point_to_struct->posX + x_size_selected); ++j)	// Цикл проверяющий каждый "пиксель" уже выделенного объекта
 			{
@@ -240,10 +222,11 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 
 				if (((j >= obj_list[i].point_to_struct->posX) && (j < (obj_list[i].point_to_struct->posX + x_size_temp))) && (obj_list[selected_obj].point_to_struct->posY > obj_list[i].point_to_struct->posY))
 				{
-					if ((nearest_obj == NULL) || (nearest_obj->point_to_struct->posY < obj_list[i].point_to_struct->posY))	// Поиск самого блтзкого объекта сверху
+					if ((nearest_obj == NULL) || (nearest_obj->point_to_struct->posY <= obj_list[i].point_to_struct->posY))	// Поиск самого блтзкого объекта сверху
 					{
 						nearest_obj		= &obj_list[i];
 						nearest_obj_num	= i;
+						break;
 					}
 				}
 			}
@@ -251,8 +234,7 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 	}
 
 	if (nearest_obj != NULL)
-	{		
-		found_obj		= true;
+	{
 		selected_obj	= nearest_obj_num;
 		nearest_obj->point_to_struct->redraw = true;
 		return true;
