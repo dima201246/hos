@@ -147,7 +147,7 @@ void display_next_obj(vector<list_of_objects> obj_list, unsigned int &first_disp
 
 	for (unsigned int	i	= first_display_obj; i < obj_list.size(); i++)
 	{
-		if (obj_list[first_display_obj].point_to_struct->posY == line_y)
+		if (obj_list[i].point_to_struct->posY == line_y)
 			first_display_obj++;
 		else
 			break;
@@ -191,6 +191,9 @@ void display_next_obj(vector<list_of_objects> obj_list, unsigned int &first_disp
 			// size_ahead_obj_y	= size_obj_y;
 		}
 	}
+
+	if (last_display_obj >= obj_list.size())
+		last_display_obj = obj_list.size() - 1;
 }
 
 bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posXmax, unsigned int win_posY)
@@ -405,13 +408,13 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 	}
 
 	if (last_display_obj == 0) {
-		last_display_obj = obj_list.size();
+		last_display_obj = obj_list.size() - 1;
 	}
 	/*Автоматическое расположение объектов в окне КОНЕЦ*/
 
 	while (cycle) {
 		if (refresh_obj) {
-			for (unsigned int	i	= first_display_obj; i < last_display_obj; i++) {
+			for (unsigned int	i	= first_display_obj; i < last_display_obj + 1; i++) {
 				temp_item	= obj_list[i];
 
 				if (selected_obj == i) {
