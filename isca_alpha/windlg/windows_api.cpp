@@ -411,7 +411,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 
 	while (cycle) {
 		if (refresh_obj) {
-			for (unsigned int	i	= first_display_obj; i <= last_display_obj; i++) {
+			for (unsigned int	i	= first_display_obj; i < last_display_obj; i++) {
 				temp_item	= obj_list[i];
 
 				if (selected_obj == i) {
