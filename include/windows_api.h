@@ -27,7 +27,8 @@
 
 		bool			redraw,
 						manual_locator,
-						user_init;
+						user_init,
+						active_obj;	// Выводится ли данный объект на экран или нет
 
 		hotkey_t		obj_hotkey;	// Горячая кнопка
 

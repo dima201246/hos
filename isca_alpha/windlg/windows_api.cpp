@@ -55,7 +55,7 @@ void get_obj_size(list_of_objects	item, unsigned int &x, unsigned int &y) {	// �
 }
 
 
-void display_prev_obj(vector<list_of_objects> obj_list, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posXmax, unsigned int win_posY) {	// Спуск в окне (поднятие всех объектов выше)
+void display_prev_obj(vector<list_of_objects> &obj_list, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posXmax, unsigned int win_posY) {	// Спуск в окне (поднятие всех объектов выше)
 	bool				button_ahead;
 
 	unsigned int		size_obj_x,
@@ -126,74 +126,66 @@ void display_prev_obj(vector<list_of_objects> obj_list, unsigned int &first_disp
 	}
 }
 
-void display_next_obj(vector<list_of_objects> obj_list, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posXmax, unsigned int win_posY) {	// Спуск в окне (поднятие всех объектов выше)
-	bool				button_ahead;
+void display_next_obj_line(vector<list_of_objects> obj_list, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posY, unsigned int win_posYmax) {	// Спуск в окне (поднятие всех объектов выше)
+	bool			collision_fail	= false;
 
-	unsigned int		size_obj_x,
-						size_obj_y,
-						size_ahead_obj_x,
-						// size_ahead_obj_y,
-						line_y;
-
-	button_ahead		= false;
-	line_y				= 0;
-	size_obj_x			= 0;
-	size_obj_x			= 0;
-	size_ahead_obj_x	= 0;
-	// size_ahead_obj_y	= 0;
+	unsigned int	line_y	= 0;
 
 	// Стирание самой высокой строки с экрана Начало
-	line_y	= obj_list[first_display_obj].point_to_struct->posY;
+	for (unsigned int	i	= 0; i < obj_list.size(); i++)	// Поиск самого высокого активного объекта
+	{
+		if ((obj_list[i].point_to_struct->active_obj) && ((obj_list[i].point_to_struct->posY < line_y) || (i == 0)))
+			line_y	= obj_list[i].point_to_struct->posY;
+	}
 
-	for (unsigned int	i	= first_display_obj; i < obj_list.size(); i++)
+	for (unsigned int	i	= 0; i < obj_list.size(); i++)
 	{
 		if (obj_list[i].point_to_struct->posY == line_y)
-			first_display_obj++;
-		else
-			break;
+		{
+			obj_list[i].point_to_struct->active_obj	= false;
+			obj_list[i].point_to_struct->redraw		= false;
+		}
 	}
 	// Стирание самой высокой строки с экрана Конец
 
-	// Сдвиг всех объектов вверх Начало
-	for (unsigned int	i	= first_display_obj; i <= last_display_obj; i++)
+	for (unsigned int	i	= 0; i < obj_list.size(); i++)	// Сдвиг всех активных объектов вверх Начало
 	{
-		if ((obj_list[i].point_to_struct->posY - 2) > win_posY)	// Чтобы объект не налазил на заголовок окна
+		if (obj_list[i].point_to_struct->active_obj)
 		{
 			obj_list[i].point_to_struct->posY	-= 2;
-			obj_list[i].point_to_struct->redraw = true;
-		}
-		else
-		{
-			first_display_obj++;
+			obj_list[i].point_to_struct->redraw	= true;
+
+			if (obj_list[i].point_to_struct->posY <= win_posY)	// Отключние объекта, если он залез на границу окна
+			{
+				obj_list[i].point_to_struct->posY	= win_posY + 1;
+				obj_list[i].point_to_struct->redraw	= false;
+			}
 		}
 	}
-	// Сдвиг всех объектов вверх Конец
 
-	for (unsigned int i	= last_display_obj + 1; i < obj_list.size(); i++) {
-
-		if (!obj_list[i].point_to_struct->user_init) {	// Если объект не был инициализирован пользователем
-			get_obj_size(obj_list[i], size_obj_x, size_obj_y);	// Получение размеров объекта
-
-			if ((obj_list[i].type_obj == WIN_BUTTON) && ((obj_list[i - 1].point_to_struct->posX + size_ahead_obj_x + size_obj_x + 1) <= win_posXmax)) {
-				last_display_obj++;
-				button_ahead	= true;
-			} else {
-				if (button_ahead)
+	for (unsigned int i	= 0; i < obj_list.size(); i++)	// Вывод на экран нижней линии
+	{
+		if ((!obj_list[i].point_to_struct->active_obj) && (obj_list[i].point_to_struct->posY < win_posYmax) && (obj_list[i].point_to_struct->posY >= win_posYmax - 2))
+		{
+			for (unsigned int j = 0; j < obj_list.size(); ++j)
+			{
+				if ((obj_list[j].point_to_struct->active_obj) && (obj_list[j].point_to_struct->posY == obj_list[i].point_to_struct->posY) && (obj_list[j].point_to_struct->posX == obj_list[i].point_to_struct->posX))
 				{
+					collision_fail	= true;
 					break;
 				}
-
-				last_display_obj++;
-				break;
 			}
 
-			size_ahead_obj_x	= size_obj_x;
-			// size_ahead_obj_y	= size_obj_y;
+			if (collision_fail)
+			{
+				collision_fail	= false;
+				continue;
+			}
+
+			obj_list[i].point_to_struct->active_obj	= true;
+			obj_list[i].point_to_struct->redraw		= true;
 		}
 	}
-
-	if (last_display_obj >= obj_list.size())
-		last_display_obj = obj_list.size() - 1;
 }
 
 bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posXmax, unsigned int win_posY)
@@ -232,6 +224,7 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 			}
 		}
 	}
+	// Поиск кнопки выше Конец
 
 	if (nearest_obj != NULL)
 	{
@@ -240,11 +233,9 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 		return true;
 	}
 
-	// Поиск кнопки выше Конец
-
 	// display_prev_obj(obj_list, first_display_obj, last_display_obj, win_posXmax, win_posY);
 
-	return true;
+	return false;
 }
 
 returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string title, color_t color) {
@@ -365,6 +356,11 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 				// if ()
 			}
 
+			if (last_display_obj == 0)
+			{
+				temp_item.point_to_struct->active_obj	= true;
+			}
+
 			size_ahead_obj_x	= size_obj_x;	// Получение размеров объекта для позиционирования следующего
 			size_ahead_obj_y	= size_obj_y;
 
@@ -388,41 +384,56 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 			obj_list[i]	= temp_item;
 		}
 	}
-
-	if (last_display_obj == 0) {
-		last_display_obj = obj_list.size() - 1;
-	}
 	/*Автоматическое расположение объектов в окне КОНЕЦ*/
 
-	while (cycle) {
-		if (refresh_obj) {
-			for (unsigned int	i	= first_display_obj; i < last_display_obj + 1; i++) {
-				temp_item	= obj_list[i];
+/*	for (int i = 0; i < obj_list.size(); ++i)
+	{
+		if (obj_list[i].point_to_struct->active_obj)
+			add_to_filef(MAIN_LOGFILE, "temp_item.active_obj: %d\n", i);
+	}
+			add_to_filef(MAIN_LOGFILE, "last_display_obj: %d\n", last_display_obj);
+*/
+	while (cycle)
+	{
+		if (refresh_obj)
+		{
+			for (unsigned int	i	= 0; i < obj_list.size(); i++)
+			{
+				if (obj_list[i].point_to_struct->active_obj)
+				{
+					temp_item	= obj_list[i];
 
-				if (selected_obj == i) {
-					selected_item	= temp_item;
-					key_pressed		= temp_item.point_to_function(temp_item.point_to_struct, temp_item.text, temp_item.color_object);	// Вызов нужного объекта
-				} else {
-					temp_item.point_to_function(temp_item.point_to_struct, temp_item.text, temp_item.color_object);	// Вызов нужного объекта
+					if (selected_obj == i)
+					{
+						selected_item	= temp_item;
+						key_pressed		= temp_item.point_to_function(temp_item.point_to_struct, temp_item.text, temp_item.color_object);	// Вызов нужного объекта
+					}
+					else
+					{
+						temp_item.point_to_function(temp_item.point_to_struct, temp_item.text, temp_item.color_object);	// Вызов нужного объекта
+					}
+
+					if (selected_obj == i)
+					{
+						temp_item.point_to_struct->redraw	= false;
+						obj_list[i]	= temp_item;
+					}
 				}
-
-				if (selected_obj == i) {
-					temp_item.point_to_struct->redraw	= false;
-					obj_list[i]	= temp_item;
-				}
-
 			}
 
 			refresh_obj	= false;
-		} else {
+		}
+		else
+		{
 			key_pressed	= selected_item.point_to_function(selected_item.point_to_struct, selected_item.text, selected_item.color_object);	// Вызов нужного объекта
 		}
 
-		switch (key_pressed) {
+		switch (key_pressed)
+		{
 			case H_KEY_ESC:	cycle		= false;
 							break;
 
-			case H_KEY_TAB:	obj_list[selected_obj].point_to_struct->redraw	= true;	// Перерисовать объект невыделенным
+			case H_KEY_TAB:	obj_list[selected_obj].point_to_struct->redraw	= true;	// Перерисовать объект невыделенным	//!!!!!!!!!!!!!!!!АБСОЛЮТНАЯ ХЕРНЯ!!!!!!!!!!! УБРАТЬ ЭТО!!!!!!
 							obj_list[selected_obj].point_to_function(obj_list[selected_obj].point_to_struct, obj_list[selected_obj].text, obj_list[selected_obj].color_object);	// Обновление элемента
 							refresh_obj	= true;
 
@@ -434,15 +445,15 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 							}
 
 							if (selected_obj > last_display_obj) {
-								display_next_obj(obj_list, first_display_obj, last_display_obj, win_posXmax, win_posY);
+								display_next_obj_line(obj_list, first_display_obj, last_display_obj, win_posY, win_posYmax);
 								clear_space(win_posX + 1, win_posY + 1, win_posXmax - win_posX - 2, win_posYmax - win_posY - 2);
+								selected_obj	= 10;
 							}
 
 							break;
 
-			case 259:		if (key_up(obj_list, selected_obj, first_display_obj, last_display_obj, win_posXmax, win_posY))
+			case KEY_UP:	if (key_up(obj_list, selected_obj, first_display_obj, last_display_obj, win_posXmax, win_posY))
 							{
-								clear_space(win_posX + 1, win_posY + 1, win_posXmax - win_posX - 2, win_posYmax - win_posY - 2);
 								refresh_obj	= true;
 							}
 
