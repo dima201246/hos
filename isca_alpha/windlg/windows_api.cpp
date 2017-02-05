@@ -1,6 +1,7 @@
 #include "internal_windlg.h"
 #include "../../include/system_defines.h"
 #include "../../include/isca_alpha.h"
+#include <cmath>
 
 using namespace std;
 
@@ -185,13 +186,23 @@ void display_next_obj_line(vector<list_of_objects> obj_list, unsigned int &first
 
 bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int win_posY, unsigned int win_posYmax)
 {
-	list_of_objects	*nearest_obj	= NULL;
+
+	struct nearest_obj
+	{
+		list_of_objects	*obj;
+		unsigned int	num,
+						size;
+	};
+
+	std::vector<nearest_obj> obj_bank;
 
 	unsigned int	x_size_selected,
 					y_size_selected,
 					x_size_temp,
 					y_size_temp,
-					nearest_obj_num	= selected_obj;
+					nearest_obj_num		= 0,
+					nearest_obj_size	= 0,
+					nearest_obj_posY	= 0;
 
 	// Поиск кнопки выше Начало
 
@@ -207,23 +218,59 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 
 				if (((j >= obj_list[i].point_to_struct->posX) && (j < (obj_list[i].point_to_struct->posX + x_size_temp))) && (obj_list[selected_obj].point_to_struct->posY > obj_list[i].point_to_struct->posY))
 				{
-					if ((nearest_obj == NULL) || (nearest_obj->point_to_struct->posY <= obj_list[i].point_to_struct->posY))	// Поиск самого блтзкого объекта сверху
+					nearest_obj	temp;
+
+					temp	= {
+						.obj		= &obj_list[i],
+						.num		= i,
+					};
+
+					if (obj_list[selected_obj].point_to_struct->posX <= obj_list[i].point_to_struct->posX)
 					{
-						nearest_obj		= &obj_list[i];
-						nearest_obj_num	= i;
-						break;
+						if ((obj_list[selected_obj].point_to_struct->posX + x_size_selected) <= (obj_list[i].point_to_struct->posX + x_size_temp))
+						{
+							temp.size	= (((obj_list[i].point_to_struct->posX - obj_list[selected_obj].point_to_struct->posX) > x_size_temp) ? ((obj_list[i].point_to_struct->posX - obj_list[selected_obj].point_to_struct->posX) - x_size_temp) : (x_size_temp - (obj_list[i].point_to_struct->posX - obj_list[selected_obj].point_to_struct->posX)));
+						}
+						else
+						{
+							temp.size	= x_size_temp;
+						}
 					}
+					else
+					{
+						temp.size	= (((obj_list[selected_obj].point_to_struct->posX - obj_list[i].point_to_struct->posX) > x_size_temp) ? ((obj_list[selected_obj].point_to_struct->posX - obj_list[i].point_to_struct->posX) - x_size_temp) : (x_size_temp - (obj_list[selected_obj].point_to_struct->posX - obj_list[i].point_to_struct->posX)));
+					}
+
+					obj_bank.push_back(temp);
+					break;
 				}
 			}
 		}
 	}
 	// Поиск кнопки выше Конец
 
-	if (nearest_obj != NULL)
+	for (unsigned int i = 0; i < obj_bank.size(); ++i)	// Поиск самой близкой координаты Y
 	{
-		obj_list[selected_obj].point_to_struct->redraw	= true;			// Перерисовка текущего выделенного объекта невыделенным
-		selected_obj									= nearest_obj_num;
-		nearest_obj->point_to_struct->redraw			= true;
+		if (nearest_obj_posY < obj_bank[i].obj->point_to_struct->posY)
+		{
+			nearest_obj_posY	= obj_bank[i].obj->point_to_struct->posY;
+		}
+	}
+
+	for (unsigned int i = 0; i < obj_bank.size(); ++i)	// Поиск объекта с большей поверхностью соприкосновения
+	{
+		if ((nearest_obj_size <= obj_bank[i].size) && (nearest_obj_posY == obj_bank[i].obj->point_to_struct->posY))
+		{
+			nearest_obj_size	= obj_bank[i].size;
+			nearest_obj_num		= i;
+		}
+	}
+
+	if (nearest_obj_size != 0)
+	{
+		obj_list[selected_obj].point_to_struct->redraw			= true;	// Перерисовка текущего выделенного объекта невыделенным
+		selected_obj											= obj_bank[nearest_obj_num].num;
+		obj_bank[nearest_obj_num].obj->point_to_struct->redraw	= true;
 		return true;
 	}
 
