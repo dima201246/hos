@@ -1,9 +1,15 @@
 #include "internal_windlg.h"
 #include "../../include/system_defines.h"
 #include "../../include/isca_alpha.h"
-#include <cmath>
 
 using namespace std;
+
+struct nearest_obj
+{
+	list_of_objects	*obj;
+	unsigned int	num,
+					size;
+};
 
 void clear_space(unsigned int	start_x, unsigned int	start_y, unsigned int	end_x, unsigned int	end_y) {	// Заливка области пустотой
 	unsigned i = 0;
@@ -186,14 +192,6 @@ void display_next_obj_line(vector<list_of_objects> obj_list, unsigned int &first
 
 bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int win_posY, unsigned int win_posYmax)
 {
-
-	struct nearest_obj
-	{
-		list_of_objects	*obj;
-		unsigned int	num,
-						size;
-	};
-
 	std::vector<nearest_obj> obj_bank;
 
 	unsigned int	x_size_selected,
@@ -205,7 +203,6 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 					nearest_obj_posY	= 0;
 
 	// Поиск кнопки выше Начало
-
 	get_obj_size(obj_list[selected_obj], x_size_selected, y_size_selected);	// Узнаём размеры выделенного объекта
 
 	for (unsigned int i = 0; i < obj_list.size(); ++i)				// Проверяем все объекты
@@ -221,8 +218,8 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 					nearest_obj	temp;
 
 					temp	= {
-						.obj		= &obj_list[i],
-						.num		= i,
+						.obj	= &obj_list[i],
+						.num	= i,
 					};
 
 					if (obj_list[selected_obj].point_to_struct->posX <= obj_list[i].point_to_struct->posX)
@@ -272,6 +269,10 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 		selected_obj											= obj_bank[nearest_obj_num].num;
 		obj_bank[nearest_obj_num].obj->point_to_struct->redraw	= true;
 		return true;
+	}
+	else
+	{
+
 	}
 
 	// display_prev_obj(obj_list, first_display_obj, last_display_obj, win_posXmax, win_posY);
@@ -323,6 +324,8 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 	refresh_obj			= true;
 	found_button		= false;
 	ahead_button		= false;
+
+	quickSort(&obj_list, &obj_list[0], )
 
 	getmaxyx(stdscr, win_posYmax, win_posXmax);
 
