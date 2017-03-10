@@ -381,7 +381,7 @@ void structuring_obj(WINOBJ* win_conf, std::vector<list_of_objects> &obj_list, u
 			}
 			else
 			{
-				add_to_filef(MAIN_LOGFILE, "User init!: %ld Coord: %ld-%ld\n", i, temp_item->point_to_struct->posX, temp_item->point_to_struct->posY);
+				// add_to_filef(MAIN_LOGFILE, "User init!: %ld Coord: %ld-%ld\n", i, temp_item->point_to_struct->posX, temp_item->point_to_struct->posY);
 			}
 
 			/*ahead_size_x	= size_obj_x;
@@ -406,10 +406,12 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 						win_posY,
 						win_posXmax,
 						win_posYmax,
-						selected_obj;
+						selected_obj,
+						top_line,	// Верхняя граница выводимых объектов
+						bot_line;	// Нижняя граница выводимых объектов
 
 	bool 				cycle,
-						found_button,		// Для отслеживания, была ли в окне хоть одна кнопка
+						found_button,	// Для отслеживания, была ли в окне хоть одна кнопка
 						refresh_obj;
 
 	selected_obj		= 0;
@@ -452,13 +454,16 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 
 	structuring_obj(win_conf, obj_list, win_posX, win_posY, win_posXmax, win_posYmax);
 
+	top_line = 0;
+	bot_line = top_line + (win_posYmax - 2);
+
 	while (cycle)
 	{
 		if (refresh_obj)
 		{
-			for (unsigned int	i	= 0; i < obj_list.size(); i++)
+			for (unsigned int i = 0; i < obj_list.size(); i++)
 			{
-				if (obj_list[i].point_to_struct->active_obj)
+				if (((obj_list[i].point_to_struct->posY >= top_line) && (obj_list[i].point_to_struct->posY <= bot_line)) && (obj_list[i].point_to_struct->active_obj))
 				{
 					temp_item	= obj_list[i];
 
