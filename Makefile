@@ -1,5 +1,5 @@
 CC				= g++
-FLAGS_LIB		= -c -fPIC -Wall -g
+FLAGS_LIB		= -c -fPIC -Wall -g -std=c++11
 FLAGS 			= -c -Wall -g
 OutPut			= hos_alpha
 StarterName		= hos_starter
