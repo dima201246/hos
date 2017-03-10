@@ -38,6 +38,7 @@ void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::
 	} else {
 		point_to_conf->redraw		= true;
 		temp_value.point_to_struct	= point_to_conf;
+		temp_value.point_to_struct->user_init	= true;
 	}
 
 	temp_value.text					= text_on_object;
@@ -280,6 +281,118 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 	return false;
 }
 
+list_of_objects	*collision(std::vector<list_of_objects> obj_list, unsigned int num, unsigned int x, unsigned int y, unsigned int size_x, unsigned int size_y)
+{
+	unsigned int	temp_size_x = 0,
+					temp_size_y = 0,
+					end_x = x + size_x;
+
+	for (unsigned int i = 0; i < obj_list.size(); ++i)
+	{
+		if (num == i)
+		{
+			continue;
+		}
+
+		get_obj_size(obj_list[i], temp_size_x, temp_size_y);
+
+		if ((obj_list[i].point_to_struct->posY <= y) && (y <= (obj_list[i].point_to_struct->posY + temp_size_y)))	// Исправить в будущем, так как данная конструкция подходит только для объектов в одну линию
+		{
+			for (unsigned int tx = x; tx <= end_x; ++tx)
+			{
+				if ((obj_list[i].point_to_struct->posX >= tx) && (tx <= (obj_list[i].point_to_struct->posX + temp_size_x)))
+					return &obj_list[i];
+			}
+		}
+	}
+
+	return NULL;
+}
+
+void structuring_obj(WINOBJ* win_conf, std::vector<list_of_objects> &obj_list, unsigned int startX, unsigned int startY, unsigned int endX, unsigned int endY)
+{
+	win_object		ahead_type_obj	= WIN_EMPTY;
+
+	unsigned int	/*ahead_size_x	= 0,
+					ahead_size_y	= 0,*/
+					ahead_pos_x		= 0,
+					ahead_pos_y		= 0,
+					size_obj_x		= 0,
+					size_obj_y		= 0;
+
+	const unsigned int	indent_x		= 2,	// Отступ от края окна по горизонтали
+						// indent_y		= 2,	// Отступ от края окна по вертикали
+						free_space_x	= 1,	// Отступ между объектами по горизонтали
+						free_space_y	= 2;	// Отступ между объектами по вертикали
+
+	list_of_objects	*temp_item		= NULL/*,
+					*ahead_item		= NULL*/,
+					*collision_obj	= NULL;
+
+	if ((win_conf == NULL) || (!win_conf->manual_locator))
+	{
+		for (unsigned int i = 0; i < obj_list.size(); ++i)
+		{
+			temp_item	= &obj_list[i];
+
+			get_obj_size(*temp_item, size_obj_x, size_obj_y);
+
+			if (!temp_item->point_to_struct->user_init)	// Если объект не был инициализирован пользователем
+			{
+				if ((ahead_type_obj != temp_item->type_obj) || ((ahead_pos_x + size_obj_x + free_space_x) >= endX))	// Спуск на следующую строку, если сменился тип объекта или нет места
+				{
+					ahead_pos_x	= startX + indent_x;
+					ahead_pos_y	+= free_space_y;
+				}
+
+				collision_obj	= collision(obj_list, i, ahead_pos_x, ahead_pos_y, size_obj_x, size_obj_y);	// Возвращает указатель на объект с котиорым столкнулся
+
+				if (collision_obj != NULL)	// Если выявленно соприкосновение с каким-либо объектом
+				{
+					if (collision_obj->type_obj == temp_item->type_obj)	// Совпадает ли тип объекта с которым соприкоснулся текущий объект или нет
+					{
+						unsigned int	temp_size_x,
+										temp_size_y;
+
+						get_obj_size(*collision_obj, temp_size_x, temp_size_y);
+
+						if ((collision_obj->point_to_struct->posX + free_space_x + size_obj_x) < endX)	// Разместить сразу за объектом, если хватает места
+						{
+							ahead_pos_x	= collision_obj->point_to_struct->posX + free_space_x;
+						}
+						else
+						{
+							ahead_pos_x	= startX + indent_x;
+							ahead_pos_y	= collision_obj->point_to_struct->posY + 2;
+						}
+					}
+					else
+					{
+						ahead_pos_x	= startX + indent_x;
+						ahead_pos_y	= collision_obj->point_to_struct->posY + 2;
+					}
+				}
+
+				temp_item->point_to_struct->posX	= ahead_pos_x;
+				temp_item->point_to_struct->posY	= ahead_pos_y;
+
+				ahead_pos_x		+= size_obj_x + free_space_x;
+				ahead_type_obj	= temp_item->type_obj;
+			}
+			else
+			{
+				add_to_filef(MAIN_LOGFILE, "User init!: %ld Coord: %ld-%ld\n", i, temp_item->point_to_struct->posX, temp_item->point_to_struct->posY);
+			}
+
+			/*ahead_size_x	= size_obj_x;
+			ahead_size_y	= size_obj_y;
+			ahead_item		= temp_item;*/
+
+			temp_item->point_to_struct->active_obj	= true; // DEBUG
+		}
+	}
+}
+
 returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string title, color_t color) {
 
 	returned_str		returned_value;	// Возвращаемая структура
@@ -287,45 +400,22 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 	list_of_objects		temp_item,
 						selected_item;
 
-	WINOBJ				*now_obj_conf,
-						*ahead_obj_conf;
-
 	int					key_pressed;
 
-	unsigned int		size_ahead_obj_x,	// Размеры предыдущего объекта, если таковой имелся
-						size_ahead_obj_y,
-						size_obj_x,			// Для получения размеров текущего объекта
-						size_obj_y,
-						win_posX,
+	unsigned int		win_posX,
 						win_posY,
 						win_posXmax,
 						win_posYmax,
-						selected_obj,
-						next_line,			// Позиция новой строки
-						first_display_obj,	// С какого объекта выводить на экран
-						last_display_obj,	// ... и до какого
-						max_posYmax;
+						selected_obj;
 
 	bool 				cycle,
 						found_button,		// Для отслеживания, была ли в окне хоть одна кнопка
-						ahead_button,
 						refresh_obj;
 
-	size_ahead_obj_x	= 0;
-	size_ahead_obj_y	= 0;
-	size_obj_x			= 0;
-	size_obj_y			= 0;
 	selected_obj		= 0;
-	first_display_obj	= 0;
-	max_posYmax			= 0;
-	last_display_obj	= 0;
-	next_line			= 2;
 	cycle				= true;
 	refresh_obj			= true;
 	found_button		= false;
-	ahead_button		= false;
-
-	quickSort(&obj_list, &obj_list[0], )
 
 	getmaxyx(stdscr, win_posYmax, win_posXmax);
 
@@ -360,97 +450,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 		return win(win_conf, obj_list, title, color);
 	}
 
-	/*Автоматическое расположение объектов в окне НАЧАЛО*/
-	if ((win_conf == NULL) || (!win_conf->manual_locator))
-	{
-		for (unsigned int	i	= 0; i < obj_list.size(); i++)
-		{
-
-			temp_item			= obj_list[i];
-			now_obj_conf		= temp_item.point_to_struct;
-			now_obj_conf->posX	+= 2 + win_posX;
-			now_obj_conf->posY	+= next_line + win_posY;
-
-			if (i != 0)
-			{
-				ahead_obj_conf	= obj_list[i - 1].point_to_struct;	// Ссылка на предыдущий объект, если он есть
-			}
-			else
-			{
-				ahead_obj_conf	= NULL;
-			}
-
-			get_obj_size(temp_item, size_obj_x, size_obj_y);	// Получение размеров объекта
-
-			if (!now_obj_conf->user_init)	// Если объект не был инициализирован пользователем
-			{
-				if ((ahead_button) && (temp_item.type_obj == WIN_BUTTON)) // Если до этого была кнопка
-				{
-					if (((ahead_obj_conf->posX + size_ahead_obj_x + size_obj_x + 1) >= win_posXmax) && (temp_item.type_obj == WIN_BUTTON))	// Если кнопка после кнопки вылазит за пределы окна
-					{
-						if ((last_display_obj == 0) && ((now_obj_conf->posY + 2 + size_obj_y) >= win_posYmax))	// Проверка, чтобы влезало по Y
-						{
-							last_display_obj	= i - 1;
-						}
-
-						if (last_display_obj == 0)	// Если достигнут конец окна, то не сдвигать остальные объекты, а оставить на нижней границе
-						{
-							now_obj_conf->posY	+= max_posYmax + 1;
-							next_line			+= max_posYmax + 1;
-						}
-
-						max_posYmax	= 0;
-					}
-					else
-					{
-						now_obj_conf->posX	= ahead_obj_conf->posX + size_ahead_obj_x + 1;	// Сдвиг кнопки вправо от предыдущей кнопки
-					}
-				}
-				else if (temp_item.type_obj != WIN_BUTTON)	// Другие объекты будут каждый с новой строки, вытянуты во всю ширину окна
-				{
-					if (i != 0)
-						now_obj_conf->posY	+= max_posYmax + 1;
-
-					//now_obj_conf->posXmax	= ...;
-				}
-			}
-			else
-			{
-				// if ()
-			}
-
-			if (last_display_obj == 0)
-			{
-				temp_item.point_to_struct->active_obj	= true;
-			}
-
-			size_ahead_obj_x	= size_obj_x;	// Получение размеров объекта для позиционирования следующего
-			size_ahead_obj_y	= size_obj_y;
-
-			if (max_posYmax < size_ahead_obj_y)
-				max_posYmax	= size_ahead_obj_y;
-
-			if (temp_item.type_obj == WIN_BUTTON)
-			{
-				ahead_button	= true;
-			}
-			else
-			{
-				ahead_button	= false;
-			}
-
-			#ifdef DEBUG
-			add_to_file(MAIN_LOGFILE, "Object number: " + str(i));
-			add_to_filef(MAIN_LOGFILE, "Function point: %p\n", temp_item.point_to_function);
-			add_to_filef(MAIN_LOGFILE, "Struct point: %p\n", temp_item.point_to_struct);
-			add_to_file(MAIN_LOGFILE, "Text: " + temp_item.text);
-			#endif
-
-			temp_item.point_to_struct	= now_obj_conf;
-			obj_list[i]	= temp_item;
-		}
-	}
-	/*Автоматическое расположение объектов в окне КОНЕЦ*/
+	structuring_obj(win_conf, obj_list, win_posX, win_posY, win_posXmax, win_posYmax);
 
 	while (cycle)
 	{
@@ -492,7 +492,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 			case H_KEY_ESC:	cycle		= false;
 							break;
 
-			case H_KEY_TAB:	obj_list[selected_obj].point_to_struct->redraw	= true;	// Перерисовать объект невыделенным	//!!!!!!!!!!!!!!!!АБСОЛЮТНАЯ ХЕРНЯ!!!!!!!!!!! УБРАТЬ ЭТО!!!!!!
+/*			case H_KEY_TAB:	obj_list[selected_obj].point_to_struct->redraw	= true;	// Перерисовать объект невыделенным	//!!!!!!!!!!!!!!!!АБСОЛЮТНАЯ ХЕРНЯ!!!!!!!!!!! УБРАТЬ ЭТО!!!!!!
 							obj_list[selected_obj].point_to_function(obj_list[selected_obj].point_to_struct, obj_list[selected_obj].text, obj_list[selected_obj].color_object);	// Обновление элемента
 							refresh_obj	= true;
 
@@ -516,7 +516,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 								refresh_obj	= true;
 							}
 
-							break;
+							break;*/
 		}
 	}
 	

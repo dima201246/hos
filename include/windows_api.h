@@ -6,6 +6,7 @@
 	#include <vector>
 	#include "screen.h"
 	
+	#define WIN_EMPTY		0
 	#define WIN_BUTTON		1
 	#define WIN_TEXT_FIELD	2
 	#define WIN_IPUT_TEXT	3
@@ -46,6 +47,9 @@
 		std::string	text;
 
 		color_t		color_object;
+
+		unsigned int	display_posY,
+						display_negative_posY;
 
 		bool		memory_leak;
 	};
