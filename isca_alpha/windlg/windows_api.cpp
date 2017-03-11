@@ -47,16 +47,21 @@ void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::
 }
 
 void get_obj_size(list_of_objects	item, unsigned int &x, unsigned int &y) {	// Получение предполагаемого размера объекта
+	// add_to_filef(MAIN_LOGFILE, "Type : %d\n", item.type_obj);
 	switch (item.type_obj) {
 		case WIN_BUTTON:	if (item.point_to_struct->posXmax == 0) {
 								x	= item.text.length() + 2;
+								// add_to_filef(MAIN_LOGFILE, "posXmax = 0 : %ld\n", x);
 							} else {
 								x	= item.point_to_struct->posXmax;
+								// add_to_filef(MAIN_LOGFILE, "posXmax != 0 : %ld\n", x);
 							}
 							if (item.point_to_struct->posYmax == 0) {
 								y	= 1;
+								// add_to_filef(MAIN_LOGFILE, "posYmax = 0 : %ld\n", y);
 							} else {
 								y	= item.point_to_struct->posYmax;
+								// add_to_filef(MAIN_LOGFILE, "posYmax != 0 : %ld\n", y);
 							}
 							break;
 	}
@@ -281,11 +286,15 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 	return false;
 }
 
-list_of_objects	*collision(std::vector<list_of_objects> obj_list, unsigned int num, unsigned int x, unsigned int y, unsigned int size_x, unsigned int size_y)
+list_of_objects	*collision(std::vector<list_of_objects> obj_list, unsigned int num, unsigned int x, unsigned int y)
 {
 	unsigned int	temp_size_x = 0,
 					temp_size_y = 0,
+					size_x = 0,
+					size_y = 0,
 					end_x = x + size_x;
+
+	get_obj_size(obj_list[num], size_x, size_y);
 
 	for (unsigned int i = 0; i < obj_list.size(); ++i)
 	{
@@ -325,8 +334,8 @@ void structuring_obj(WINOBJ* win_conf, std::vector<list_of_objects> &obj_list, u
 						free_space_x	= 1,	// Отступ между объектами по горизонтали
 						free_space_y	= 2;	// Отступ между объектами по вертикали
 
-	list_of_objects	*temp_item		= NULL/*,
-					*ahead_item		= NULL*/,
+	list_of_objects	*temp_item		= NULL,/*,
+					*ahead_item		= NULL,*/
 					*collision_obj	= NULL;
 
 	if ((win_conf == NULL) || (!win_conf->manual_locator))
@@ -345,7 +354,7 @@ void structuring_obj(WINOBJ* win_conf, std::vector<list_of_objects> &obj_list, u
 					ahead_pos_y	+= free_space_y;
 				}
 
-				collision_obj	= collision(obj_list, i, ahead_pos_x, ahead_pos_y, size_obj_x, size_obj_y);	// Возвращает указатель на объект с котиорым столкнулся
+				collision_obj	= collision(obj_list, i, ahead_pos_x, ahead_pos_y);	// Возвращает указатель на объект с котиорым столкнулся
 
 				if (collision_obj != NULL)	// Если выявленно соприкосновение с каким-либо объектом
 				{
@@ -356,9 +365,9 @@ void structuring_obj(WINOBJ* win_conf, std::vector<list_of_objects> &obj_list, u
 
 						get_obj_size(*collision_obj, temp_size_x, temp_size_y);
 
-						if ((collision_obj->point_to_struct->posX + free_space_x + size_obj_x) < endX)	// Разместить сразу за объектом, если хватает места
+						if ((collision_obj->point_to_struct->posX + temp_size_x + free_space_x + size_obj_x) < endX)	// Разместить сразу за объектом, если хватает места
 						{
-							ahead_pos_x	= collision_obj->point_to_struct->posX + free_space_x;
+							ahead_pos_x	= collision_obj->point_to_struct->posX + temp_size_x + free_space_x;
 						}
 						else
 						{
