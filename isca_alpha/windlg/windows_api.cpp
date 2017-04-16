@@ -176,6 +176,44 @@ nearest_obj close_obj(list_of_objects *first_obj, list_of_objects *second_obj)
 	return temp;
 }
 
+void obj_up(vector<list_of_objects> obj_list, unsigned int selected_obj, unsigned int win_posYmax, unsigned int &top_line, unsigned int &bot_line)
+{
+	unsigned int temp_x, temp_y;
+
+	get_obj_size(obj_list[selected_obj], temp_x, temp_y);
+
+	top_line -= temp_y + 1;	// Изменение области видимых объектов
+	bot_line = top_line + (win_posYmax - 1);
+
+	for (unsigned int i = 0; i < obj_list.size(); i++)	// Сдвиг всех объектов, которые находятся в поле зрения
+	{
+		if ((obj_list[i].point_to_struct->posY > top_line) && (obj_list[i].point_to_struct->posY < bot_line))
+		{
+			obj_list[i].point_to_struct->posYdisplay = obj_list[i].point_to_struct->posY;
+			obj_list[i].point_to_struct->posYdisplay -= top_line;
+		}
+	}
+}
+
+void obj_down(vector<list_of_objects> obj_list, unsigned int selected_obj, unsigned int win_posY, unsigned int win_posYmax, unsigned int &top_line, unsigned int &bot_line)
+{			
+	unsigned int temp_x, temp_y;
+
+	get_obj_size(obj_list[selected_obj], temp_x, temp_y);
+
+	top_line += temp_y + ((top_line == win_posY + 1) ? 0 : 1);	// Изменение области видимых объектов
+	bot_line = top_line + (win_posYmax - 1);
+
+	for (unsigned int i = 0; i < obj_list.size(); i++)	// Сдвиг всех объектов, которые находятся в поле зрения
+	{
+		if ((obj_list[i].point_to_struct->posY > top_line) && (obj_list[i].point_to_struct->posY < bot_line))
+		{
+			obj_list[i].point_to_struct->posYdisplay = obj_list[i].point_to_struct->posY;
+			obj_list[i].point_to_struct->posYdisplay -= top_line;
+		}
+	}
+}
+
 bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int win_posYmax, unsigned int &top_line, unsigned int &bot_line)
 {
 	std::vector<nearest_obj> obj_bank;
@@ -229,21 +267,7 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 
 		if (obj_list[selected_obj].point_to_struct->posY <= top_line)	// Если объект находится за гранью видимого
 		{
-			unsigned int temp_x, temp_y;
-
-			get_obj_size(obj_list[selected_obj], temp_x, temp_y);
-
-			top_line -= temp_y + 1;	// Изменение области видимых объектов
-			bot_line = top_line + (win_posYmax - 1);
-
-			for (unsigned int i = 0; i < obj_list.size(); i++)	// Сдвиг всех объектов, которые находятся в поле зрения
-			{
-				if ((obj_list[i].point_to_struct->posY > top_line) && (obj_list[i].point_to_struct->posY < bot_line))
-				{
-					obj_list[i].point_to_struct->posYdisplay = obj_list[i].point_to_struct->posY;
-					obj_list[i].point_to_struct->posYdisplay -= top_line;
-				}
-			}
+			obj_up(obj_list, selected_obj, win_posYmax, top_line, bot_line);
 		}
 
 		return true;
@@ -305,21 +329,7 @@ bool key_down(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsi
 
 		if (obj_list[selected_obj].point_to_struct->posY >= bot_line)	// Если объект находится за гранью видимого
 		{
-			unsigned int temp_x, temp_y;
-
-			get_obj_size(obj_list[selected_obj], temp_x, temp_y);
-
-			top_line += temp_y + ((top_line == win_posY + 1) ? 0 : 1);	// Изменение области видимых объектов
-			bot_line = top_line + (win_posYmax - 1);
-
-			for (unsigned int i = 0; i < obj_list.size(); i++)	// Сдвиг всех объектов, которые находятся в поле зрения
-			{
-				if ((obj_list[i].point_to_struct->posY > top_line) && (obj_list[i].point_to_struct->posY < bot_line))
-				{
-					obj_list[i].point_to_struct->posYdisplay = obj_list[i].point_to_struct->posY;
-					obj_list[i].point_to_struct->posYdisplay -= top_line;
-				}
-			}
+			obj_down(obj_list, selected_obj, win_posY, win_posYmax, top_line, bot_line);
 		}
 
 		return true;
