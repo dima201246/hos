@@ -49,7 +49,6 @@ void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::
 }
 
 void get_obj_size(list_of_objects	item, unsigned int &x, unsigned int &y) {	// Получение предполагаемого размера объекта
-	// add_to_filef(MAIN_LOGFILE, "Type : %d\n", item.type_obj);
 	switch (item.type_obj) {
 		case WIN_BUTTON:	if (item.point_to_struct->posXmax == 0) {
 								x	= item.text.length() + 2;
@@ -68,74 +67,7 @@ void get_obj_size(list_of_objects	item, unsigned int &x, unsigned int &y) {	// �
 							break;
 	}
 }
-/*
-void display_prev_obj(vector<list_of_objects> &obj_list, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posXmax, unsigned int win_posY) {	// Спуск в окне (поднятие всех объектов выше)
-	bool				button_ahead;
 
-	unsigned int		size_obj_x,
-						size_obj_y,
-						size_ahead_obj_x,
-						// size_ahead_obj_y,
-						line_y;
-
-	button_ahead		= false;
-	line_y				= 0;
-	size_obj_x			= 0;
-	size_obj_x			= 0;
-	size_ahead_obj_x	= 0;
-	// size_ahead_obj_y	= 0;
-
-	add_to_filef(MAIN_LOGFILE, "last_display_obj: %d\n", last_display_obj);
-	// Стирание самой нижней строки Начало
-	line_y	= obj_list[last_display_obj].point_to_struct->posY;
-	add_to_filef(MAIN_LOGFILE, "line_y: %d\n", line_y);
-
-	for (unsigned int	i	= last_display_obj; i > 0; i--)
-	{
-		if (obj_list[i].point_to_struct->posY == line_y)
-			last_display_obj--;
-		else
-			break;
-	}
-	// Стирание самой нижней строки Конец
-			add_to_filef(MAIN_LOGFILE, "last_display_obj: %d\n", last_display_obj);
-
-	// Сдвиг всех объектов вниз Начало
-	for (unsigned int	i	= first_display_obj; i <= last_display_obj; i++)
-	{
-		// if ((obj_list[i].point_to_struct->posY - 2) > win_posY)	// Чтобы объект не налазил на заголовок окна
-		{
-			obj_list[i].point_to_struct->posY	+= 2;
-			obj_list[i].point_to_struct->redraw = true;
-		}
-	}
-			add_to_filef(MAIN_LOGFILE, "End shift down\n");
-	// Сдвиг всех объектов вниз Конец
-
-	for (unsigned int i	= last_display_obj + 1; i < obj_list.size(); i++) {
-
-		if (!obj_list[i].point_to_struct->user_init) {	// Если объект не был инициализирован пользователем
-			get_obj_size(obj_list[i], size_obj_x, size_obj_y);	// Получение размеров объекта
-
-			if ((obj_list[i].type_obj == WIN_BUTTON) && ((obj_list[i - 1].point_to_struct->posX + size_ahead_obj_x + size_obj_x + 1) <= win_posXmax)) {
-				last_display_obj++;
-				button_ahead	= true;
-			} else {
-				if (button_ahead)
-				{
-					break;
-				}
-
-				last_display_obj++;
-				break;
-			}
-
-			size_ahead_obj_x	= size_obj_x;
-			// size_ahead_obj_y	= size_obj_y;
-		}
-	}
-}
-*/
 void display_next_obj_line(vector<list_of_objects> obj_list, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posY, unsigned int win_posYmax) {	// Спуск в окне (поднятие всех объектов выше)
 	bool			collision_fail	= false;
 
@@ -192,100 +124,10 @@ void display_next_obj_line(vector<list_of_objects> obj_list, unsigned int &first
 				continue;
 			}
 
-			obj_list[i].point_to_struct->active_obj	= true;
-			obj_list[i].point_to_struct->redraw		= true;
+			obj_list[i].point_to_struct->active_obj = true;
+			obj_list[i].point_to_struct->redraw = true;
 		}
 	}
-}
-
-bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int win_posY, unsigned int win_posYmax, unsigned int &top_line)
-{
-	std::vector<nearest_obj> obj_bank;
-
-	unsigned int	x_size_selected,
-					y_size_selected,
-					x_size_temp,
-					y_size_temp,
-					nearest_obj_num		= 0,
-					nearest_obj_size	= 0,
-					nearest_obj_posY	= 0;
-
-	// Поиск кнопки выше Начало
-	get_obj_size(obj_list[selected_obj], x_size_selected, y_size_selected);	// Узнаём размеры выделенного объекта
-
-	for (unsigned int i = 0; i < obj_list.size(); ++i)				// Проверяем все объекты
-	{
-		if ((obj_list[i].point_to_struct->active_obj) && (obj_list[i].point_to_struct->posY < obj_list[selected_obj].point_to_struct->posY))	// Небольшая оптимизация, чтобы проверялись только объекты выше выделенного
-		{
-			get_obj_size(obj_list[i], x_size_temp, y_size_temp);	// Получение размера временного объекта
-
-			for (unsigned int j = obj_list[selected_obj].point_to_struct->posX; j <= (obj_list[selected_obj].point_to_struct->posX + x_size_selected); ++j)	// Цикл проверяющий каждый "пиксель" уже выделенного объекта
-			{
-				if (((j >= obj_list[i].point_to_struct->posX) && (j < (obj_list[i].point_to_struct->posX + x_size_temp))) && (obj_list[selected_obj].point_to_struct->posY > obj_list[i].point_to_struct->posY))
-				{
-					nearest_obj	temp;
-
-					temp	= {
-						.obj	= &obj_list[i],
-						.num	= i,
-					};
-
-					if (obj_list[selected_obj].point_to_struct->posX <= obj_list[i].point_to_struct->posX)
-					{
-						if ((obj_list[selected_obj].point_to_struct->posX + x_size_selected) <= (obj_list[i].point_to_struct->posX + x_size_temp))
-						{
-							temp.size	= (((obj_list[i].point_to_struct->posX - obj_list[selected_obj].point_to_struct->posX) > x_size_temp) ? ((obj_list[i].point_to_struct->posX - obj_list[selected_obj].point_to_struct->posX) - x_size_temp) : (x_size_temp - (obj_list[i].point_to_struct->posX - obj_list[selected_obj].point_to_struct->posX)));
-						}
-						else
-						{
-							temp.size	= x_size_temp;
-						}
-					}
-					else
-					{
-						temp.size	= (((obj_list[selected_obj].point_to_struct->posX - obj_list[i].point_to_struct->posX) > x_size_temp) ? ((obj_list[selected_obj].point_to_struct->posX - obj_list[i].point_to_struct->posX) - x_size_temp) : (x_size_temp - (obj_list[selected_obj].point_to_struct->posX - obj_list[i].point_to_struct->posX)));
-					}
-
-					obj_bank.push_back(temp);
-					break;
-				}
-			}
-		}
-	}
-	// Поиск кнопки выше Конец
-
-	for (unsigned int i = 0; i < obj_bank.size(); ++i)	// Поиск самой близкой координаты Y
-	{
-		if (nearest_obj_posY < obj_bank[i].obj->point_to_struct->posY)
-		{
-			nearest_obj_posY	= obj_bank[i].obj->point_to_struct->posY;
-		}
-	}
-
-	for (unsigned int i = 0; i < obj_bank.size(); ++i)	// Поиск объекта с большей поверхностью соприкосновения
-	{
-		if ((nearest_obj_size <= obj_bank[i].size) && (nearest_obj_posY == obj_bank[i].obj->point_to_struct->posY))
-		{
-			nearest_obj_size	= obj_bank[i].size;
-			nearest_obj_num		= i;
-		}
-	}
-
-	if (nearest_obj_size != 0)
-	{
-		obj_list[selected_obj].point_to_struct->redraw			= true;	// Перерисовка текущего выделенного объекта невыделенным
-		selected_obj											= obj_bank[nearest_obj_num].num;
-		obj_bank[nearest_obj_num].obj->point_to_struct->redraw	= true;
-		return true;
-	}
-	else
-	{
-
-	}
-
-	// display_prev_obj(obj_list, first_display_obj, last_display_obj, win_posXmax, win_posY);
-
-	return false;
 }
 
 nearest_obj close_obj(list_of_objects *first_obj, list_of_objects *second_obj)
@@ -334,7 +176,83 @@ nearest_obj close_obj(list_of_objects *first_obj, list_of_objects *second_obj)
 	return temp;
 }
 
-bool key_down(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int win_posYmax, unsigned int &top_line, unsigned int &bot_line)
+bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int win_posYmax, unsigned int &top_line, unsigned int &bot_line)
+{
+	std::vector<nearest_obj> obj_bank;
+
+	nearest_obj temp_close_obj;
+
+	unsigned int	x_size_selected,
+					y_size_selected;
+
+	// Поиск кнопки ниже Начало
+	get_obj_size(obj_list[selected_obj], x_size_selected, y_size_selected);	// Узнаём размеры выделенного объекта
+
+	for (unsigned int i = 0; i < obj_list.size(); ++i)	// Проверяем все объекты под объектом
+	{
+		if ((obj_list[i].point_to_struct->active_obj) && (obj_list[i].point_to_struct->posY < obj_list[selected_obj].point_to_struct->posY))	// Небольшая оптимизация, чтобы проверялись только объекты ниже выделенного
+		{
+			temp_close_obj = close_obj(&obj_list[selected_obj], &obj_list[i]);
+
+			if (temp_close_obj.size != 0)
+			{
+				temp_close_obj.num = i;
+				obj_bank.push_back(temp_close_obj);
+			}
+		}
+	}
+	// Поиск кнопки ниже Конец
+
+	if (obj_bank.size() > 0)
+	{
+		temp_close_obj = obj_bank[0];
+
+		for (unsigned int i = 1; i < obj_bank.size(); ++i)	// Поиск самого близкого и с большим пересечением
+		{
+			if (temp_close_obj.obj->point_to_struct->posY <= obj_bank[i].obj->point_to_struct->posY)
+			{
+				if ((temp_close_obj.obj->point_to_struct->posY == obj_bank[i].obj->point_to_struct->posY) && (temp_close_obj.size <= obj_bank[i].size))
+				{
+					temp_close_obj = obj_bank[i];
+				}
+
+				if (temp_close_obj.obj->point_to_struct->posY < obj_bank[i].obj->point_to_struct->posY)
+				{
+					temp_close_obj = obj_bank[i];
+				}
+			}
+		}
+
+		obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка текущего выделенного объекта невыделенным
+		selected_obj = temp_close_obj.num;
+		obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка нового выделенного объекта невыделенным
+
+		if (obj_list[selected_obj].point_to_struct->posY <= top_line)	// Если объект находится за гранью видимого
+		{
+			unsigned int temp_x, temp_y;
+
+			get_obj_size(obj_list[selected_obj], temp_x, temp_y);
+
+			top_line -= temp_y + 1;	// Изменение области видимых объектов
+			bot_line = top_line + (win_posYmax - 1);
+
+			for (unsigned int i = 0; i < obj_list.size(); i++)	// Сдвиг всех объектов, которые находятся в поле зрения
+			{
+				if ((obj_list[i].point_to_struct->posY > top_line) && (obj_list[i].point_to_struct->posY < bot_line))
+				{
+					obj_list[i].point_to_struct->posYdisplay = obj_list[i].point_to_struct->posY;
+					obj_list[i].point_to_struct->posYdisplay -= top_line;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool key_down(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int win_posY, unsigned int win_posYmax, unsigned int &top_line, unsigned int &bot_line)
 {
 	std::vector<nearest_obj> obj_bank;
 
@@ -367,9 +285,17 @@ bool key_down(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsi
 
 		for (unsigned int i = 1; i < obj_bank.size(); ++i)	// Поиск самого близкого и с большим пересечением
 		{
-			if ((temp_close_obj.obj->point_to_struct->posY >= obj_bank[i].obj->point_to_struct->posY) && (temp_close_obj.size <= obj_bank[i].size))
+			if (temp_close_obj.obj->point_to_struct->posY >= obj_bank[i].obj->point_to_struct->posY)
 			{
-				temp_close_obj = obj_bank[i];
+				if ((temp_close_obj.obj->point_to_struct->posY == obj_bank[i].obj->point_to_struct->posY) && (temp_close_obj.size <= obj_bank[i].size))
+				{
+					temp_close_obj = obj_bank[i];
+				}
+
+				if (temp_close_obj.obj->point_to_struct->posY > obj_bank[i].obj->point_to_struct->posY)
+				{
+					temp_close_obj = obj_bank[i];
+				}
 			}
 		}
 
@@ -377,18 +303,18 @@ bool key_down(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsi
 		selected_obj = temp_close_obj.num;
 		obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка нового выделенного объекта невыделенным
 
-		if (obj_list[selected_obj].point_to_struct->posY > bot_line)	// Если объект находится за гранью видимого
+		if (obj_list[selected_obj].point_to_struct->posY >= bot_line)	// Если объект находится за гранью видимого
 		{
 			unsigned int temp_x, temp_y;
 
 			get_obj_size(obj_list[selected_obj], temp_x, temp_y);
 
-			top_line += temp_y + 1;	// Изменение области видимых объектов
-			bot_line = top_line + (win_posYmax - FREE_SPACE_Y);
+			top_line += temp_y + ((top_line == win_posY + 1) ? 0 : 1);	// Изменение области видимых объектов
+			bot_line = top_line + (win_posYmax - 1);
 
 			for (unsigned int i = 0; i < obj_list.size(); i++)	// Сдвиг всех объектов, которые находятся в поле зрения
 			{
-				if ((obj_list[i].point_to_struct->posY >= top_line) && (obj_list[i].point_to_struct->posY <= bot_line))
+				if ((obj_list[i].point_to_struct->posY > top_line) && (obj_list[i].point_to_struct->posY < bot_line))
 				{
 					obj_list[i].point_to_struct->posYdisplay = obj_list[i].point_to_struct->posY;
 					obj_list[i].point_to_struct->posYdisplay -= top_line;
@@ -582,7 +508,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 	structuring_obj(win_conf, obj_list, win_posX, win_posY, win_posXmax, win_posYmax);
 
 	top_line = win_posY + 1;
-	bot_line = top_line + (win_posYmax - FREE_SPACE_Y);
+	bot_line = top_line + (win_posYmax - 1);
 
 	while (cycle)
 	{
@@ -592,7 +518,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 
 			for (unsigned int i = 0; i < obj_list.size(); i++)
 			{
-				if (((obj_list[i].point_to_struct->posY > top_line) && (obj_list[i].point_to_struct->posY <= bot_line)) && (obj_list[i].point_to_struct->active_obj))
+				if (((obj_list[i].point_to_struct->posY > top_line) && (obj_list[i].point_to_struct->posY < bot_line)) && (obj_list[i].point_to_struct->active_obj))
 				{
 					temp_item	= obj_list[i];
 
@@ -610,7 +536,6 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 					{
 						temp_item.point_to_struct->redraw	= false;
 						obj_list[i]	= temp_item;
-						add_to_filef(MAIN_LOGFILE, "Selected: %d posX: %d posY: %d posYdisplay: %d Text: %s\n", i, temp_item.point_to_struct->posX, temp_item.point_to_struct->posY, temp_item.point_to_struct->posYdisplay, temp_item.text.c_str());
 					}
 				}
 			}
@@ -646,19 +571,16 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 
 							break;
 */
-			case KEY_UP:	if (key_up(obj_list, selected_obj, win_posY, win_posYmax, top_line))
+			case KEY_UP:	if (key_up(obj_list, selected_obj, win_posYmax, top_line, bot_line))
 							{
 								refresh_obj	= true;
-								bot_line = top_line + (win_posYmax - 2);
 							}
-
 							break;
 
-			case KEY_DOWN:	if (key_down(obj_list, selected_obj, win_posYmax, top_line, bot_line))
+			case KEY_DOWN:	if (key_down(obj_list, selected_obj, win_posY, win_posYmax, top_line, bot_line))
 							{
 								refresh_obj	= true;
 							}
-
 							break;
 		}
 	}
