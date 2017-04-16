@@ -68,68 +68,6 @@ void get_obj_size(list_of_objects	item, unsigned int &x, unsigned int &y) {	// �
 	}
 }
 
-void display_next_obj_line(vector<list_of_objects> obj_list, unsigned int &first_display_obj, unsigned int &last_display_obj, unsigned int win_posY, unsigned int win_posYmax) {	// Спуск в окне (поднятие всех объектов выше)
-	bool			collision_fail	= false;
-
-	unsigned int	line_y	= 0;
-
-	// Стирание самой высокой строки с экрана Начало
-	for (unsigned int	i	= 0; i < obj_list.size(); i++)	// Поиск самого высокого активного объекта
-	{
-		if ((obj_list[i].point_to_struct->active_obj) && ((obj_list[i].point_to_struct->posY < line_y) || (i == 0)))
-			line_y	= obj_list[i].point_to_struct->posY;
-	}
-
-	for (unsigned int	i	= 0; i < obj_list.size(); i++)
-	{
-		if (obj_list[i].point_to_struct->posY == line_y)
-		{
-			obj_list[i].point_to_struct->active_obj	= false;
-			obj_list[i].point_to_struct->redraw		= false;
-		}
-	}
-	// Стирание самой высокой строки с экрана Конец
-
-	for (unsigned int	i	= 0; i < obj_list.size(); i++)	// Сдвиг всех активных объектов вверх Начало
-	{
-		if (obj_list[i].point_to_struct->active_obj)
-		{
-			obj_list[i].point_to_struct->posY	-= FREE_SPACE_Y;
-			obj_list[i].point_to_struct->redraw	= true;
-
-			if (obj_list[i].point_to_struct->posY <= win_posY)	// Отключние объекта, если он залез на границу окна
-			{
-				obj_list[i].point_to_struct->posY	= win_posY + 1;
-				obj_list[i].point_to_struct->redraw	= false;
-			}
-		}
-	}
-
-	for (unsigned int i	= 0; i < obj_list.size(); i++)	// Вывод на экран нижней линии
-	{
-		if ((!obj_list[i].point_to_struct->active_obj) && (obj_list[i].point_to_struct->posY < win_posYmax) && (obj_list[i].point_to_struct->posY >= win_posYmax - FREE_SPACE_Y))
-		{
-			for (unsigned int j = 0; j < obj_list.size(); ++j)
-			{
-				if ((obj_list[j].point_to_struct->active_obj) && (obj_list[j].point_to_struct->posY == obj_list[i].point_to_struct->posY) && (obj_list[j].point_to_struct->posX == obj_list[i].point_to_struct->posX))
-				{
-					collision_fail	= true;
-					break;
-				}
-			}
-
-			if (collision_fail)
-			{
-				collision_fail	= false;
-				continue;
-			}
-
-			obj_list[i].point_to_struct->active_obj = true;
-			obj_list[i].point_to_struct->redraw = true;
-		}
-	}
-}
-
 nearest_obj close_obj(list_of_objects *first_obj, list_of_objects *second_obj)
 {
 	unsigned int	f_size_x,
@@ -562,24 +500,7 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 			case H_KEY_ESC:	cycle		= false;
 							break;
 
-/*			case H_KEY_TAB:	obj_list[selected_obj].point_to_struct->redraw	= true;	// Перерисовать объект невыделенным	//!!!!!!!!!!!!!!!!АБСОЛЮТНАЯ ХЕРНЯ!!!!!!!!!!! УБРАТЬ ЭТО!!!!!!
-							obj_list[selected_obj].point_to_function(obj_list[selected_obj].point_to_struct, obj_list[selected_obj].text, obj_list[selected_obj].color_object);	// Обновление элемента
-							refresh_obj	= true;
-
-							if (selected_obj != (obj_list.size() - 1)) {
-								selected_obj++;
-							} else {
-								// selected_obj	= 0;
-								selected_obj	= first_display_obj;	// ПОКА ТАК, ПОТОМ ИСПРАВИТЬ!!!!
-							}
-
-							if (selected_obj > last_display_obj) {
-								display_next_obj_line(obj_list, first_display_obj, last_display_obj, win_posY, win_posYmax);
-								clear_space(win_posX + 1, win_posY + 1, win_posXmax - win_posX - 2, win_posYmax - win_posY - 2);
-								selected_obj	= 10;
-							}
-
-							break;
+/*			case H_KEY_TAB:	
 */
 			case KEY_UP:	if (key_up(obj_list, selected_obj, win_posYmax, top_line, bot_line))
 							{
