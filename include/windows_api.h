@@ -21,6 +21,7 @@
 	{
 		unsigned int	posX,
 						posY,
+						posYdisplay,
 						posXmax,
 						posYmax,
 						std_selected,
