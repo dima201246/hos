@@ -68,6 +68,52 @@ void get_obj_size(list_of_objects	item, unsigned int &x, unsigned int &y) {	// �
 	}
 }
 
+nearest_obj close_side_obj(list_of_objects *first_obj, list_of_objects *second_obj)
+{
+	unsigned int	f_size_x,
+					f_size_y,
+					s_size_x,
+					s_size_y;
+
+	nearest_obj		temp = {};
+
+	get_obj_size(*first_obj, f_size_x, f_size_y);
+	get_obj_size(*second_obj, s_size_x, s_size_y);
+	
+	for (unsigned int i = first_obj->point_to_struct->posY; i <= (first_obj->point_to_struct->posY + f_size_y); ++i)	// Цикл проверяющий каждый "пиксель" уже выделенного объекта
+	{
+		if (((i >= second_obj->point_to_struct->posY) && (i <= (second_obj->point_to_struct->posY + s_size_y))))
+		{
+			temp = {
+				.obj = second_obj,	// Сохранение ссылки на объект
+				.num = i,	// Сохранение номера объекта в векторе
+				.size = 0,
+			};
+
+			if (first_obj->point_to_struct->posY <= second_obj->point_to_struct->posY)
+			{
+				if ((first_obj->point_to_struct->posY + f_size_x) <= (second_obj->point_to_struct->posY + s_size_y))
+				{
+					temp.size	= (((second_obj->point_to_struct->posY - first_obj->point_to_struct->posY) > s_size_y) ? ((second_obj->point_to_struct->posY - first_obj->point_to_struct->posY) - s_size_y) : (s_size_y - (second_obj->point_to_struct->posY - first_obj->point_to_struct->posY)));
+				}
+
+				else
+				{
+					temp.size	= s_size_y;
+				}
+			}
+			else
+			{
+				temp.size	= (((first_obj->point_to_struct->posY - second_obj->point_to_struct->posY) > s_size_y) ? ((first_obj->point_to_struct->posY - second_obj->point_to_struct->posY) - s_size_y) : (s_size_y - (first_obj->point_to_struct->posY - second_obj->point_to_struct->posY)));
+			}
+
+			break;
+		}
+	}
+
+	return temp;
+}
+
 nearest_obj close_obj(list_of_objects *first_obj, list_of_objects *second_obj)
 {
 	unsigned int	f_size_x,
@@ -152,6 +198,68 @@ void obj_down(vector<list_of_objects> obj_list, unsigned int selected_obj, unsig
 	}
 }
 
+bool key_left(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int win_posYmax, unsigned int &top_line, unsigned int &bot_line)
+{
+	std::vector<nearest_obj> obj_bank;
+
+	nearest_obj temp_close_obj;
+
+	unsigned int	x_size_selected,
+					y_size_selected;
+
+	// Поиск кнопки левее Начало
+	get_obj_size(obj_list[selected_obj], x_size_selected, y_size_selected);	// Узнаём размеры выделенного объекта
+
+	for (unsigned int i = 0; i < obj_list.size(); ++i)	// Проверяем все объекты левее объекта
+	{
+		if ((obj_list[i].point_to_struct->active_obj) && (obj_list[i].point_to_struct->posX < obj_list[selected_obj].point_to_struct->posX))	// Небольшая оптимизация, чтобы проверялись только объекты левее выделенного
+		{
+			temp_close_obj = close_side_obj(&obj_list[selected_obj], &obj_list[i]);
+
+			if (temp_close_obj.size != 0)
+			{
+				temp_close_obj.num = i;
+				obj_bank.push_back(temp_close_obj);
+			}
+		}
+	}
+	// Поиск кнопки левее Конец
+
+	if (obj_bank.size() > 0)
+	{
+		temp_close_obj = obj_bank[0];
+
+		for (unsigned int i = 1; i < obj_bank.size(); ++i)	// Поиск самого близкого и с большим пересечением
+		{
+			if (temp_close_obj.obj->point_to_struct->posX <= obj_bank[i].obj->point_to_struct->posX)
+			{
+				if ((temp_close_obj.obj->point_to_struct->posX == obj_bank[i].obj->point_to_struct->posX) && (temp_close_obj.size <= obj_bank[i].size))
+				{
+					temp_close_obj = obj_bank[i];
+				}
+
+				if (temp_close_obj.obj->point_to_struct->posX < obj_bank[i].obj->point_to_struct->posX)
+				{
+					temp_close_obj = obj_bank[i];
+				}
+			}
+		}
+
+		obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка текущего выделенного объекта невыделенным
+		selected_obj = temp_close_obj.num;
+		obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка нового выделенного объекта невыделенным
+
+/*		if (obj_list[selected_obj].point_to_struct->posY <= top_line)	// Если объект находится за гранью видимого
+		{
+			obj_up(obj_list, selected_obj, win_posYmax, top_line, bot_line);
+		}*/
+
+		return true;
+	}
+
+	return false;
+}
+
 bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int win_posYmax, unsigned int &top_line, unsigned int &bot_line)
 {
 	std::vector<nearest_obj> obj_bank;
@@ -161,7 +269,7 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 	unsigned int	x_size_selected,
 					y_size_selected;
 
-	// Поиск кнопки ниже Начало
+	// Поиск кнопки выше Начало
 	get_obj_size(obj_list[selected_obj], x_size_selected, y_size_selected);	// Узнаём размеры выделенного объекта
 
 	for (unsigned int i = 0; i < obj_list.size(); ++i)	// Проверяем все объекты под объектом
@@ -177,7 +285,7 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 			}
 		}
 	}
-	// Поиск кнопки ниже Конец
+	// Поиск кнопки выше Конец
 
 	if (obj_bank.size() > 0)
 	{
@@ -207,6 +315,68 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 		{
 			obj_up(obj_list, selected_obj, win_posYmax, top_line, bot_line);
 		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool key_right(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsigned int win_posY, unsigned int win_posYmax, unsigned int &top_line, unsigned int &bot_line)
+{
+	std::vector<nearest_obj> obj_bank;
+
+	nearest_obj temp_close_obj;
+
+	unsigned int	x_size_selected,
+					y_size_selected;
+
+	// Поиск кнопки левее Начало
+	get_obj_size(obj_list[selected_obj], x_size_selected, y_size_selected);	// Узнаём размеры выделенного объекта
+
+	for (unsigned int i = 0; i < obj_list.size(); ++i)	// Проверяем все объекты левее объекта
+	{
+		if ((obj_list[i].point_to_struct->active_obj) && (obj_list[i].point_to_struct->posX > obj_list[selected_obj].point_to_struct->posX))	// Небольшая оптимизация, чтобы проверялись только объекты левее выделенного
+		{
+			temp_close_obj = close_side_obj(&obj_list[selected_obj], &obj_list[i]);
+
+			if (temp_close_obj.size != 0)
+			{
+				temp_close_obj.num = i;
+				obj_bank.push_back(temp_close_obj);
+			}
+		}
+	}
+	// Поиск кнопки левее Конец
+
+	if (obj_bank.size() > 0)
+	{
+		temp_close_obj = obj_bank[0];
+
+		for (unsigned int i = 1; i < obj_bank.size(); ++i)	// Поиск самого близкого и с большим пересечением
+		{
+			if (temp_close_obj.obj->point_to_struct->posX >= obj_bank[i].obj->point_to_struct->posX)
+			{
+				if ((temp_close_obj.obj->point_to_struct->posX == obj_bank[i].obj->point_to_struct->posX) && (temp_close_obj.size <= obj_bank[i].size))
+				{
+					temp_close_obj = obj_bank[i];
+				}
+
+				if (temp_close_obj.obj->point_to_struct->posX > obj_bank[i].obj->point_to_struct->posX)
+				{
+					temp_close_obj = obj_bank[i];
+				}
+			}
+		}
+
+		obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка текущего выделенного объекта невыделенным
+		selected_obj = temp_close_obj.num;
+		obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка нового выделенного объекта невыделенным
+
+/*		if (obj_list[selected_obj].point_to_struct->posY <= top_line)	// Если объект находится за гранью видимого
+		{
+			obj_up(obj_list, selected_obj, win_posYmax, top_line, bot_line);
+		}*/
 
 		return true;
 	}
@@ -500,8 +670,12 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 			case H_KEY_ESC:	cycle		= false;
 							break;
 
-/*			case H_KEY_TAB:	
-*/
+			case H_KEY_TAB:	if (key_right(obj_list, selected_obj, win_posY, win_posYmax, top_line, bot_line))
+							{
+								refresh_obj	= true;
+							}
+							break;
+
 			case KEY_UP:	if (key_up(obj_list, selected_obj, win_posYmax, top_line, bot_line))
 							{
 								refresh_obj	= true;
@@ -509,6 +683,18 @@ returned_str win(WINOBJ* win_conf, vector<list_of_objects> obj_list, string titl
 							break;
 
 			case KEY_DOWN:	if (key_down(obj_list, selected_obj, win_posY, win_posYmax, top_line, bot_line))
+							{
+								refresh_obj	= true;
+							}
+							break;
+
+			case KEY_RIGHT:	if (key_right(obj_list, selected_obj, win_posY, win_posYmax, top_line, bot_line))
+							{
+								refresh_obj	= true;
+							}
+							break;
+
+			case KEY_LEFT:	if (key_left(obj_list, selected_obj, win_posYmax, top_line, bot_line))
 							{
 								refresh_obj	= true;
 							}
