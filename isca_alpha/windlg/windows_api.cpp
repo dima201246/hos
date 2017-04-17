@@ -526,7 +526,7 @@ bool key_down(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsi
 	return false;
 }
 
-list_of_objects	*collision(std::vector<list_of_objects> obj_list, unsigned int num, unsigned int x, unsigned int y)
+list_of_objects	*collision(std::vector<list_of_objects> &obj_list, unsigned int num, unsigned int x, unsigned int y)
 {
 	unsigned int	temp_size_x = 0,
 					temp_size_y = 0,
