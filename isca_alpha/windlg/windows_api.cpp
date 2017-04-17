@@ -237,8 +237,7 @@ bool key_left(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsi
 				{
 					temp_close_obj = obj_bank[i];
 				}
-
-				if (temp_close_obj.obj->point_to_struct->posX < obj_bank[i].obj->point_to_struct->posX)
+				else if (temp_close_obj.obj->point_to_struct->posX < obj_bank[i].obj->point_to_struct->posX)
 				{
 					temp_close_obj = obj_bank[i];
 				}
@@ -249,12 +248,54 @@ bool key_left(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsi
 		selected_obj = temp_close_obj.num;
 		obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка нового выделенного объекта невыделенным
 
-/*		if (obj_list[selected_obj].point_to_struct->posY <= top_line)	// Если объект находится за гранью видимого
-		{
-			obj_up(obj_list, selected_obj, win_posYmax, top_line, bot_line);
-		}*/
-
 		return true;
+	}
+
+	if (obj_bank.size() == 0)
+	{
+		temp_close_obj = {};
+
+		for (unsigned int i = 0; i < obj_list.size(); ++i)
+		{
+			if ((obj_list[i].point_to_struct->active_obj) && (obj_list[i].point_to_struct->posY < obj_list[selected_obj].point_to_struct->posY))
+			{
+				if (temp_close_obj.size == 0)
+				{
+					temp_close_obj.num = i;
+					temp_close_obj.size = 1;
+					temp_close_obj.obj = &obj_list[i];
+				}
+				else if (temp_close_obj.obj->point_to_struct->posY <= obj_list[i].point_to_struct->posY)
+				{
+					if ((temp_close_obj.obj->point_to_struct->posY == obj_list[i].point_to_struct->posY) && (temp_close_obj.obj->point_to_struct->posX < obj_list[i].point_to_struct->posX))
+					{
+						temp_close_obj.num = i;
+						temp_close_obj.obj = &obj_list[i];
+					}
+					else if (temp_close_obj.obj->point_to_struct->posY < obj_list[i].point_to_struct->posY)
+					{
+						temp_close_obj.num = i;
+						temp_close_obj.obj = &obj_list[i];	
+					}
+				}
+			}
+		}
+
+		if (temp_close_obj.size != 0)
+		{
+
+			obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка текущего выделенного объекта невыделенным
+			selected_obj = temp_close_obj.num;
+			obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка нового выделенного объекта невыделенным
+			// add_to_filef(MAIN_LOGFILE, "Text: %s\n", temp_close_obj.obj->text.c_str());
+
+			if (obj_list[selected_obj].point_to_struct->posY <= top_line)	// Если объект находится за гранью видимого
+			{
+				obj_up(obj_list, selected_obj, win_posYmax, top_line, bot_line);
+			}
+
+			return true;
+		}
 	}
 
 	return false;
@@ -299,8 +340,7 @@ bool key_up(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsign
 				{
 					temp_close_obj = obj_bank[i];
 				}
-
-				if (temp_close_obj.obj->point_to_struct->posY < obj_bank[i].obj->point_to_struct->posY)
+				else if (temp_close_obj.obj->point_to_struct->posY < obj_bank[i].obj->point_to_struct->posY)
 				{
 					temp_close_obj = obj_bank[i];
 				}
@@ -326,7 +366,7 @@ bool key_right(vector<list_of_objects> obj_list, unsigned int &selected_obj, uns
 {
 	std::vector<nearest_obj> obj_bank;
 
-	nearest_obj temp_close_obj;
+	nearest_obj temp_close_obj = {};
 
 	unsigned int	x_size_selected,
 					y_size_selected;
@@ -361,8 +401,7 @@ bool key_right(vector<list_of_objects> obj_list, unsigned int &selected_obj, uns
 				{
 					temp_close_obj = obj_bank[i];
 				}
-
-				if (temp_close_obj.obj->point_to_struct->posX > obj_bank[i].obj->point_to_struct->posX)
+				else if (temp_close_obj.obj->point_to_struct->posX > obj_bank[i].obj->point_to_struct->posX)
 				{
 					temp_close_obj = obj_bank[i];
 				}
@@ -373,12 +412,54 @@ bool key_right(vector<list_of_objects> obj_list, unsigned int &selected_obj, uns
 		selected_obj = temp_close_obj.num;
 		obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка нового выделенного объекта невыделенным
 
-/*		if (obj_list[selected_obj].point_to_struct->posY <= top_line)	// Если объект находится за гранью видимого
-		{
-			obj_up(obj_list, selected_obj, win_posYmax, top_line, bot_line);
-		}*/
-
 		return true;
+	}
+
+	if (obj_bank.size() == 0)
+	{
+		temp_close_obj = {};
+
+		for (unsigned int i = 0; i < obj_list.size(); ++i)
+		{
+			if ((obj_list[i].point_to_struct->active_obj) && (obj_list[i].point_to_struct->posY > obj_list[selected_obj].point_to_struct->posY))
+			{
+				if (temp_close_obj.size == 0)
+				{
+					temp_close_obj.num = i;
+					temp_close_obj.size = 1;
+					temp_close_obj.obj = &obj_list[i];
+				}
+				else if (temp_close_obj.obj->point_to_struct->posY >= obj_list[i].point_to_struct->posY)
+				{
+					if ((temp_close_obj.obj->point_to_struct->posY == obj_list[i].point_to_struct->posY) && (temp_close_obj.obj->point_to_struct->posX > obj_list[i].point_to_struct->posX))
+					{
+						temp_close_obj.num = i;
+						temp_close_obj.obj = &obj_list[i];
+					}
+					else if (temp_close_obj.obj->point_to_struct->posY > obj_list[i].point_to_struct->posY)
+					{
+						temp_close_obj.num = i;
+						temp_close_obj.obj = &obj_list[i];	
+					}
+				}
+			}
+		}
+
+		if (temp_close_obj.size != 0)
+		{
+
+			obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка текущего выделенного объекта невыделенным
+			selected_obj = temp_close_obj.num;
+			obj_list[selected_obj].point_to_struct->redraw = true;	// Перерисовка нового выделенного объекта невыделенным
+			// add_to_filef(MAIN_LOGFILE, "Text: %s\n", temp_close_obj.obj->text.c_str());
+
+			if (obj_list[selected_obj].point_to_struct->posY >= bot_line)	// Если объект находится за гранью видимого
+			{
+				obj_down(obj_list, selected_obj, win_posY, win_posYmax, top_line, bot_line);
+			}
+
+			return true;
+		}
 	}
 
 	return false;
@@ -423,8 +504,7 @@ bool key_down(vector<list_of_objects> obj_list, unsigned int &selected_obj, unsi
 				{
 					temp_close_obj = obj_bank[i];
 				}
-
-				if (temp_close_obj.obj->point_to_struct->posY > obj_bank[i].obj->point_to_struct->posY)
+				else if (temp_close_obj.obj->point_to_struct->posY > obj_bank[i].obj->point_to_struct->posY)
 				{
 					temp_close_obj = obj_bank[i];
 				}
