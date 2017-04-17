@@ -13,6 +13,7 @@
 	#define WIN_TOP_BAR		4
 	#define WIN_CHECKBOX	5
 	#define WIN_MENU		6
+	#define WIN_TABLE		7
 
 	typedef	int	win_object;
 	typedef	int	hotkey_t;

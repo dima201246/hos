@@ -20,11 +20,18 @@ int main(int argc, char *argv[]) {
 	test_obj_conf.posX = 14;
 	test_obj_conf.posY = 4;
 
+	InitWINOBJ(test_text_field);
+	test_text_field.posX = 14;
+	test_text_field.posY = 5;
+	test_text_field.posXmax = 14;
+	test_text_field.posYmax = 4;
+
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_01", TEXT_WHITE_BLACK, &test_obj_conf);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_0", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_1", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_2", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_3", TEXT_WHITE_BLACK, NULL);
+	add_to_win(test_obj_vec, WIN_TEXT_FIELD, "TEST_TEXT_000", TEXT_WHITE_BLACK, &test_text_field);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_4", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_5", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_6", TEXT_WHITE_BLACK, NULL);
@@ -38,6 +45,7 @@ int main(int argc, char *argv[]) {
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_14", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_15", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_16", TEXT_WHITE_BLACK, NULL);
+/*
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_17", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_18", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_19", TEXT_WHITE_BLACK, NULL);
@@ -83,7 +91,7 @@ int main(int argc, char *argv[]) {
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_29", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_30", TEXT_WHITE_BLACK, NULL);
 	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_31", TEXT_WHITE_BLACK, NULL);
-	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_32", TEXT_WHITE_BLACK, NULL);
+	add_to_win(test_obj_vec, WIN_BUTTON, "TEST_TEXT_32", TEXT_WHITE_BLACK, NULL);*/
 	win(NULL, test_obj_vec, "TEST WIN", TEXT_WHITE_BLACK);
 
 	endwin();

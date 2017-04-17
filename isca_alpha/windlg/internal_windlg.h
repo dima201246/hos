@@ -17,6 +17,7 @@
 
 	int	windlg_input(unsigned int	max_size, unsigned int	&firstItem, unsigned int	&lastItem, unsigned int	&selected, bool	progressBar);
 	void clear_space(unsigned int	start_x, unsigned int	start_y, unsigned int	end_x, unsigned int	end_y);
+	void get_obj_size(list_of_objects	item, unsigned int &x, unsigned int &y);	// Получение предполагаемого размера объекта
 
 	/*	Объекты для окна
 	*	Передаём:
@@ -25,5 +26,6 @@
 	*		- Цвет объекта
 	*/
 	int button_obj(WINOBJ *, std::string, color_t);
+	int text_obj(WINOBJ *, std::string, color_t);
 
 #endif
