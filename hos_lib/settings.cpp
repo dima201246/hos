@@ -8,6 +8,36 @@ string hos_version() {
 	return _HOS_VERSION;
 }
 
+void cat_egg()
+{
+	bool tail_pos = false;
+
+	timeout(500);
+
+	while (getch() == -1)
+	{
+		erase();
+		printw("             *     ,MMM8&&&.            *\n                  MMMM88&&&&&    .\n                 MMMM88&&&&&&&\n     *           MMM88&&&&&&&&\n                 MMM88&&&&&&&&\n");
+		printw("                 'MMM88&&&&&&'\n                   'MMM8&&&'      *\n          |\\___/|\n          )     (             .              '\n         =\\     /=\n");
+		printw("           )===(       *\n          /     \\\n          |     |\n         /       \\\n         \\       /\n  _/\\_/\\_/\\__  _/_/\\_/\\_/\\_/\\_/\\_/\\_/\\_/\\_/\\_\n");
+
+		if (tail_pos)
+		{
+			tail_pos = false;
+			printw("  |  |  |  |( (  |  |  |  |  |  |  |  |  |  |\n  |  |  |  | ) ) |  |  |  |  |  |  |  |  |  |\n  |  |  |  |(_(  |  |  |  |  |  |  |  |  |  |\n");
+		}
+		else
+		{
+			tail_pos = true;
+			printw("  |  |  |  | ) ) |  |  |  |  |  |  |  |  |  |\n  |  |  |  |( (  |  |  |  |  |  |  |  |  |  |\n  |  |  |  | )_) |  |  |  |  |  |  |  |  |  |\n");
+		}
+
+		printw("  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n");
+	}
+
+	timeout(-1);
+}
+
 void about_hos() {
 	timeout(-1);
 	erase();
@@ -29,7 +59,11 @@ void about_hos() {
 
 
 	printw("\nPress any key...");
-	getch();
+
+	if (getch() == 'c')
+	{
+		cat_egg();
+	}
 }
 
 void system_info() { // Пока не работает
