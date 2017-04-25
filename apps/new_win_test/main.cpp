@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 
 	InitWINOBJ(test_text_field);
 	test_text_field.posX = 14;
-	test_text_field.posY = 5;
+	test_text_field.posY = 6;
 	test_text_field.posXmax = 14;
 	test_text_field.posYmax = 4;
 
