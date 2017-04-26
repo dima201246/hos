@@ -67,5 +67,5 @@
 
 	void add_to_win(std::vector<list_of_objects>&, win_object, std::string, color_t, WINOBJ*);
 	returned_str win(WINOBJ*, std::vector<list_of_objects>, std::string, color_t);
-
+	std::string get_ver_winapi();
 #endif

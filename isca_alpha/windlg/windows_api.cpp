@@ -4,7 +4,14 @@
 
 const unsigned int FREE_SPACE_Y = 2;
 
+const std::string WINDOWS_API_VERSION = "0.1 ALPHA";
+
 using namespace std;
+
+std::string get_ver_winapi()
+{
+	return WINDOWS_API_VERSION;
+}
 
 struct nearest_obj
 {

@@ -11,7 +11,7 @@ void about_hos()
 {
 	timeout(-1);
 	erase();
-	printw(":DV company 2016\n\n");
+	printw(":DV company 2017\n\n");
 
 	printw("HOS version: %s\n", hos_version().c_str());
 	printw("Date build: %s %s\n", __DATE__, __TIME__);

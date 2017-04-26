@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 
 	add_to_load_screen(loading_info, 0, 0, "HOS version: " + hos_ver);
 	add_to_load_screen(loading_info, 0, 1, "WINDLG version: " + get_ver_windlg());
+	add_to_load_screen(loading_info, 0, 2, "Windows API version: " + get_ver_winapi());
 
 	loading_title_start(&loading_info);	// Вывод загрузочного экрана
 
