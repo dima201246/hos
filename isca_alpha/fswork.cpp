@@ -37,6 +37,9 @@ void fv_in_strv_out(vector <FILEINFO> filevector, vector <string>& fileout) {
 }
 
 void files_sort_by(char type_sort, vector<FILEINFO> &filevec) {
+	if (filevec.size() < 2)
+		return;
+
 	FILEINFO temp_1, temp_2, temp_3;
 	unsigned int k_cycle, itemp_1, itemp_2;
 	for (unsigned int i = 0; i < filevec.size() - 1; i++) { // Сортировка методом пузырька
