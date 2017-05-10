@@ -613,7 +613,7 @@ void structuring_obj(WINOBJ* win_conf, std::vector<list_of_objects> &obj_list, u
 					else
 					{
 						ahead_pos_x	= startX + indent_x;
-						ahead_pos_y	= collision_obj->point_to_struct->posY + FREE_SPACE_Y + temp_size_y;
+						ahead_pos_y	= collision_obj->point_to_struct->posY + 1 + temp_size_y;
 					}
 				}
 
