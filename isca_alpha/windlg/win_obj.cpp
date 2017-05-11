@@ -73,6 +73,8 @@ unsigned int textParcer(std::vector<std::string> &text_array, std::string text, 
 
 	unsigned int return_num = 0;
 
+	text_array.clear();
+
 	if ((text.length() != 0) && (text.length() > maxY))
 	{
 		return_num = ((double)((double)text.length() / (double)maxY) + 0.999999);
@@ -96,6 +98,23 @@ unsigned int textParcer(std::vector<std::string> &text_array, std::string text, 
 	return return_num;
 }
 
+unsigned int view_text(WINOBJ *obj_conf, std::vector<std::string> &text_array, std::string text, color_t color, unsigned int num_start, unsigned int num_end)
+{
+	unsigned int count_str = 0;
+
+	clear_space(obj_conf->posX, obj_conf->posYdisplay, obj_conf->posXmax, obj_conf->posYmax);
+	unsigned int how_many = textParcer(text_array, text, obj_conf->posXmax - 2, num_end);
+	draw_box(1, "", (how_many > (obj_conf->posYmax - 2) ? 1 : 0), obj_conf->posX, obj_conf->posYdisplay, obj_conf->posXmax, obj_conf->posYmax - 1, color, get_inv_color(color));
+
+	for (unsigned int i = num_start; i <= num_end; ++i)
+	{
+		mvprintw(obj_conf->posYdisplay + 1 + count_str, obj_conf->posX + 1, "%s", text_array[i].c_str());
+		count_str++;
+	}
+
+	return how_many;
+}
+
 int text_obj(WINOBJ *obj_conf, std::string text, color_t color)
 {
 	std::vector<std::string> text_array;
@@ -104,36 +123,40 @@ int text_obj(WINOBJ *obj_conf, std::string text, color_t color)
 
 	if (obj_conf->redraw)
 	{
-
 		textParcer(text_array, text, obj_conf->posXmax - 5, 1);
-
-		if ((obj_conf->posXmax != 0) || (obj_conf->posYmax != 0)) {
-			mvprintw(obj_conf->posYdisplay + 1, obj_conf->posX + 1, "%s...", text_array[0].c_str());
-		}
+		mvprintw(obj_conf->posYdisplay + 1, obj_conf->posX + 1, "%s...", text_array[0].c_str());
 	}
 	else
 	{
-		timeout(-1);
-
 		int key = 0;
+		unsigned int pos_str_start = 0,
+					 pos_str_end = obj_conf->posYmax - 3;
 
-		unsigned int how_many = textParcer(text_array, text, obj_conf->posXmax - 2, obj_conf->posYmax - 3);
-		
-		draw_box(1, "", (how_many > (obj_conf->posYmax - 2) ? 1 : 0), obj_conf->posX, obj_conf->posYdisplay, obj_conf->posXmax, obj_conf->posYmax - 1, color, get_inv_color(color));
-
-		for (unsigned int i = 0; i < text_array.size(); ++i)
-		{
-			mvprintw(obj_conf->posYdisplay + 1 + i, obj_conf->posX + 1, "%s", text_array[i].c_str());
-		}
+		timeout(-1);
+		unsigned int max_num = view_text(obj_conf, text_array, text, color, pos_str_start, pos_str_end);
 
 		key = getch();
 
 		while ((key != H_KEY_ESC) && (key != H_KEY_TAB) && (key != KEY_LEFT) && (key != KEY_RIGHT))
 		{
-			/*switch (key)
+			switch (key)
 			{
-				case KEY_DOWN: if ()
-			}*/
+				case KEY_UP:	if (pos_str_start != 0)
+								{
+									pos_str_start--;
+									pos_str_end--;
+									view_text(obj_conf, text_array, text, color, pos_str_start, pos_str_end);
+								}
+								break;
+
+				case KEY_DOWN:	if ((max_num - 1) > pos_str_end)
+								{
+									pos_str_start++;
+									pos_str_end++;
+									view_text(obj_conf, text_array, text, color, pos_str_start, pos_str_end);
+								}
+								break;
+			}
 
 			key = getch();
 		}
