@@ -13,6 +13,7 @@
 
 $ make hos_lib
 $ make
+$ make hos_starter
 $ make start
 
 # Распространяется под лицензией Apache License 2.0
