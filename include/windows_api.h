@@ -51,7 +51,8 @@
 		color_t		color_object;
 
 		unsigned int	display_posY,
-						display_negative_posY;
+						display_negative_posY,
+						position_num;
 
 		bool		memory_leak;
 	};
@@ -65,7 +66,7 @@
 	#define InitWINOBJ(name_var)	WINOBJ	name_var	= {}
 	#define InitObjVec(name_var)	std::vector<list_of_objects>	name_var
 
-	void add_to_win(std::vector<list_of_objects>&, win_object, std::string, color_t, WINOBJ*);
+	unsigned int add_to_win(std::vector<list_of_objects>&, win_object, std::string, color_t, WINOBJ*);	// Добавление объекта в окно, возвращает номер элемента
 	returned_str win(WINOBJ*, std::vector<list_of_objects>, std::string, color_t);
 	std::string get_ver_winapi();
 #endif

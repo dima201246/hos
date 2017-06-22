@@ -29,7 +29,7 @@ void clear_space(unsigned int	start_x, unsigned int	start_y, unsigned int	end_x,
 	}
 }
 
-void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::string text_on_object, color_t color_obj, WINOBJ* point_to_conf) {	// Добавление объекта в окно
+unsigned int add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::string text_on_object, color_t color_obj, WINOBJ* point_to_conf) {	// Добавление объекта в окно
 	list_of_objects	temp_value	= {};	// Переменная для получение объекта из вектора
 
 	switch (object_type) {	// Определение типа передаваемого объекта
@@ -45,7 +45,7 @@ void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::
 	if (point_to_conf == NULL) {	// Проверка, была ли передана структура вместе с объектом
 		WINOBJ *temp_objstr			= new WINOBJ;	// Если нет, то выделение под неё памяти
 		*temp_objstr				= {};
-		temp_objstr->redraw			= true;	// Чотбы сразу, при первом вызове, объект перерисовался
+		temp_objstr->redraw			= true;	// Чтобы сразу, при первом вызове, объект перерисовался
 		temp_value.point_to_struct	= temp_objstr;
 		temp_value.memory_leak		= true;
 	} else {
@@ -56,7 +56,19 @@ void add_to_win(vector<list_of_objects> &obj_list, win_object object_type, std::
 
 	temp_value.text					= text_on_object;
 	temp_value.color_object			= color_obj;
+
+	if (obj_list.size() > 1)	// Добавление номера элемента
+	{
+		temp_value.position_num = obj_list[obj_list.size() -  1].position_num + 1;
+	}
+	else
+	{
+		temp_value.position_num = 1;
+	}
+
 	obj_list.push_back(temp_value);
+
+	return temp_value.position_num;
 }
 
 nearest_obj close_side_obj(list_of_objects *first_obj, list_of_objects *second_obj)
