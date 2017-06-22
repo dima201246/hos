@@ -103,14 +103,18 @@ unsigned int view_text(WINOBJ *obj_conf, std::vector<std::string> &text_array, s
 	unsigned int count_str = 0;
 
 	clear_space(obj_conf->posX, obj_conf->posYdisplay, obj_conf->posXmax, obj_conf->posYmax);
+
 	unsigned int how_many = textParcer(text_array, text, obj_conf->posXmax - 2, num_end);
-	draw_box(1, "", (how_many > (obj_conf->posYmax - 2) ? 1 : 0), obj_conf->posX, obj_conf->posYdisplay, obj_conf->posXmax, obj_conf->posYmax - 1, color, get_inv_color(color));
+
+	draw_box(1, "", (how_many > (obj_conf->posYmax - 2) ? (obj_conf->posYdisplay + 1) : 0), obj_conf->posX, obj_conf->posYdisplay, obj_conf->posXmax, obj_conf->posYmax - 1, color, get_inv_color(color));
 
 	for (unsigned int i = num_start; i <= num_end; ++i)
 	{
 		mvprintw(obj_conf->posYdisplay + 1 + count_str, obj_conf->posX + 1, "%s", text_array[i].c_str());
 		count_str++;
 	}
+
+	draw_box(2, "", (((num_end * obj_conf->posYmax - 2) / how_many) + (obj_conf->posY)), obj_conf->posX, obj_conf->posYdisplay, obj_conf->posXmax, obj_conf->posYmax - 1, color, get_inv_color(color));
 
 	return how_many;
 }
