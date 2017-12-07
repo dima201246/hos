@@ -7,9 +7,31 @@
 #include "../include/desktop.h"
 #include "../include/system_defines.h"
 
+#include "./include/video_buf.h"
+
 int main(int argc, char *argv[])
 {
 	setlocale(LC_ALL, "");
+	video_init();
+	// init_signals();
+	// apps_vect.clear();
+	// sleep(2);
+	// screen_init();
+
+	for (;;)
+	{
+		sleep(1);
+	}
+
+
+	// main_desktop("user_name");
+	end_video();
+	exit(0);
+
+
+	// while (true);
+	// end_video();
+/*
 	init_display();
 	init_color();
 
@@ -64,5 +86,5 @@ int main(int argc, char *argv[])
 
 	main_desktop("user_name");		// ВИНОВНИК ТОРЖЕСТВА
 	endwin();						// КОНЕЦ СТРАДАНИЯМ
-	return 0;
+	return 0;*/
 }

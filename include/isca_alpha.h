@@ -19,6 +19,7 @@
 	#include "windows_api.h"
 	#include "settings.h"
 	#include "hos_api.h"
+	#include "hos_video.h"
 
 	#define H_KEY_ESC		27
 	#define H_KEY_BACKSPACE	127
