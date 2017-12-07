@@ -30,20 +30,15 @@ void screen_init()
 {
 	int am;
 
-	add_to_filef("./test", "Init screen!!\n");
 	if ((am = shm_open(VIDEO_ADD_APP, O_RDWR, 0777)) == -1)
 	{
-		printf("Can't start application without HOS!\n");
 		add_to_filef("./test", "Init screen NotOK!!\n");
 		exit(-1);
 	}
 
-	add_to_filef("./test", "Test state 0\n");
 	app_container_strct *video_addon_obj = (app_container_strct*) mmap(NULL, sizeof(struct app_container_strct), PROT_READ | PROT_WRITE, MAP_SHARED, am, 0);
 
-	add_to_filef("./test", "Test state 1\n");
 	while (video_addon_obj->busy);
-	add_to_filef("./test", "Test state 2\n");
 
 	video_addon_obj->busy = true;
 
@@ -51,7 +46,6 @@ void screen_init()
 
 	strcpy(video_addon_obj->name_app, "Main");
 	strcpy(video_addon_obj->name_buf, buf_name.c_str());
-
 
 	int sm = shm_open(video_addon_obj->name_buf, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR); // Создание объекта общей памяти
 
@@ -72,13 +66,9 @@ void screen_init()
 		}
 	}
 
-	add_to_filef("./test", "Init screen OK!!\n");
-/*	FILE	*pidf;
-	pid_t	num_pid;
-	pidf	= fopen(VIDEO_PID, "r");
-	fscanf(pidf, "%d", &num_pid);
-	fclose(pidf);*/
-	kill(17911, SIGUSR1);
+	
+	add_to_filef("./test", "Video PID: %d\n", video_addon_obj->pid_video);
+	kill(video_addon_obj->pid_video, SIGUSR1);
 
 	video_init = true;
 }

@@ -28,11 +28,7 @@ bool video_cycle_run;
 
 void end_video()
 {
-	FILE	*pidf;
-	pid_t	video_pid;
-	pidf	= fopen(VIDEO_PID, "r");
-	fscanf(pidf, "%d", &video_pid);
-	fclose(pidf);
+	pid_t	video_pid = new_video_app_obj->pid_video;
 	kill(video_pid, SIGTERM);
 	waitpid(video_pid, NULL, WUNTRACED);
 }
@@ -145,7 +141,6 @@ void hdl(int sig)
 
 int init_video_signal()
 {
-	unlink(VIDEO_PID);
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
 	act.sa_handler = hdl;
@@ -159,7 +154,7 @@ int init_video_signal()
 	sigaction(SIGTERM, &act, 0);
 	// sigaction(SIGUSR2, &act, 0);
 
-	add_to_file(VIDEO_PID, getpid());
+	new_video_app_obj->pid_video = getpid();
 	return 0;
 }
 

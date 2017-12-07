@@ -1,4 +1,5 @@
 *.o
+*.log
 lib
 apps/apps.list
 hos_alpha
